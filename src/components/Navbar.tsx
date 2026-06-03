@@ -8,13 +8,27 @@ import type { User } from "@supabase/supabase-js";
 
 export function Navbar() {
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+      if (data.user) {
+        supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", data.user.id)
+          .single()
+          .then(({ data: profile }) => setIsAdmin(profile?.is_admin ?? false));
+      }
+    });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => setUser(session?.user ?? null)
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        if (!session?.user) setIsAdmin(false);
+      }
     );
     return () => subscription.unsubscribe();
   }, []);
@@ -121,6 +135,11 @@ export function Navbar() {
               <Link href="/profile" className="text-sm text-gray-300 hover:text-accent transition">
                 My Predictions
               </Link>
+              {isAdmin && (
+                <Link href="/admin" className="text-sm text-yellow-400 hover:text-yellow-300 transition">
+                  Admin
+                </Link>
+              )}
               <button
                 onClick={handleLogout}
                 className="text-sm text-gray-400 hover:text-red-400 transition"
