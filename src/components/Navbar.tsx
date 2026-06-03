@@ -29,27 +29,27 @@ export function Navbar() {
       {/* Main banner with player images */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20" />
-        <div className="max-w-7xl mx-auto px-4 h-28 md:h-36 flex items-center justify-center relative">
+        <div className="max-w-7xl mx-auto px-4 h-36 md:h-48 flex items-center justify-center relative">
           {/* Yamal - far left */}
           <div className="absolute left-0 bottom-0 hidden md:block">
             <Image
               src="/players/yamal.png"
               alt="Yamal"
-              width={120}
-              height={132}
-              className="w-24 h-[8rem] object-contain opacity-80 drop-shadow-[0_0_10px_rgba(139,21,56,0.4)]"
+              width={140}
+              height={168}
+              className="w-28 h-[11rem] object-contain opacity-80 drop-shadow-[0_0_10px_rgba(139,21,56,0.4)]"
               priority
             />
           </div>
 
           {/* Messi - inner left */}
-          <div className="absolute left-2 md:left-28 bottom-0">
+          <div className="absolute left-2 md:left-32 bottom-0">
             <Image
               src="/players/messi.png"
               alt="Messi"
-              width={160}
-              height={176}
-              className="w-20 h-24 md:w-36 md:h-[10rem] object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              width={180}
+              height={198}
+              className="w-24 h-28 md:w-40 md:h-[13rem] object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
               priority
             />
           </div>
@@ -63,9 +63,9 @@ export function Navbar() {
               <Image
                 src="/players/worldcup-logo.png"
                 alt="FIFA World Cup 2026"
-                width={50}
-                height={62}
-                className="w-8 h-10 md:w-12 md:h-[60px] object-contain"
+                width={55}
+                height={68}
+                className="w-9 h-11 md:w-14 md:h-[68px] object-contain"
                 priority
               />
             </div>
@@ -75,13 +75,13 @@ export function Navbar() {
           </div>
 
           {/* Ronaldo - inner right */}
-          <div className="absolute right-2 md:right-28 bottom-0">
+          <div className="absolute right-2 md:right-32 bottom-0">
             <Image
               src="/players/ronaldo.png"
               alt="Ronaldo"
-              width={160}
-              height={176}
-              className="w-20 h-24 md:w-36 md:h-[10rem] object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              width={180}
+              height={198}
+              className="w-24 h-28 md:w-40 md:h-[13rem] object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
               priority
             />
           </div>
@@ -91,9 +91,9 @@ export function Navbar() {
             <Image
               src="/players/mbappe.png"
               alt="Mbappe"
-              width={120}
-              height={132}
-              className="w-24 h-[8rem] object-contain opacity-80 drop-shadow-[0_0_10px_rgba(139,21,56,0.4)]"
+              width={140}
+              height={168}
+              className="w-28 h-[11rem] object-contain opacity-80 drop-shadow-[0_0_10px_rgba(139,21,56,0.4)]"
               priority
             />
           </div>
