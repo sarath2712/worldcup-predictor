@@ -7,6 +7,8 @@ export type Match = {
   home_score: number | null;
   away_score: number | null;
   venue: string | null;
+  actual_potm: string | null;
+  actual_scorers: string | null;
 };
 
 export type Prediction = {
@@ -44,6 +46,7 @@ export type MatchExtras = {
   match_id: number;
   predicted_potm: string | null;
   predicted_scorers: string | null;
+  points: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -56,6 +59,7 @@ export type TournamentPrediction = {
   predicted_top_scorer: string | null;
   predicted_best_player: string | null;
   predicted_best_goalkeeper: string | null;
+  points: number | null;
   created_at: string;
   updated_at: string;
 };

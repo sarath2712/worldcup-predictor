@@ -93,11 +93,11 @@ export default function ProfilePage() {
                         {match.home_score} - {match.away_score}
                       </p>
                       <p className={`text-xs font-medium ${
-                        pred.points === 3 ? "text-green-600" :
-                        pred.points === 1 ? "text-yellow-600" : "text-red-600"
+                        pred.points === 30 ? "text-green-600" :
+                        pred.points === 10 ? "text-yellow-600" : "text-red-600"
                       }`}>
-                        {pred.points === 3 ? "🎯 Exact!" :
-                         pred.points === 1 ? "✓ Correct" : "✗ Wrong"}
+                        {pred.points === 30 ? "🎯 Exact!" :
+                         pred.points === 10 ? "✓ Correct" : "✗ Wrong"}
                       </p>
                     </>
                   ) : (

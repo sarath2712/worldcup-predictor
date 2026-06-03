@@ -31,25 +31,25 @@ export function Navbar() {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20" />
         <div className="max-w-7xl mx-auto px-4 h-36 md:h-48 flex items-center justify-center relative">
           {/* Yamal - far left */}
-          <div className="absolute left-0 bottom-0 hidden md:block">
+          <div className="absolute left-0 bottom-0 hidden md:block w-[6.5rem] h-[12rem] overflow-hidden">
             <Image
               src="/players/yamal.png"
               alt="Yamal"
-              width={140}
-              height={168}
-              className="w-28 h-[11rem] object-contain opacity-80 drop-shadow-[0_0_10px_rgba(139,21,56,0.4)]"
+              width={200}
+              height={366}
+              className="w-full h-full object-cover object-top opacity-80 drop-shadow-[0_0_10px_rgba(139,21,56,0.4)]"
               priority
             />
           </div>
 
           {/* Messi - inner left */}
-          <div className="absolute left-2 md:left-32 bottom-0">
+          <div className="absolute left-2 md:left-32 bottom-0 w-20 h-24 md:w-[8.5rem] md:h-[12rem] overflow-hidden">
             <Image
               src="/players/messi.png"
               alt="Messi"
-              width={180}
-              height={198}
-              className="w-24 h-28 md:w-40 md:h-[13rem] object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              width={200}
+              height={220}
+              className="w-full h-full object-cover object-top drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
               priority
             />
           </div>
@@ -75,25 +75,25 @@ export function Navbar() {
           </div>
 
           {/* Ronaldo - inner right */}
-          <div className="absolute right-2 md:right-32 bottom-0">
+          <div className="absolute right-2 md:right-32 bottom-0 w-20 h-24 md:w-[8.5rem] md:h-[12rem] overflow-hidden">
             <Image
               src="/players/ronaldo.png"
               alt="Ronaldo"
-              width={180}
-              height={198}
-              className="w-24 h-28 md:w-40 md:h-[13rem] object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              width={200}
+              height={200}
+              className="w-full h-full object-cover object-top drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
               priority
             />
           </div>
 
           {/* Mbappe - far right */}
-          <div className="absolute right-0 bottom-0 hidden md:block">
+          <div className="absolute right-0 bottom-0 hidden md:block w-[6.5rem] h-[12rem] overflow-hidden">
             <Image
               src="/players/mbappe.png"
               alt="Mbappe"
-              width={140}
-              height={168}
-              className="w-28 h-[11rem] object-contain opacity-80 drop-shadow-[0_0_10px_rgba(139,21,56,0.4)]"
+              width={200}
+              height={278}
+              className="w-full h-full object-cover object-top opacity-80 drop-shadow-[0_0_10px_rgba(139,21,56,0.4)]"
               priority
             />
           </div>
