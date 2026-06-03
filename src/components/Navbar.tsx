@@ -29,7 +29,7 @@ export function Navbar() {
       {/* Main banner with player images */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20" />
-        <div className="max-w-6xl mx-auto px-4 h-24 md:h-32 flex items-center justify-center relative">
+        <div className="max-w-6xl mx-auto px-4 h-28 md:h-36 flex items-center justify-center relative">
           {/* Messi - left */}
           <div className="absolute left-2 md:left-8 bottom-0">
             <Image
@@ -37,17 +37,30 @@ export function Navbar() {
               alt="Messi"
               width={140}
               height={154}
-              className="w-20 h-22 md:w-32 md:h-36 object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              className="w-20 h-24 md:w-32 md:h-[9rem] object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
               priority
             />
           </div>
 
-          {/* Center title */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-center">
-            <span className="text-accent">FIFA</span>
-            <span className="text-white">WC2026</span>
-            <span className="text-accent">Predictor</span>
-          </h1>
+          {/* Center title with World Cup logo */}
+          <div className="flex flex-col items-center gap-0">
+            <div className="flex items-center gap-2 md:gap-3">
+              <span className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-accent">FIFA</span>
+              <span className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-white">World</span>
+              <span className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-accent">CUP</span>
+              <Image
+                src="/players/worldcup-logo.webp"
+                alt="FIFA World Cup 2026"
+                width={50}
+                height={62}
+                className="w-8 h-10 md:w-12 md:h-[60px] object-contain"
+                priority
+              />
+            </div>
+            <span className="text-xs md:text-sm font-medium text-gray-400 tracking-[0.3em] uppercase">
+              Predictor
+            </span>
+          </div>
 
           {/* Ronaldo - right */}
           <div className="absolute right-2 md:right-8 bottom-0">
@@ -56,7 +69,7 @@ export function Navbar() {
               alt="Ronaldo"
               width={140}
               height={154}
-              className="w-20 h-22 md:w-32 md:h-36 object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              className="w-20 h-24 md:w-32 md:h-[9rem] object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
               priority
             />
           </div>
