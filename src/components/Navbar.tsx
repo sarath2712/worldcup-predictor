@@ -68,21 +68,16 @@ export function Navbar() {
             />
           </div>
 
-          {/* Center title with World Cup logo */}
-          <div className="flex flex-col items-center gap-0">
-            <div className="flex items-center gap-2 md:gap-3">
-              <span className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-accent">FIFA</span>
-              <span className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-white">World</span>
-              <span className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-accent">CUP</span>
-              <Image
-                src="/players/worldcup-logo.png"
-                alt="FIFA World Cup 2026"
-                width={55}
-                height={68}
-                className="w-9 h-11 md:w-14 md:h-[68px] object-contain"
-                priority
-              />
-            </div>
+          {/* Center - Official FIFA World Cup 2026 Logo */}
+          <div className="flex flex-col items-center gap-1">
+            <Image
+              src="/players/wc2026-logo.png"
+              alt="FIFA World Cup 2026"
+              width={200}
+              height={240}
+              className="h-24 md:h-36 w-auto object-contain"
+              priority
+            />
             <span className="text-xs md:text-sm font-medium text-gray-400 tracking-[0.3em] uppercase">
               Predictor
             </span>
