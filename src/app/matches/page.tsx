@@ -42,10 +42,11 @@ export default function MatchesPage() {
 
   if (loading) return <div className="text-center py-16">Loading matches...</div>;
 
-  // Group by stage
+  // Group by date (matches already sorted by kickoff_utc)
   const grouped = matches.reduce((acc, match) => {
-    if (!acc[match.stage]) acc[match.stage] = [];
-    acc[match.stage].push(match);
+    const dateKey = format(new Date(match.kickoff_utc), "EEEE, MMMM d, yyyy");
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push(match);
     return acc;
   }, {} as Record<string, Match[]>);
 
@@ -53,11 +54,11 @@ export default function MatchesPage() {
     <div className="space-y-8">
       <h1 className="text-3xl font-bold">Matches</h1>
 
-      {Object.entries(grouped).map(([stage, stageMatches]) => (
-        <div key={stage}>
-          <h2 className="text-xl font-semibold mb-4 text-accent">{stage}</h2>
+      {Object.entries(grouped).map(([date, dateMatches]) => (
+        <div key={date}>
+          <h2 className="text-xl font-semibold mb-4 text-accent">{date}</h2>
           <div className="space-y-3">
-            {stageMatches.map((match) => (
+            {dateMatches.map((match) => (
               <MatchCard
                 key={match.id}
                 match={match}
@@ -131,9 +132,14 @@ function MatchCard({
   return (
     <div className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs text-gray-500">
-          {format(kickoff, "EEE, MMM d · h:mm a")}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs px-2 py-0.5 bg-accent/10 text-accent rounded-full font-medium">
+            {match.stage}
+          </span>
+          <span className="text-xs text-gray-500">
+            {format(kickoff, "h:mm a")}
+          </span>
+        </div>
         {isLocked && (
           <span className="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded-full">
             🔒 Locked
