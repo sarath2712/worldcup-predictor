@@ -29,11 +29,11 @@ export default function LeaderboardPage() {
       <h1 className="text-3xl font-bold">🏆 Leaderboard</h1>
 
       {entries.length === 0 ? (
-        <p className="text-gray-500">No predictions scored yet. Check back after the first match!</p>
+        <p className="text-gray-400">No predictions scored yet. Check back after the first match!</p>
       ) : (
-        <div className="bg-white dark:bg-gray-900 rounded-xl border shadow-sm overflow-hidden">
+        <div className="bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-800">
+            <thead className="bg-white/5">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Player</th>
@@ -45,7 +45,7 @@ export default function LeaderboardPage() {
             </thead>
             <tbody className="divide-y">
               {entries.map((entry, i) => (
-                <tr key={entry.user_id} className={i < 3 ? "bg-yellow-50/50 dark:bg-yellow-900/10" : ""}>
+                <tr key={entry.user_id} className={i < 3 ? "bg-accent/5" : ""}>
                   <td className="px-4 py-3 font-bold text-lg">
                     {entry.rank === 1 && "🥇"}
                     {entry.rank === 2 && "🥈"}
@@ -53,7 +53,7 @@ export default function LeaderboardPage() {
                     {entry.rank > 3 && entry.rank}
                   </td>
                   <td className="px-4 py-3 font-medium">{entry.username}</td>
-                  <td className="px-4 py-3 text-center font-bold text-primary">{entry.total_points}</td>
+                  <td className="px-4 py-3 text-center font-bold text-accent">{entry.total_points}</td>
                   <td className="px-4 py-3 text-center text-sm">{entry.exact_scores}</td>
                   <td className="px-4 py-3 text-center text-sm">{entry.correct_outcomes}</td>
                   <td className="px-4 py-3 text-center text-sm text-gray-500">{entry.matches_scored}</td>
@@ -64,7 +64,7 @@ export default function LeaderboardPage() {
         </div>
       )}
 
-      <div className="text-sm text-gray-500 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+      <div className="text-sm text-gray-400 bg-white/5 border border-white/10 p-4 rounded-lg">
         <strong>Scoring:</strong> Exact score prediction = 3 points | Correct outcome (Win/Draw/Loss) = 1 point | Wrong = 0 points
       </div>
     </div>

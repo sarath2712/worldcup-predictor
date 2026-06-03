@@ -99,7 +99,7 @@ function AdminMatchRow({
   const [away, setAway] = useState(match.away_score?.toString() || "");
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-900 rounded-xl border shadow-sm">
+    <div className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
       <div className="flex items-center justify-between">
         <div>
           <p className="font-medium">{match.home_team} vs {match.away_team}</p>
@@ -114,7 +114,7 @@ function AdminMatchRow({
             min="0"
             value={home}
             onChange={(e) => setHome(e.target.value)}
-            className="w-12 text-center border rounded py-1 dark:bg-gray-800"
+            className="w-12 text-center border border-white/20 rounded py-1 bg-white/10 text-white"
             placeholder="H"
           />
           <span>-</span>
@@ -123,7 +123,7 @@ function AdminMatchRow({
             min="0"
             value={away}
             onChange={(e) => setAway(e.target.value)}
-            className="w-12 text-center border rounded py-1 dark:bg-gray-800"
+            className="w-12 text-center border border-white/20 rounded py-1 bg-white/10 text-white"
             placeholder="A"
           />
           <button

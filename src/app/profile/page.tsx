@@ -51,8 +51,8 @@ export default function ProfilePage() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">My Predictions</h1>
         <div className="text-right">
-          <p className="text-sm text-gray-500">@{username}</p>
-          <p className="text-2xl font-bold text-primary">{totalPoints} pts</p>
+          <p className="text-sm text-gray-400">@{username}</p>
+          <p className="text-2xl font-bold text-accent">{totalPoints} pts</p>
         </div>
       </div>
 
@@ -68,7 +68,7 @@ export default function ProfilePage() {
             return (
               <div
                 key={pred.id}
-                className="p-4 bg-white dark:bg-gray-900 rounded-xl border shadow-sm flex items-center justify-between"
+                className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm flex items-center justify-between"
               >
                 <div>
                   <p className="font-medium">
@@ -107,7 +107,7 @@ export default function ProfilePage() {
 
                 <div className="text-right min-w-[50px]">
                   {pred.points !== null && (
-                    <span className="font-bold text-primary">+{pred.points}</span>
+                    <span className="font-bold text-accent">+{pred.points}</span>
                   )}
                 </div>
               </div>

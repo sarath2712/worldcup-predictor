@@ -55,7 +55,7 @@ export default function MatchesPage() {
 
       {Object.entries(grouped).map(([stage, stageMatches]) => (
         <div key={stage}>
-          <h2 className="text-xl font-semibold mb-4 text-primary">{stage}</h2>
+          <h2 className="text-xl font-semibold mb-4 text-accent">{stage}</h2>
           <div className="space-y-3">
             {stageMatches.map((match) => (
               <MatchCard
@@ -129,7 +129,7 @@ function MatchCard({
   };
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-900 rounded-xl border shadow-sm">
+    <div className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs text-gray-500">
           {format(kickoff, "EEE, MMM d · h:mm a")}
@@ -161,7 +161,7 @@ function MatchCard({
               max="20"
               value={home}
               onChange={(e) => setHome(e.target.value)}
-              className="w-10 text-center border rounded py-1 dark:bg-gray-800"
+              className="w-10 text-center border border-white/20 rounded py-1 bg-white/10 text-white"
             />
             <span className="text-gray-400">-</span>
             <input
@@ -170,7 +170,7 @@ function MatchCard({
               max="20"
               value={away}
               onChange={(e) => setAway(e.target.value)}
-              className="w-10 text-center border rounded py-1 dark:bg-gray-800"
+              className="w-10 text-center border border-white/20 rounded py-1 bg-white/10 text-white"
             />
           </div>
         ) : (
