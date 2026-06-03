@@ -29,15 +29,15 @@ export function Navbar() {
       {/* Main banner with player images */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20" />
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-center relative">
+        <div className="max-w-6xl mx-auto px-4 h-24 md:h-32 flex items-center justify-center relative">
           {/* Messi - left */}
-          <div className="absolute left-4 md:left-8 bottom-0">
+          <div className="absolute left-2 md:left-8 bottom-0">
             <Image
               src="/players/messi.png"
               alt="Messi"
-              width={120}
-              height={120}
-              className="w-16 h-16 md:w-24 md:h-24 object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              width={140}
+              height={154}
+              className="w-20 h-22 md:w-32 md:h-36 object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
               priority
             />
           </div>
@@ -50,13 +50,13 @@ export function Navbar() {
           </h1>
 
           {/* Ronaldo - right */}
-          <div className="absolute right-4 md:right-8 bottom-0">
+          <div className="absolute right-2 md:right-8 bottom-0">
             <Image
               src="/players/ronaldo.png"
               alt="Ronaldo"
-              width={120}
-              height={120}
-              className="w-16 h-16 md:w-24 md:h-24 object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              width={140}
+              height={154}
+              className="w-20 h-22 md:w-32 md:h-36 object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
               priority
             />
           </div>
@@ -74,6 +74,9 @@ export function Navbar() {
           </Link>
           <Link href="/leaderboard" className="text-sm text-gray-300 hover:text-accent transition">
             Leaderboard
+          </Link>
+          <Link href="/rules" className="text-sm text-gray-300 hover:text-accent transition">
+            Rules
           </Link>
 
           {user ? (
