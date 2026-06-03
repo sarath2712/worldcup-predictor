@@ -57,13 +57,13 @@ export function Navbar() {
           </div>
 
           {/* Messi - inner left */}
-          <div className="absolute left-2 md:left-[9.5rem] bottom-0 w-20 h-24 md:w-[9rem] md:h-[12rem]">
+          <div className="absolute left-2 md:left-[9.5rem] bottom-0 w-20 h-24 md:w-[10rem] md:h-[12rem] overflow-hidden">
             <Image
               src="/players/messi.png"
               alt="Messi"
               width={200}
               height={220}
-              className="w-full h-full object-contain object-bottom drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              className="w-full h-full object-cover object-bottom drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
               priority
             />
           </div>
@@ -89,13 +89,13 @@ export function Navbar() {
           </div>
 
           {/* Ronaldo - inner right */}
-          <div className="absolute right-2 md:right-[9.5rem] bottom-0 w-20 h-24 md:w-[9rem] md:h-[12rem]">
+          <div className="absolute right-2 md:right-[9.5rem] bottom-0 w-20 h-24 md:w-[10rem] md:h-[12rem] overflow-hidden">
             <Image
               src="/players/ronaldo.png"
               alt="Ronaldo"
               width={200}
               height={200}
-              className="w-full h-full object-contain object-bottom drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              className="w-full h-full object-cover object-bottom drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
               priority
             />
           </div>
