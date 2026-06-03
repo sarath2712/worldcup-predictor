@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Match, Prediction, MatchExtras } from "@/lib/types";
 import type { User } from "@supabase/supabase-js";
 import { format, isPast, addHours } from "date-fns";
+import { getFlag } from "@/lib/flags";
 
 export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
@@ -190,7 +191,9 @@ function MatchCard({
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="flex-1 text-right font-medium">{match.home_team}</div>
+        <div className="flex-1 text-right font-medium">
+          {match.home_team} <span className="text-xl ml-1">{getFlag(match.home_team)}</span>
+        </div>
 
         {hasResult ? (
           <div className="text-center font-bold text-lg min-w-[60px]">
@@ -220,7 +223,9 @@ function MatchCard({
           <div className="text-center text-gray-400 min-w-[60px]">vs</div>
         )}
 
-        <div className="flex-1 font-medium">{match.away_team}</div>
+        <div className="flex-1 font-medium">
+          <span className="text-xl mr-1">{getFlag(match.away_team)}</span> {match.away_team}
+        </div>
       </div>
 
       {user && !isLocked && !hasResult && (
