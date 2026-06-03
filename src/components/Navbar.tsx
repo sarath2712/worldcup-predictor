@@ -35,6 +35,9 @@ export function Navbar() {
           <Link href="/matches" className="text-sm text-gray-300 hover:text-accent transition">
             Matches
           </Link>
+          <Link href="/tournament" className="text-sm text-gray-300 hover:text-accent transition">
+            Tournament
+          </Link>
           <Link href="/leaderboard" className="text-sm text-gray-300 hover:text-accent transition">
             Leaderboard
           </Link>

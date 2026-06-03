@@ -146,3 +146,58 @@ select
 from public.profiles p
 left join public.predictions pr on pr.user_id = p.id
 group by p.id, p.username, p.avatar_url;
+
+-- Match extras: Player of the Match & Scorers predictions per match
+create table public.match_extras (
+  id bigint generated always as identity primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  match_id bigint references public.matches(id) on delete cascade not null,
+  predicted_potm text,             -- Player of the Match prediction
+  predicted_scorers text,          -- Comma-separated scorer names
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique(user_id, match_id)
+);
+
+alter table public.match_extras enable row level security;
+
+create policy "Users can view own match_extras"
+  on public.match_extras for select using (auth.uid() = user_id);
+
+create policy "Users can view others match_extras after kickoff"
+  on public.match_extras for select
+  using (exists (select 1 from public.matches where matches.id = match_extras.match_id and matches.kickoff_utc < now()));
+
+create policy "Users can insert own match_extras before deadline"
+  on public.match_extras for insert
+  with check (auth.uid() = user_id and exists (select 1 from public.matches where matches.id = match_id and matches.kickoff_utc > now() + interval '1 hour'));
+
+create policy "Users can update own match_extras before deadline"
+  on public.match_extras for update
+  using (auth.uid() = user_id and exists (select 1 from public.matches where matches.id = match_extras.match_id and matches.kickoff_utc > now() + interval '1 hour'));
+
+-- Tournament predictions: one row per user
+create table public.tournament_predictions (
+  id bigint generated always as identity primary key,
+  user_id uuid references public.profiles(id) on delete cascade unique not null,
+  predicted_winner text,           -- World Cup Winner
+  predicted_finalist text,         -- Runner-up / Finalist
+  predicted_top_scorer text,       -- Golden Boot winner
+  predicted_best_player text,      -- Player of the Tournament (Golden Ball)
+  predicted_best_goalkeeper text,  -- Golden Glove
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+alter table public.tournament_predictions enable row level security;
+
+create policy "Tournament predictions viewable by everyone"
+  on public.tournament_predictions for select using (true);
+
+create policy "Users can insert own tournament predictions"
+  on public.tournament_predictions for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users can update own tournament predictions before tournament starts"
+  on public.tournament_predictions for update
+  using (auth.uid() = user_id and now() < '2026-06-11 19:00:00+00'::timestamptz);

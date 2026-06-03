@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Match, Prediction } from "@/lib/types";
+import type { Match, Prediction, MatchExtras } from "@/lib/types";
 import type { User } from "@supabase/supabase-js";
 import { format, isPast, addHours } from "date-fns";
 
 export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [predictions, setPredictions] = useState<Record<number, Prediction>>({});
+  const [extras, setExtras] = useState<Record<number, MatchExtras>>({});
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
@@ -34,6 +35,15 @@ export default function MatchesPage() {
         const predMap: Record<number, Prediction> = {};
         predData?.forEach((p) => (predMap[p.match_id] = p));
         setPredictions(predMap);
+
+        const { data: extrasData } = await supabase
+          .from("match_extras")
+          .select("*")
+          .eq("user_id", user.id);
+
+        const extrasMap: Record<number, MatchExtras> = {};
+        extrasData?.forEach((e) => (extrasMap[e.match_id] = e));
+        setExtras(extrasMap);
       }
       setLoading(false);
     }
@@ -63,10 +73,14 @@ export default function MatchesPage() {
                 key={match.id}
                 match={match}
                 prediction={predictions[match.id]}
+                matchExtras={extras[match.id]}
                 user={user}
                 supabase={supabase}
                 onPredictionSaved={(pred) =>
                   setPredictions((p) => ({ ...p, [match.id]: pred }))
+                }
+                onExtrasSaved={(ext) =>
+                  setExtras((e) => ({ ...e, [match.id]: ext }))
                 }
               />
             ))}
@@ -80,18 +94,24 @@ export default function MatchesPage() {
 function MatchCard({
   match,
   prediction,
+  matchExtras,
   user,
   supabase,
   onPredictionSaved,
+  onExtrasSaved,
 }: {
   match: Match;
   prediction?: Prediction;
+  matchExtras?: MatchExtras;
   user: User | null;
   supabase: ReturnType<typeof createClient>;
   onPredictionSaved: (pred: Prediction) => void;
+  onExtrasSaved: (ext: MatchExtras) => void;
 }) {
   const [home, setHome] = useState(prediction?.predicted_home?.toString() || "");
   const [away, setAway] = useState(prediction?.predicted_away?.toString() || "");
+  const [potm, setPotm] = useState(matchExtras?.predicted_potm || "");
+  const [scorers, setScorers] = useState(matchExtras?.predicted_scorers || "");
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -118,6 +138,23 @@ function MatchCard({
       .upsert(payload, { onConflict: "user_id,match_id" })
       .select()
       .single();
+
+    // Save match extras (POTM & scorers)
+    if (potm || scorers) {
+      const extrasPayload = {
+        user_id: user.id,
+        match_id: match.id,
+        predicted_potm: potm || null,
+        predicted_scorers: scorers || null,
+        updated_at: new Date().toISOString(),
+      };
+      const { data: extData } = await supabase
+        .from("match_extras")
+        .upsert(extrasPayload, { onConflict: "user_id,match_id" })
+        .select()
+        .single();
+      if (extData) onExtrasSaved(extData);
+    }
 
     if (error) {
       setMsg(error.message);
@@ -187,15 +224,33 @@ function MatchCard({
       </div>
 
       {user && !isLocked && !hasResult && (
-        <div className="flex items-center gap-2 mt-3">
-          <button
-            onClick={handleSave}
-            disabled={saving || !home || !away}
-            className="text-xs px-3 py-1.5 bg-primary text-white rounded-lg disabled:opacity-50 hover:bg-primary/90 transition"
-          >
-            {prediction ? "Update" : "Save"} Prediction
-          </button>
-          {msg && <span className="text-xs text-green-600">{msg}</span>}
+        <div className="mt-3 space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input
+              type="text"
+              value={potm}
+              onChange={(e) => setPotm(e.target.value)}
+              placeholder="⭐ Player of the Match"
+              className="text-xs px-3 py-1.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-gray-500"
+            />
+            <input
+              type="text"
+              value={scorers}
+              onChange={(e) => setScorers(e.target.value)}
+              placeholder="⚽ Scorers (comma-separated)"
+              className="text-xs px-3 py-1.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-gray-500"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleSave}
+              disabled={saving || !home || !away}
+              className="text-xs px-3 py-1.5 bg-primary text-white rounded-lg disabled:opacity-50 hover:bg-primary/90 transition"
+            >
+              {prediction ? "Update" : "Save"} Prediction
+            </button>
+            {msg && <span className="text-xs text-green-600">{msg}</span>}
+          </div>
         </div>
       )}
 

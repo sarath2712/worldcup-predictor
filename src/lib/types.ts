@@ -37,3 +37,25 @@ export type LeaderboardEntry = {
   correct_outcomes: number;
   rank: number;
 };
+
+export type MatchExtras = {
+  id: number;
+  user_id: string;
+  match_id: number;
+  predicted_potm: string | null;
+  predicted_scorers: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TournamentPrediction = {
+  id: number;
+  user_id: string;
+  predicted_winner: string | null;
+  predicted_finalist: string | null;
+  predicted_top_scorer: string | null;
+  predicted_best_player: string | null;
+  predicted_best_goalkeeper: string | null;
+  created_at: string;
+  updated_at: string;
+};
