@@ -75,7 +75,7 @@ export default function ProfilePage() {
                     {match.home_team} vs {match.away_team}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {match.stage} · {format(new Date(match.kickoff_utc), "MMM d, HH:mm")} UTC
+                    {match.stage} · {format(new Date(match.kickoff_utc), "MMM d, h:mm a")}
                   </p>
                 </div>
 

@@ -132,7 +132,7 @@ function MatchCard({
     <div className="p-4 bg-white dark:bg-gray-900 rounded-xl border shadow-sm">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs text-gray-500">
-          {format(kickoff, "EEE, MMM d · HH:mm")} UTC
+          {format(kickoff, "EEE, MMM d · h:mm a")}
         </span>
         {isLocked && (
           <span className="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded-full">
