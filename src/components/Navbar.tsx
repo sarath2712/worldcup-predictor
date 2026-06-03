@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
@@ -20,18 +21,51 @@ export function Navbar() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    window.location.href = "/";
+    window.location.href = "/matches";
   };
 
   return (
-    <nav className="border-b border-white/10 bg-[#0b1121]/80 backdrop-blur-md sticky top-0 z-50">
-      <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="font-bold text-xl tracking-tight">
-          <span className="text-accent">FIFA</span><span className="text-white">WC2026</span>
-          <span className="text-xs font-normal text-gray-400 ml-1.5">Predictor</span>
-        </Link>
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0b1121]/90 backdrop-blur-md">
+      {/* Main banner with player images */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20" />
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-center relative">
+          {/* Messi - left */}
+          <div className="absolute left-4 md:left-8 bottom-0">
+            <Image
+              src="/players/messi.png"
+              alt="Messi"
+              width={120}
+              height={120}
+              className="w-16 h-16 md:w-24 md:h-24 object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              priority
+            />
+          </div>
 
-        <div className="flex items-center gap-6">
+          {/* Center title */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-center">
+            <span className="text-accent">FIFA</span>
+            <span className="text-white">WC2026</span>
+            <span className="text-accent">Predictor</span>
+          </h1>
+
+          {/* Ronaldo - right */}
+          <div className="absolute right-4 md:right-8 bottom-0">
+            <Image
+              src="/players/ronaldo.png"
+              alt="Ronaldo"
+              width={120}
+              height={120}
+              className="w-16 h-16 md:w-24 md:h-24 object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              priority
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation links */}
+      <nav className="border-t border-white/5 bg-[#0b1121]/60">
+        <div className="max-w-5xl mx-auto px-4 h-10 flex items-center justify-center gap-6">
           <Link href="/matches" className="text-sm text-gray-300 hover:text-accent transition">
             Matches
           </Link>
@@ -43,7 +77,7 @@ export function Navbar() {
           </Link>
 
           {user ? (
-            <div className="flex items-center gap-4">
+            <>
               <Link href="/profile" className="text-sm text-gray-300 hover:text-accent transition">
                 My Predictions
               </Link>
@@ -53,17 +87,17 @@ export function Navbar() {
               >
                 Logout
               </button>
-            </div>
+            </>
           ) : (
             <Link
               href="/login"
-              className="text-sm px-4 py-2 bg-accent text-black font-semibold rounded-lg hover:bg-accent/80 transition"
+              className="text-sm px-3 py-1 bg-accent text-black font-semibold rounded-md hover:bg-accent/80 transition"
             >
               Login
             </Link>
           )}
         </div>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }
