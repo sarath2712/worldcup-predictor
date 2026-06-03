@@ -110,34 +110,35 @@ export function Navbar() {
       </div>
 
       {/* Navigation links */}
-      <nav className="border-t border-white/5 bg-[#0b1121]/60 overflow-x-auto">
-        <div className="max-w-5xl mx-auto px-4 h-10 flex items-center justify-start sm:justify-center gap-4 sm:gap-6 min-w-max">
-          <Link href="/matches" className="text-sm text-gray-300 hover:text-accent transition">
+      <nav className="border-t border-white/5 bg-[#0b1121]/60">
+        <div className="max-w-5xl mx-auto px-3 sm:px-4 py-2 sm:py-0 sm:h-10 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:gap-x-6">
+          <Link href="/matches" className="text-xs sm:text-sm text-gray-300 hover:text-accent transition">
             Matches
           </Link>
-          <Link href="/tournament" className="text-sm text-gray-300 hover:text-accent transition">
+          <Link href="/tournament" className="text-xs sm:text-sm text-gray-300 hover:text-accent transition">
             Tournament
           </Link>
-          <Link href="/leaderboard" className="text-sm text-gray-300 hover:text-accent transition">
+          <Link href="/leaderboard" className="text-xs sm:text-sm text-gray-300 hover:text-accent transition">
             Leaderboard
           </Link>
-          <Link href="/rules" className="text-sm text-gray-300 hover:text-accent transition">
+          <Link href="/rules" className="text-xs sm:text-sm text-gray-300 hover:text-accent transition">
             Rules
           </Link>
 
           {user ? (
             <>
-              <Link href="/profile" className="text-sm text-gray-300 hover:text-accent transition">
-                My Predictions
+              <Link href="/profile" className="text-xs sm:text-sm text-gray-300 hover:text-accent transition">
+                <span className="sm:hidden">Predictions</span>
+                <span className="hidden sm:inline">My Predictions</span>
               </Link>
               {isAdmin && (
-                <Link href="/admin" className="text-sm text-yellow-400 hover:text-yellow-300 transition">
+                <Link href="/admin" className="text-xs sm:text-sm text-yellow-400 hover:text-yellow-300 transition">
                   Admin
                 </Link>
               )}
               <button
                 onClick={handleLogout}
-                className="text-sm text-gray-400 hover:text-red-400 transition"
+                className="text-xs sm:text-sm text-gray-400 hover:text-red-400 transition"
               >
                 Logout
               </button>
@@ -145,7 +146,7 @@ export function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="text-sm px-3 py-1 bg-accent text-black font-semibold rounded-md hover:bg-accent/80 transition"
+              className="text-xs sm:text-sm px-3 py-1 bg-accent text-black font-semibold rounded-md hover:bg-accent/80 transition"
             >
               Login
             </Link>
