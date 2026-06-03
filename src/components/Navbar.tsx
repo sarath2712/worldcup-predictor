@@ -43,7 +43,7 @@ export function Navbar() {
       {/* Main banner with player images */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20" />
-        <div className="max-w-7xl mx-auto px-4 h-36 md:h-48 flex items-center justify-center relative">
+        <div className="max-w-7xl mx-auto px-4 h-28 sm:h-36 md:h-48 flex items-center justify-center relative">
           {/* Yamal - far left */}
           <div className="absolute left-0 bottom-0 hidden md:block w-[9rem] h-[12rem]">
             <Image
@@ -69,16 +69,16 @@ export function Navbar() {
           </div>
 
           {/* Center - Official FIFA World Cup 2026 Logo */}
-          <div className="flex flex-col items-center gap-1">
+          <div className="flex flex-col items-center gap-0">
             <Image
               src="/players/wc2026-logo.png"
               alt="FIFA World Cup 2026"
               width={200}
               height={240}
-              className="h-24 md:h-36 w-auto object-contain"
+              className="h-20 sm:h-28 md:h-36 w-auto object-contain"
               priority
             />
-            <span className="text-xs md:text-sm font-medium text-gray-400 tracking-[0.3em] uppercase">
+            <span className="text-[10px] sm:text-xs md:text-sm font-medium text-gray-400 tracking-[0.2em] sm:tracking-[0.3em] uppercase">
               Predictor
             </span>
           </div>
@@ -110,8 +110,8 @@ export function Navbar() {
       </div>
 
       {/* Navigation links */}
-      <nav className="border-t border-white/5 bg-[#0b1121]/60">
-        <div className="max-w-5xl mx-auto px-4 h-10 flex items-center justify-center gap-6">
+      <nav className="border-t border-white/5 bg-[#0b1121]/60 overflow-x-auto">
+        <div className="max-w-5xl mx-auto px-4 h-10 flex items-center justify-start sm:justify-center gap-4 sm:gap-6 min-w-max">
           <Link href="/matches" className="text-sm text-gray-300 hover:text-accent transition">
             Matches
           </Link>
