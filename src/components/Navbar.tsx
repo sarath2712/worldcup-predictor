@@ -49,7 +49,7 @@ export function Navbar() {
               <span className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-white">World</span>
               <span className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-accent">CUP</span>
               <Image
-                src="/players/worldcup-logo.webp"
+                src="/players/worldcup-logo.png"
                 alt="FIFA World Cup 2026"
                 width={50}
                 height={62}
@@ -63,13 +63,13 @@ export function Navbar() {
           </div>
 
           {/* Ronaldo - right */}
-          <div className="absolute right-2 md:right-8 bottom-0">
+          <div className="absolute right-0 md:right-4 bottom-0">
             <Image
               src="/players/ronaldo.png"
               alt="Ronaldo"
-              width={140}
-              height={154}
-              className="w-20 h-24 md:w-32 md:h-[9rem] object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              width={180}
+              height={198}
+              className="w-24 h-28 md:w-40 md:h-[11rem] object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
               priority
             />
           </div>
