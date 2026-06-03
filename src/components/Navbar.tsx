@@ -29,9 +29,21 @@ export function Navbar() {
       {/* Main banner with player images */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20" />
-        <div className="max-w-6xl mx-auto px-4 h-28 md:h-36 flex items-center justify-center relative">
-          {/* Messi - left */}
-          <div className="absolute left-2 md:left-8 bottom-0">
+        <div className="max-w-7xl mx-auto px-4 h-28 md:h-36 flex items-center justify-center relative">
+          {/* Yamal - far left */}
+          <div className="absolute left-0 bottom-0 hidden md:block">
+            <Image
+              src="/players/yamal.png"
+              alt="Yamal"
+              width={120}
+              height={132}
+              className="w-24 h-[8rem] object-contain opacity-80 drop-shadow-[0_0_10px_rgba(139,21,56,0.4)]"
+              priority
+            />
+          </div>
+
+          {/* Messi - inner left */}
+          <div className="absolute left-2 md:left-28 bottom-0">
             <Image
               src="/players/messi.png"
               alt="Messi"
@@ -62,14 +74,26 @@ export function Navbar() {
             </span>
           </div>
 
-          {/* Ronaldo - right */}
-          <div className="absolute right-2 md:right-8 bottom-0">
+          {/* Ronaldo - inner right */}
+          <div className="absolute right-2 md:right-28 bottom-0">
             <Image
               src="/players/ronaldo.png"
               alt="Ronaldo"
               width={160}
               height={176}
               className="w-20 h-24 md:w-36 md:h-[10rem] object-contain drop-shadow-[0_0_10px_rgba(139,21,56,0.5)]"
+              priority
+            />
+          </div>
+
+          {/* Mbappe - far right */}
+          <div className="absolute right-0 bottom-0 hidden md:block">
+            <Image
+              src="/players/mbappe.png"
+              alt="Mbappe"
+              width={120}
+              height={132}
+              className="w-24 h-[8rem] object-contain opacity-80 drop-shadow-[0_0_10px_rgba(139,21,56,0.4)]"
               priority
             />
           </div>
