@@ -272,14 +272,14 @@ function MatchCard({
               type="text"
               value={potm}
               onChange={(e) => setPotm(e.target.value)}
-              placeholder="⭐ Player of the Match"
+              placeholder="Player of the Match"
               className="text-xs px-3 py-1.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-gray-500"
             />
             <input
               type="text"
               value={scorers}
               onChange={(e) => setScorers(e.target.value)}
-              placeholder="⚽ Scorers (comma-separated)"
+              placeholder="Scorers (comma-separated)"
               className="text-xs px-3 py-1.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-gray-500"
             />
           </div>

@@ -35,7 +35,7 @@ export default function LoginPage() {
         // Auto-confirmed — redirect immediately
         window.location.href = "/matches";
       } else {
-        setMessage("You are Signed Up, Good Luck with your Predictions!! 🎉");
+        setMessage("You are Signed Up, Good Luck with your Predictions!!");
       }
     } else {
       const { error } = await supabase.auth.signInWithPassword({

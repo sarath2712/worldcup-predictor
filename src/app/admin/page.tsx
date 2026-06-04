@@ -152,7 +152,7 @@ export default function AdminPage() {
 
       {/* Tournament Results Section */}
       <div className="border-t border-white/10 pt-8">
-        <h2 className="text-2xl font-bold mb-4">🏆 Tournament Results</h2>
+        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2"><svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 9H4a2 2 0 01-2-2V5a2 2 0 012-2h2"/><path d="M18 9h2a2 2 0 002-2V5a2 2 0 00-2-2h-2"/><path d="M6 3h12v6a6 6 0 01-12 0V3z"/><path d="M12 15v3"/><path d="M8 21h8"/></svg> Tournament Results</h2>
         <p className="text-sm text-gray-500 mb-4">
           Enter after tournament ends. Winner=200, Finalist=180, others=150 each.
         </p>

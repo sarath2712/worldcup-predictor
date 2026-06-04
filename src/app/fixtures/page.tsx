@@ -149,7 +149,7 @@ export default function FixturesPage() {
       <Link href="/" className="text-sm text-gray-400 hover:text-white transition mb-6 inline-block">
         ← Back to Home
       </Link>
-      <h1 className="text-4xl font-bold mb-2">📋 FIFA World Cup 2026</h1>
+      <h1 className="text-4xl font-bold mb-2 flex items-center gap-3"><svg className="w-9 h-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> FIFA World Cup 2026</h1>
       <p className="text-gray-400 mb-6">June 11 – July 13, 2026</p>
 
       {/* Tabs */}

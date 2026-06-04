@@ -55,7 +55,7 @@ export function RegistrationForm({ category, title }: RegistrationFormProps) {
   if (success) {
     return (
       <div className="rounded-2xl border border-green-500/30 bg-green-500/10 p-8 text-center">
-        <p className="text-2xl mb-2">🎉</p>
+        <svg className="w-10 h-10 text-green-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
         <h3 className="text-xl font-bold text-green-400 mb-2">Registration Successful!</h3>
         <p className="text-gray-400 text-sm">
           You&apos;ve been registered for {title}. Fixture details will be shared soon.

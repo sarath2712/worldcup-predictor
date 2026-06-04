@@ -26,7 +26,7 @@ export default function LeaderboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">🏆 Leaderboard</h1>
+      <h1 className="text-3xl font-bold flex items-center gap-3"><svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 9H4a2 2 0 01-2-2V5a2 2 0 012-2h2"/><path d="M18 9h2a2 2 0 002-2V5a2 2 0 00-2-2h-2"/><path d="M6 3h12v6a6 6 0 01-12 0V3z"/><path d="M12 15v3"/><path d="M8 21h8"/></svg> Leaderboard</h1>
 
       {entries.length === 0 ? (
         <p className="text-gray-400">No predictions scored yet. Check back after the first match!</p>
@@ -47,9 +47,9 @@ export default function LeaderboardPage() {
               {entries.map((entry, i) => (
                 <tr key={entry.user_id} className={i < 3 ? "bg-accent/5" : ""}>
                   <td className="px-4 py-3 font-bold text-lg">
-                    {entry.rank === 1 && "🥇"}
-                    {entry.rank === 2 && "🥈"}
-                    {entry.rank === 3 && "🥉"}
+                    {entry.rank === 1 && <span className="text-yellow-400">1st</span>}
+                    {entry.rank === 2 && <span className="text-gray-300">2nd</span>}
+                    {entry.rank === 3 && <span className="text-amber-600">3rd</span>}
                     {entry.rank > 3 && entry.rank}
                   </td>
                   <td className="px-4 py-3 font-medium">{entry.username}</td>

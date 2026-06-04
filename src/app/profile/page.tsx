@@ -96,7 +96,7 @@ export default function ProfilePage() {
                         pred.points === 30 ? "text-green-600" :
                         pred.points === 10 ? "text-yellow-600" : "text-red-600"
                       }`}>
-                        {pred.points === 30 ? "🎯 Exact!" :
+                        {pred.points === 30 ? "Exact!" :
                          pred.points === 10 ? "✓ Correct" : "✗ Wrong"}
                       </p>
                     </>

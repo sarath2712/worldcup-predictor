@@ -53,13 +53,13 @@ export default function PlaystationWorldcupPage() {
       <Link href="/" className="text-sm text-gray-400 hover:text-white transition mb-6 inline-block">
         ← Back to Home
       </Link>
-      <h1 className="text-3xl font-bold mb-2">🎮 PLAYSTATION WORLD CUP — REGISTRATION</h1>
+      <h1 className="text-3xl font-bold mb-2 flex items-center gap-3"><svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M8 10v4M6 12h4"/><circle cx="16" cy="10" r="1" fill="currentColor"/><circle cx="18" cy="12" r="1" fill="currentColor"/></svg> PLAYSTATION WORLD CUP — REGISTRATION</h1>
       <p className="text-gray-400 mb-8">Register below to participate in the FIFA eTournament</p>
 
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 mb-8">
         {success ? (
           <div className="text-center">
-            <p className="text-2xl mb-2">🎉</p>
+            <svg className="w-10 h-10 text-green-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
             <h3 className="text-xl font-bold text-green-400 mb-2">Registration Successful!</h3>
             <p className="text-gray-400 text-sm">
               You&apos;ve been registered for the PlayStation World Cup. Fixture details will be shared soon.
@@ -145,13 +145,13 @@ export default function PlaystationWorldcupPage() {
 
       {/* Info Section */}
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 space-y-4">
-        <h2 className="text-lg font-bold text-accent">ℹ️ Event Details</h2>
+        <h2 className="text-lg font-bold text-accent flex items-center gap-2"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Event Details</h2>
         <p className="text-gray-300 text-sm leading-relaxed">
           FIFA eTournament on PlayStation. Knockout-style brackets. 
           Fixtures and time slots will be prepared and shared based on the total number of registrations received.
         </p>
         <div className="border-t border-white/10 pt-4">
-          <h3 className="text-sm font-semibold text-gray-300 mb-2">📌 Common Rules</h3>
+          <h3 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-1.5"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l0 20M12 2l-4 4M12 2l4 4"/></svg> Common Rules</h3>
           <ul className="text-gray-400 text-sm space-y-1.5">
             <li>• Registration closes on <strong className="text-white">Wednesday, 10th June</strong>.</li>
             <li>• Matches will be played on PS5 with EA FC 25.</li>

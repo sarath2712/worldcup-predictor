@@ -93,7 +93,7 @@ export default function TournamentPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold">🏆 Tournament Predictor</h1>
+        <h1 className="text-3xl font-bold flex items-center justify-center gap-3"><svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 9H4a2 2 0 01-2-2V5a2 2 0 012-2h2"/><path d="M18 9h2a2 2 0 002-2V5a2 2 0 00-2-2h-2"/><path d="M6 3h12v6a6 6 0 01-12 0V3z"/><path d="M12 15v3"/><path d="M8 21h8"/></svg> Tournament Predictor</h1>
         <p className="text-gray-400 mt-2">
           Predict the big outcomes before the tournament starts!
         </p>
@@ -112,7 +112,7 @@ export default function TournamentPage() {
       <div className="space-y-6 bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
         <div className="space-y-4">
           <PredictionField
-            icon="🏆"
+            icon="●"
             label="World Cup Winner"
             value={winner}
             onChange={setWinner}
@@ -120,7 +120,7 @@ export default function TournamentPage() {
             placeholder="e.g. Brazil"
           />
           <PredictionField
-            icon="🥈"
+            icon="●"
             label="Finalist (Runner-up)"
             value={finalist}
             onChange={setFinalist}
@@ -128,7 +128,7 @@ export default function TournamentPage() {
             placeholder="e.g. France"
           />
           <PredictionField
-            icon="⚽"
+            icon="○"
             label="Top Scorer (Golden Boot)"
             value={topScorer}
             onChange={setTopScorer}
@@ -136,7 +136,7 @@ export default function TournamentPage() {
             placeholder="e.g. Kylian Mbappé"
           />
           <PredictionField
-            icon="⭐"
+            icon="☆"
             label="Player of the Tournament (Golden Ball)"
             value={bestPlayer}
             onChange={setBestPlayer}
@@ -144,7 +144,7 @@ export default function TournamentPage() {
             placeholder="e.g. Lionel Messi"
           />
           <PredictionField
-            icon="🧤"
+            icon="◆"
             label="Best Goalkeeper (Golden Glove)"
             value={bestGk}
             onChange={setBestGk}
@@ -171,11 +171,11 @@ export default function TournamentPage() {
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
           <h2 className="font-semibold text-lg mb-4 text-accent">Your Predictions</h2>
           <div className="space-y-2 text-sm">
-            <Row icon="🏆" label="Winner" value={prediction.predicted_winner} />
-            <Row icon="🥈" label="Finalist" value={prediction.predicted_finalist} />
-            <Row icon="⚽" label="Top Scorer" value={prediction.predicted_top_scorer} />
-            <Row icon="⭐" label="Best Player" value={prediction.predicted_best_player} />
-            <Row icon="🧤" label="Best GK" value={prediction.predicted_best_goalkeeper} />
+            <Row icon="★" label="Winner" value={prediction.predicted_winner} />
+            <Row icon="●" label="Finalist" value={prediction.predicted_finalist} />
+            <Row icon="○" label="Top Scorer" value={prediction.predicted_top_scorer} />
+            <Row icon="☆" label="Best Player" value={prediction.predicted_best_player} />
+            <Row icon="◆" label="Best GK" value={prediction.predicted_best_goalkeeper} />
           </div>
         </div>
       )}

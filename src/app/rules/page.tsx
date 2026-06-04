@@ -9,7 +9,7 @@ export default function RulesPage() {
       {/* Match Predictions */}
       <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-white/10 bg-white/5">
-          <h3 className="text-xl font-bold text-accent">⚽ Match Predictions</h3>
+          <h3 className="text-xl font-bold text-accent flex items-center gap-2"><svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg> Match Predictions</h3>
           <p className="text-sm text-gray-400 mt-1">Points awarded per match</p>
         </div>
         <div className="divide-y divide-white/5">
@@ -47,7 +47,7 @@ export default function RulesPage() {
       {/* Tournament Predictions */}
       <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-white/10 bg-white/5">
-          <h3 className="text-xl font-bold text-accent">🏆 Tournament Predictions</h3>
+          <h3 className="text-xl font-bold text-accent flex items-center gap-2"><svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 9H4a2 2 0 01-2-2V5a2 2 0 012-2h2"/><path d="M18 9h2a2 2 0 002-2V5a2 2 0 00-2-2h-2"/><path d="M6 3h12v6a6 6 0 01-12 0V3z"/><path d="M12 15v3"/><path d="M8 21h8"/></svg> Tournament Predictions</h3>
           <p className="text-sm text-gray-400 mt-1">Bonus points for tournament-level predictions</p>
         </div>
         <div className="divide-y divide-white/5">
