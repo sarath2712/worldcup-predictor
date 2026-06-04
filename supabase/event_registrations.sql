@@ -1,5 +1,10 @@
--- Event registrations table for Men's/Women's/Kids Football
-CREATE TABLE IF NOT EXISTS event_registrations (
+-- Event registrations table for Men's/Women's/Kids/PlayStation
+-- Run this ENTIRE script in Supabase SQL Editor (Dashboard > SQL Editor > New Query)
+
+-- Drop table if exists to start fresh (remove this line if you want to keep existing data)
+DROP TABLE IF EXISTS event_registrations;
+
+CREATE TABLE event_registrations (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   name text NOT NULL,
   email text NOT NULL,
@@ -11,11 +16,19 @@ CREATE TABLE IF NOT EXISTS event_registrations (
   UNIQUE(email, category)
 );
 
--- Allow inserts from anon users (public registration)
+-- Enable RLS
 ALTER TABLE event_registrations ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Anyone can register" ON event_registrations
-  FOR INSERT WITH CHECK (true);
+-- Allow anonymous users to insert (register)
+CREATE POLICY "Allow public insert" ON event_registrations
+  FOR INSERT TO anon
+  WITH CHECK (true);
 
-CREATE POLICY "Anyone can read registrations" ON event_registrations
-  FOR SELECT USING (true);
+-- Allow anonymous users to read
+CREATE POLICY "Allow public select" ON event_registrations
+  FOR SELECT TO anon
+  USING (true);
+
+-- Also grant table-level permissions to anon role
+GRANT INSERT, SELECT ON event_registrations TO anon;
+GRANT USAGE ON SCHEMA public TO anon;
