@@ -311,14 +311,14 @@ export default function Home() {
 
               {/* Signup tag on prediction tile - only for non-logged-in users */}
               {tile.href === "/matches" && !user && (
-                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[3.2rem] sm:left-3 sm:translate-x-0 px-1.5 py-0.5 rounded-full bg-white/20 border border-white/30 text-[8px] sm:text-[9px] font-semibold text-white/90 tracking-wide">
-                  Signup needed
+                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[3.2rem] sm:left-3 sm:translate-x-0 px-1.5 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
+                  Signup to Predict
                 </span>
               )}
 
               {/* Register Now tag on registration tiles */}
               {["/mens-football", "/kids-football", "/womens-football", "/playstation-worldcup"].includes(tile.href) && (
-                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[3.2rem] sm:left-3 sm:translate-x-0 px-2 py-0.5 rounded-full bg-white/25 border border-white/40 text-[8px] sm:text-[9px] font-bold text-white tracking-wide animate-pulse">
+                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[3.2rem] sm:left-3 sm:translate-x-0 px-2 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
                   Register Now
                 </span>
               )}
