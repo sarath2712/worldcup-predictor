@@ -66,6 +66,15 @@ function ArrowIcon({ className = "" }: { className?: string }) {
   );
 }
 
+function ShieldIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  );
+}
+
 const tiles = [
   {
     title: "Men's Football",
@@ -108,6 +117,13 @@ const tiles = [
     href: "/fixtures",
     Icon: CalendarIcon,
     color: "from-red-500 to-red-600",
+  },
+  {
+    title: "Admin",
+    subtitle: "DASHBOARD",
+    href: "/admin-registrations",
+    Icon: ShieldIcon,
+    color: "from-gray-600 to-gray-800",
   },
 ];
 
@@ -254,7 +270,7 @@ export default function Home() {
               key={tile.title}
               href={tile.href}
               className={`rounded-2xl bg-gradient-to-br ${tile.color} backdrop-blur-md border border-white/20
-                flex flex-col items-start justify-end p-4 sm:p-5 aspect-square
+                flex flex-col items-start justify-end p-4 sm:p-5 aspect-[5/6] sm:aspect-square
                 hover:scale-105 hover:border-white/40 hover:shadow-2xl transition-all duration-300
                 group cursor-pointer relative overflow-hidden`}
             >
