@@ -6,10 +6,12 @@ import type { Prediction, Match } from "@/lib/types";
 import { format } from "date-fns";
 
 type PredictionWithMatch = Prediction & { matches: Match };
+type Registration = { id: number; category: string; favourite_team: string; created_at: string };
 
 export default function ProfilePage() {
   const [predictions, setPredictions] = useState<PredictionWithMatch[]>([]);
-  const [username, setUsername] = useState("");
+  const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const [userInfo, setUserInfo] = useState<{ username: string; email: string; mobile: string; flatNumber: string }>({ username: "", email: "", mobile: "", flatNumber: "" });
   const [totalPoints, setTotalPoints] = useState(0);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
@@ -24,11 +26,25 @@ export default function ProfilePage() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("username")
+        .select("username, is_admin")
         .eq("id", user.id)
         .single();
 
-      setUsername(profile?.username || "");
+      setUserInfo({
+        username: profile?.username || user.user_metadata?.username || "",
+        email: user.email || "",
+        mobile: user.user_metadata?.mobile || "",
+        flatNumber: user.user_metadata?.flat_number || "",
+      });
+
+      // Load event registrations by email
+      const { data: regs } = await supabase
+        .from("event_registrations")
+        .select("id, category, favourite_team, created_at")
+        .eq("email", user.email)
+        .order("created_at", { ascending: false });
+
+      setRegistrations(regs || []);
 
       const { data } = await supabase
         .from("predictions")
@@ -47,14 +63,54 @@ export default function ProfilePage() {
   if (loading) return <div className="text-center py-16">Loading profile...</div>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">My Predictions</h1>
-        <div className="text-right">
-          <p className="text-sm text-gray-400">@{username}</p>
-          <p className="text-2xl font-bold text-accent">{totalPoints} pts</p>
+    <div className="space-y-6 max-w-2xl mx-auto px-4 py-8">
+      {/* Profile Info */}
+      <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+        <h1 className="text-2xl font-bold mb-4">My Profile</h1>
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div>
+            <p className="text-gray-500">Name</p>
+            <p className="font-medium">{userInfo.username}</p>
+          </div>
+          <div>
+            <p className="text-gray-500">Email</p>
+            <p className="font-medium">{userInfo.email}</p>
+          </div>
+          <div>
+            <p className="text-gray-500">Mobile</p>
+            <p className="font-medium">{userInfo.mobile || "—"}</p>
+          </div>
+          <div>
+            <p className="text-gray-500">Flat No.</p>
+            <p className="font-medium">{userInfo.flatNumber || "—"}</p>
+          </div>
         </div>
       </div>
+
+      {/* Event Registrations */}
+      {registrations.length > 0 && (
+        <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+          <h2 className="text-xl font-bold mb-3">My Registrations</h2>
+          <div className="space-y-2">
+            {registrations.map((reg) => (
+              <div key={reg.id} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                <div>
+                  <p className="font-medium capitalize">{reg.category.replace("_", " ")} Football</p>
+                  {reg.favourite_team && <p className="text-xs text-gray-400">Team: {reg.favourite_team}</p>}
+                </div>
+                <p className="text-xs text-gray-500">{format(new Date(reg.created_at), "MMM d, yyyy")}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Predictions */}
+      <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold">My Predictions</h2>
+          <p className="text-2xl font-bold text-accent">{totalPoints} pts</p>
+        </div>
 
       {predictions.length === 0 ? (
         <p className="text-gray-500">
@@ -115,6 +171,7 @@ export default function ProfilePage() {
           })}
         </div>
       )}
+      </div>
     </div>
   );
 }

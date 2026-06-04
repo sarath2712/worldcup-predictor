@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import UserHeader from "@/components/UserHeader";
 
 /* SVG Icon components - clean, standard icons */
 function JerseyIcon({ className = "" }: { className?: string }) {
@@ -66,15 +67,6 @@ function ArrowIcon({ className = "" }: { className?: string }) {
   );
 }
 
-function ShieldIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      <path d="M9 12l2 2 4-4" />
-    </svg>
-  );
-}
-
 const tiles = [
   {
     title: "Men's Football",
@@ -117,13 +109,6 @@ const tiles = [
     href: "/fixtures",
     Icon: CalendarIcon,
     color: "from-red-500 to-red-600",
-  },
-  {
-    title: "Admin",
-    subtitle: "DASHBOARD",
-    href: "/admin-registrations",
-    Icon: ShieldIcon,
-    color: "from-gray-600 to-gray-800",
   },
 ];
 
@@ -197,19 +182,8 @@ export default function Home() {
         style={{ backgroundImage: "repeating-linear-gradient(90deg, transparent, transparent 48px, rgba(255,255,255,0.08) 48px, rgba(255,255,255,0.08) 50px)" }}
       />
 
-      {/* Top badges */}
-      <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mt-6 sm:mt-8 mb-4">
-        {[
-          { dot: "bg-red-500", name: "CANADA" },
-          { dot: "bg-blue-500", name: "USA" },
-          { dot: "bg-green-500", name: "MEXICO" },
-          { dot: "bg-red-500", name: "2026" },
-        ].map((b) => (
-          <span key={b.name} className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm text-xs font-medium text-gray-300">
-            <span className={`w-2 h-2 rounded-full ${b.dot}`} /> {b.name}
-          </span>
-        ))}
-      </div>
+      {/* Top header bar */}
+      <UserHeader />
 
       {/* Header text */}
       <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-[0.3em] mb-1">

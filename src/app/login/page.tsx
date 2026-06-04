@@ -7,6 +7,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [mobile, setMobile] = useState("");
   const [flatNumber, setFlatNumber] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState("");
@@ -27,13 +28,13 @@ export default function LoginPage() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { username, flat_number: flatNumber } },
+        options: { data: { username, flat_number: flatNumber, mobile } },
       });
       if (error) {
         setError(error.message);
       } else if (data.session) {
         // Auto-confirmed — redirect immediately
-        window.location.href = "/matches";
+        window.location.href = "/";
       } else {
         setMessage("You are Signed Up, Good Luck with your Predictions!!");
       }
@@ -45,7 +46,7 @@ export default function LoginPage() {
       if (error) {
         setError(error.message);
       } else {
-        window.location.href = "/matches";
+        window.location.href = "/";
       }
     }
   };
@@ -60,7 +61,7 @@ export default function LoginPage() {
         {isSignUp && (
           <>
             <div>
-              <label className="block text-sm font-medium mb-1">Username</label>
+              <label className="block text-sm font-medium mb-1">Name</label>
               <input
                 type="text"
                 value={username}
@@ -68,6 +69,22 @@ export default function LoginPage() {
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-900"
                 required
                 minLength={3}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Mobile Number</label>
+              <input
+                type="tel"
+                value={mobile}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                  setMobile(val);
+                }}
+                placeholder="10 digit mobile number"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-900"
+                required
+                pattern="\d{10}"
+                maxLength={10}
               />
             </div>
             <div>
