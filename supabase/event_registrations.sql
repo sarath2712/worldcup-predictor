@@ -21,14 +21,16 @@ ALTER TABLE event_registrations ENABLE ROW LEVEL SECURITY;
 
 -- Allow anonymous users to insert (register)
 CREATE POLICY "Allow public insert" ON event_registrations
-  FOR INSERT TO anon
+  FOR INSERT TO anon, authenticated
   WITH CHECK (true);
 
 -- Allow anonymous users to read
 CREATE POLICY "Allow public select" ON event_registrations
-  FOR SELECT TO anon
+  FOR SELECT TO anon, authenticated
   USING (true);
 
--- Also grant table-level permissions to anon role
+-- Also grant table-level permissions to both anon and authenticated roles
 GRANT INSERT, SELECT ON event_registrations TO anon;
+GRANT INSERT, SELECT ON event_registrations TO authenticated;
 GRANT USAGE ON SCHEMA public TO anon;
+GRANT USAGE ON SCHEMA public TO authenticated;
