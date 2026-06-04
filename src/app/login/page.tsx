@@ -7,6 +7,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [flatNumber, setFlatNumber] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -18,15 +19,23 @@ export default function LoginPage() {
     setMessage("");
 
     if (isSignUp) {
-      const { error } = await supabase.auth.signUp({
+      if (!/^\d{4}$/.test(flatNumber)) {
+        setError("Flat Number must be exactly 4 digits");
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { username } },
+        options: { data: { username, flat_number: flatNumber } },
       });
       if (error) {
         setError(error.message);
+      } else if (data.session) {
+        // Auto-confirmed — redirect immediately
+        window.location.href = "/matches";
       } else {
-        setMessage("Check your email for the confirmation link!");
+        setMessage("You are Signed Up, Good Luck with your Predictions!! 🎉");
       }
     } else {
       const { error } = await supabase.auth.signInWithPassword({
@@ -49,17 +58,37 @@ export default function LoginPage() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {isSignUp && (
-          <div>
-            <label className="block text-sm font-medium mb-1">Username</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-900"
-              required
-              minLength={3}
-            />
-          </div>
+          <>
+            <div>
+              <label className="block text-sm font-medium mb-1">Username</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-900"
+                required
+                minLength={3}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Flat Number</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={flatNumber}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                  setFlatNumber(val);
+                }}
+                placeholder="e.g. 1234"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-900"
+                required
+                pattern="\d{4}"
+                maxLength={4}
+              />
+              <p className="text-xs text-gray-500 mt-1">Must be exactly 4 digits</p>
+            </div>
+          </>
         )}
 
         <div>

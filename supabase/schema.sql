@@ -5,6 +5,7 @@
 create table public.profiles (
   id uuid references auth.users on delete cascade primary key,
   username text unique not null,
+  flat_number text check (flat_number ~ '^\d{4}$'),
   avatar_url text,
   is_admin boolean default false,
   created_at timestamptz default now()
@@ -23,8 +24,12 @@ create policy "Users can update own profile"
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, username)
-  values (new.id, coalesce(new.raw_user_meta_data->>'username', split_part(new.email, '@', 1)));
+  insert into public.profiles (id, username, flat_number)
+  values (
+    new.id,
+    coalesce(new.raw_user_meta_data->>'username', split_part(new.email, '@', 1)),
+    new.raw_user_meta_data->>'flat_number'
+  );
   return new;
 end;
 $$ language plpgsql security definer;
