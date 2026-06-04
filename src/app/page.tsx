@@ -212,31 +212,36 @@ export default function Home() {
       </h1>
 
       {/* Sobha Lake Gardens */}
-      <p className="text-xs sm:text-sm text-gray-400 tracking-[0.3em] uppercase mb-8 sm:mb-10">
+      <p className="text-xs sm:text-sm text-gray-400 tracking-[0.3em] uppercase mb-4">
         Sobha Lake Gardens
       </p>
+
+      {/* Countdown timer */}
+      <div className="mb-8 sm:mb-10">
+        <Countdown />
+      </div>
 
       {/* Main content area with players and tiles */}
       <div className="relative w-full max-w-6xl px-4 flex items-center justify-center">
         {/* Ronaldo - left */}
-        <div className="absolute left-0 bottom-0 hidden md:block w-[240px] lg:w-[300px] pointer-events-none">
+        <div className="absolute left-0 bottom-0 hidden md:block w-[280px] lg:w-[360px] xl:w-[420px] pointer-events-none">
           <Image
             src="/players/ronaldo-landing.png"
             alt="Ronaldo"
-            width={500}
-            height={620}
+            width={600}
+            height={750}
             className="w-full h-auto object-contain drop-shadow-[0_0_40px_rgba(239,68,68,0.4)]"
             priority
           />
         </div>
 
         {/* Messi - right */}
-        <div className="absolute right-0 bottom-0 hidden md:block w-[240px] lg:w-[300px] pointer-events-none">
+        <div className="absolute right-0 bottom-0 hidden md:block w-[280px] lg:w-[360px] xl:w-[420px] pointer-events-none">
           <Image
             src="/players/messi-landing.png"
             alt="Messi"
-            width={500}
-            height={620}
+            width={600}
+            height={750}
             className="w-full h-auto object-contain drop-shadow-[0_0_40px_rgba(59,130,246,0.4)]"
             priority
           />
@@ -300,10 +305,6 @@ export default function Home() {
         />
       </div>
 
-      {/* Countdown timer */}
-      <div className="mt-6 sm:mt-8 mb-8">
-        <Countdown />
-      </div>
     </div>
   );
 }
