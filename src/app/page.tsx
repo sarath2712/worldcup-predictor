@@ -254,7 +254,7 @@ export default function Home() {
               key={tile.title}
               href={tile.href}
               className={`rounded-2xl bg-gradient-to-br ${tile.color} backdrop-blur-md border border-white/20
-                flex flex-col items-start justify-end p-4 sm:p-5 aspect-[4/3]
+                flex flex-col items-start justify-end p-4 sm:p-5 aspect-square
                 hover:scale-105 hover:border-white/40 hover:shadow-2xl transition-all duration-300
                 group cursor-pointer relative overflow-hidden`}
             >
