@@ -309,8 +309,8 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Signup tag on prediction tile */}
-              {tile.href === "/matches" && (
+              {/* Signup tag on prediction tile - only for non-logged-in users */}
+              {tile.href === "/matches" && !user && (
                 <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[3.2rem] sm:left-3 sm:translate-x-0 px-1.5 py-0.5 rounded-full bg-white/20 border border-white/30 text-[8px] sm:text-[9px] font-semibold text-white/90 tracking-wide">
                   Signup needed
                 </span>
