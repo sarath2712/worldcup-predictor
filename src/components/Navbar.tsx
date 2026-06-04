@@ -110,35 +110,35 @@ export function Navbar() {
       </div>
 
       {/* Navigation links */}
-      <nav className="border-t border-white/5 bg-[#0b1121]/60">
-        <div className="max-w-5xl mx-auto px-3 sm:px-4 py-2 sm:py-0 sm:h-10 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:gap-x-6">
-          <Link href="/matches" className="text-xs sm:text-sm text-gray-300 hover:text-accent transition">
+      <nav className="border-t border-white/5 bg-[#0b1121]/80">
+        <div className="max-w-5xl mx-auto px-2 sm:px-4 py-2 sm:py-1.5 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+          <Link href="/matches" className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-gray-200 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full border border-white/10 transition">
             Matches
           </Link>
-          <Link href="/tournament" className="text-xs sm:text-sm text-gray-300 hover:text-accent transition">
+          <Link href="/tournament" className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-gray-200 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full border border-white/10 transition">
             Tournament
           </Link>
-          <Link href="/leaderboard" className="text-xs sm:text-sm text-gray-300 hover:text-accent transition">
-            Leaderboard
+          <Link href="/leaderboard" className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-gray-200 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full border border-white/10 transition">
+            Board
           </Link>
-          <Link href="/rules" className="text-xs sm:text-sm text-gray-300 hover:text-accent transition">
+          <Link href="/rules" className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-gray-200 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full border border-white/10 transition">
             Rules
           </Link>
 
           {user ? (
             <>
-              <Link href="/profile" className="text-xs sm:text-sm text-gray-300 hover:text-accent transition">
+              <Link href="/profile" className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-gray-200 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full border border-white/10 transition">
                 <span className="sm:hidden">Predictions</span>
                 <span className="hidden sm:inline">My Predictions</span>
               </Link>
               {isAdmin && (
-                <Link href="/admin" className="text-xs sm:text-sm text-yellow-400 hover:text-yellow-300 transition">
+                <Link href="/admin" className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-yellow-400 bg-yellow-400/10 hover:bg-yellow-400/20 rounded-full border border-yellow-400/30 transition">
                   Admin
                 </Link>
               )}
               <button
                 onClick={handleLogout}
-                className="text-xs sm:text-sm text-gray-400 hover:text-red-400 transition"
+                className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-gray-400 bg-white/5 hover:bg-red-500/20 hover:text-red-400 rounded-full border border-white/10 transition"
               >
                 Logout
               </button>
@@ -146,7 +146,7 @@ export function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="text-xs sm:text-sm px-3 py-1 bg-accent text-black font-semibold rounded-md hover:bg-accent/80 transition"
+              className="px-4 py-1.5 text-sm font-semibold text-black bg-accent hover:bg-accent/80 rounded-full transition"
             >
               Login
             </Link>

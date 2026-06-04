@@ -115,11 +115,41 @@ function MatchCard({
   const [scorers, setScorers] = useState(matchExtras?.predicted_scorers || "");
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
+  const [timeLeft, setTimeLeft] = useState("");
 
   const kickoff = new Date(match.kickoff_utc);
   const deadline = addHours(kickoff, -1);
   const isLocked = isPast(deadline);
   const hasResult = match.home_score !== null;
+
+  useEffect(() => {
+    if (isLocked || hasResult) return;
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = deadline.getTime() - now.getTime();
+      if (diff <= 0) {
+        setTimeLeft("Locked");
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      if (days > 0) {
+        setTimeLeft(`${days}d ${hours}h ${minutes}m`);
+      } else if (hours > 0) {
+        setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+      } else {
+        setTimeLeft(`${minutes}m ${seconds}s`);
+      }
+    }
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, [isLocked, hasResult]);
 
   const handleSave = async () => {
     if (!user || isLocked) return;
@@ -178,16 +208,23 @@ function MatchCard({
             {format(kickoff, "h:mm a")}
           </span>
         </div>
-        {isLocked && (
-          <span className="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded-full">
-            🔒 Locked
-          </span>
-        )}
-        {prediction?.points !== null && prediction?.points !== undefined && (
-          <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
-            +{prediction.points} pts
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {!isLocked && !hasResult && timeLeft && (
+            <span className="text-xs px-2 py-0.5 bg-orange-500/10 text-orange-400 rounded-full font-mono">
+              ⏱ {timeLeft}
+            </span>
+          )}
+          {isLocked && (
+            <span className="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded-full">
+              🔒 Locked
+            </span>
+          )}
+          {prediction?.points !== null && prediction?.points !== undefined && (
+            <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
+              +{prediction.points} pts
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center gap-4">
