@@ -131,21 +131,21 @@ function Countdown() {
   }, []);
 
   return (
-    <div className="flex items-center gap-3 sm:gap-4">
-      <span className="text-xs sm:text-sm font-bold tracking-[0.2em] text-gray-400 uppercase">Kick-off in</span>
+    <div className="flex items-center gap-2 sm:gap-3">
+      <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase">Kick-off in</span>
       {[
         { val: timeLeft.days, label: "DAYS" },
         { val: timeLeft.hours, label: "HRS" },
         { val: timeLeft.mins, label: "MIN" },
         { val: timeLeft.secs, label: "SEC" },
       ].map((item, i) => (
-        <div key={item.label} className="flex items-center gap-2 sm:gap-3">
-          {i > 0 && <span className="text-2xl font-bold text-accent">:</span>}
+        <div key={item.label} className="flex items-center gap-1.5 sm:gap-2">
+          {i > 0 && <span className="text-lg font-bold text-accent">:</span>}
           <div className="text-center">
-            <div className="text-3xl sm:text-4xl font-black text-white tabular-nums">
+            <div className="text-xl sm:text-2xl font-black text-white tabular-nums">
               {String(item.val).padStart(2, "0")}
             </div>
-            <div className="text-[10px] text-gray-500 font-medium tracking-wider">{item.label}</div>
+            <div className="text-[8px] text-gray-500 font-medium tracking-wider">{item.label}</div>
           </div>
         </div>
       ))}
@@ -294,16 +294,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Trophy image - centered below tiles */}
-      <div className="mt-6 pointer-events-none">
-        <Image
-          src="/players/trophy.png"
-          alt="FIFA World Cup Trophy"
-          width={80}
-          height={160}
-          className="h-16 sm:h-20 w-auto object-contain drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]"
-        />
-      </div>
 
     </div>
   );

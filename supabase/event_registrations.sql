@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS event_registrations (
   phone text NOT NULL,
   flat_number text NOT NULL,
   favourite_team text,
-  category text NOT NULL CHECK (category IN ('mens', 'womens', 'kids')),
+  category text NOT NULL CHECK (category IN ('mens', 'womens', 'kids', 'playstation')),
   created_at timestamptz DEFAULT now(),
   UNIQUE(email, category)
 );
