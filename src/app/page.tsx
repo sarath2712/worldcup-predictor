@@ -69,7 +69,7 @@ function ArrowIcon({ className = "" }: { className?: string }) {
 const tiles = [
   {
     title: "Men's Football",
-    subtitle: "GROUP A-L",
+    subtitle: "CLASH OF THE TITANS",
     href: "/mens-football",
     Icon: JerseyIcon,
     color: "from-blue-500 to-blue-700",
