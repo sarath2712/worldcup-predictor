@@ -221,7 +221,7 @@ export default function Home() {
         {/* Ronaldo - left */}
         <div className="absolute left-0 bottom-0 hidden md:block w-[240px] lg:w-[300px] pointer-events-none">
           <Image
-            src="/players/ronaldo.png"
+            src="/players/ronaldo-landing.png"
             alt="Ronaldo"
             width={500}
             height={620}
@@ -233,7 +233,7 @@ export default function Home() {
         {/* Messi - right */}
         <div className="absolute right-0 bottom-0 hidden md:block w-[240px] lg:w-[300px] pointer-events-none">
           <Image
-            src="/players/messi.png"
+            src="/players/messi-landing.png"
             alt="Messi"
             width={500}
             height={620}
