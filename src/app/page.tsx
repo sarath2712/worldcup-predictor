@@ -316,6 +316,13 @@ export default function Home() {
                 </span>
               )}
 
+              {/* Register Now tag on registration tiles */}
+              {["/mens-football", "/kids-football", "/womens-football", "/playstation-worldcup"].includes(tile.href) && (
+                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[3.2rem] sm:left-3 sm:translate-x-0 px-2 py-0.5 rounded-full bg-white/25 border border-white/40 text-[8px] sm:text-[9px] font-bold text-white tracking-wide animate-pulse">
+                  Register Now
+                </span>
+              )}
+
               {/* Title */}
               <span className="text-sm sm:text-lg font-bold text-white leading-tight">
                 {tile.title}
