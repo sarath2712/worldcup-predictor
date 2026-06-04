@@ -250,7 +250,7 @@ export default function Home() {
       </p>
 
       {/* Countdown timer */}
-      <div className="mb-8 sm:mb-10">
+      <div className="mb-4 sm:mb-10">
         <Countdown />
       </div>
 
@@ -281,46 +281,47 @@ export default function Home() {
         </div>
 
         {/* Tiles Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 max-w-[580px] w-full relative z-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 max-w-[580px] w-full relative z-10">
           {tiles.map((tile) => (
             <Link
               key={tile.title}
               href={tile.href}
               onClick={(e) => handleTileClick(tile, e)}
-              className={`rounded-2xl bg-gradient-to-br ${tile.color} backdrop-blur-md border border-white/20
-                flex flex-col items-start justify-end p-4 sm:p-5 aspect-[5/6] sm:aspect-square
+              className={`rounded-xl sm:rounded-2xl bg-gradient-to-br ${tile.color} backdrop-blur-md border border-white/20
+                flex flex-col items-start justify-end p-3 sm:p-5 aspect-[4/3] sm:aspect-square
                 hover:scale-105 hover:border-white/40 hover:shadow-2xl transition-all duration-300
                 group cursor-pointer relative overflow-hidden`}
             >
               {/* Layered transparent icon container */}
-              <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
+              <div className="absolute top-2 left-2 sm:top-4 sm:left-4">
                 <div className="relative">
-                  {/* Back layer - larger, more transparent */}
-                  <div className="absolute -top-1 -left-1 w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/10 backdrop-blur-sm" />
-                  {/* Front layer - icon */}
-                  <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
-                    <tile.Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white drop-shadow-md" />
+                  <div className="absolute -top-0.5 -left-0.5 w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm" />
+                  <div className="relative w-7 h-7 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+                    <tile.Icon className="w-3.5 h-3.5 sm:w-6 sm:h-6 text-white drop-shadow-md" />
                   </div>
                 </div>
               </div>
 
               {/* Arrow icon - top right */}
-              <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
-                <div className="w-8 h-8 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 group-hover:bg-white/20 transition">
-                  <ArrowIcon className="w-4 h-4 text-white/70" />
+              <div className="absolute top-2 right-2 sm:top-4 sm:right-4">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 group-hover:bg-white/20 transition">
+                  <ArrowIcon className="w-3 h-3 sm:w-4 sm:h-4 text-white/70" />
                 </div>
               </div>
 
-              {/* Floating decorative shapes */}
-              <div className="absolute top-1/2 right-8 w-3 h-3 bg-white/10 rotate-45 rounded-sm" />
-              <div className="absolute bottom-8 right-12 w-2 h-2 bg-white/15 rotate-12 rounded-sm" />
+              {/* Signup tag on prediction tile */}
+              {tile.href === "/matches" && (
+                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[3.2rem] sm:left-3 sm:translate-x-0 px-1.5 py-0.5 rounded-full bg-white/20 border border-white/30 text-[8px] sm:text-[9px] font-semibold text-white/90 tracking-wide">
+                  Signup needed
+                </span>
+              )}
 
               {/* Title */}
-              <span className="text-base sm:text-lg font-bold text-white leading-tight">
+              <span className="text-sm sm:text-lg font-bold text-white leading-tight">
                 {tile.title}
               </span>
               {/* Subtitle */}
-              <span className="text-[10px] sm:text-xs font-semibold text-white/50 uppercase tracking-[0.15em] mt-0.5">
+              <span className="text-[8px] sm:text-xs font-semibold text-white/50 uppercase tracking-[0.15em] mt-0.5">
                 {tile.subtitle}
               </span>
             </Link>
