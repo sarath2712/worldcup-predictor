@@ -188,7 +188,7 @@ export default function Home() {
 
   const handleLoginSuccess = () => {
     setShowLogin(false);
-    window.location.reload();
+    window.location.href = "/matches";
   };
 
   const handleTileClick = (tile: typeof tiles[0], e: React.MouseEvent) => {
@@ -309,10 +309,15 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Signup tag on prediction tile - only for non-logged-in users */}
+              {/* Prediction tile tags */}
               {tile.href === "/matches" && !user && (
                 <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[3.2rem] sm:left-3 sm:translate-x-0 px-1.5 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
                   Signup to Predict
+                </span>
+              )}
+              {tile.href === "/matches" && user && (
+                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[3.2rem] sm:left-3 sm:translate-x-0 px-2 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
+                  Predict Now
                 </span>
               )}
 
