@@ -18,6 +18,10 @@ export default function MatchesPage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "/";
+        return;
+      }
       setUser(user);
 
       const { data: matchData } = await supabase

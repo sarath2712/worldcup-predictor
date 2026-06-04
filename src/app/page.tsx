@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import UserHeader from "@/components/UserHeader";
+import LoginModal from "@/components/LoginModal";
+import { createClient } from "@/lib/supabase/client";
 
 /* SVG Icon components - clean, standard icons */
 function JerseyIcon({ className = "" }: { className?: string }) {
@@ -155,6 +157,47 @@ function Countdown() {
 }
 
 export default function Home() {
+  const [user, setUser] = useState<{ email: string; username: string; isAdmin: boolean } | null>(null);
+  const [showLogin, setShowLogin] = useState(false);
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function loadUser() {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("username, is_admin")
+        .eq("id", authUser.id)
+        .single();
+
+      setUser({
+        email: authUser.email || "",
+        username: profile?.username || authUser.user_metadata?.username || authUser.email || "",
+        isAdmin: profile?.is_admin || false,
+      });
+    }
+    loadUser();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
+
+  const handleLoginSuccess = () => {
+    setShowLogin(false);
+    window.location.reload();
+  };
+
+  const handleTileClick = (tile: typeof tiles[0], e: React.MouseEvent) => {
+    if (tile.href === "/matches" && !user) {
+      e.preventDefault();
+      setShowLogin(true);
+    }
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden flex flex-col items-center">
       {/* Background gradient */}
@@ -183,7 +226,7 @@ export default function Home() {
       />
 
       {/* Top header bar */}
-      <UserHeader />
+      <UserHeader user={user} onLoginClick={() => setShowLogin(true)} onLogout={handleLogout} />
 
       {/* Header text */}
       <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-[0.3em] mb-1">
@@ -243,6 +286,7 @@ export default function Home() {
             <Link
               key={tile.title}
               href={tile.href}
+              onClick={(e) => handleTileClick(tile, e)}
               className={`rounded-2xl bg-gradient-to-br ${tile.color} backdrop-blur-md border border-white/20
                 flex flex-col items-start justify-end p-4 sm:p-5 aspect-[5/6] sm:aspect-square
                 hover:scale-105 hover:border-white/40 hover:shadow-2xl transition-all duration-300
@@ -284,7 +328,8 @@ export default function Home() {
         </div>
       </div>
 
-
+      {/* Login Modal */}
+      <LoginModal open={showLogin} onClose={() => setShowLogin(false)} onSuccess={handleLoginSuccess} />
     </div>
   );
 }

@@ -8,26 +8,16 @@ import type { User } from "@supabase/supabase-js";
 
 export function Navbar() {
   const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user);
-      if (data.user) {
-        supabase
-          .from("profiles")
-          .select("is_admin")
-          .eq("id", data.user.id)
-          .single()
-          .then(({ data: profile }) => setIsAdmin(profile?.is_admin ?? false));
-      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
-        if (!session?.user) setIsAdmin(false);
       }
     );
     return () => subscription.unsubscribe();
@@ -134,11 +124,6 @@ export function Navbar() {
                 <span className="sm:hidden">Predictions</span>
                 <span className="hidden sm:inline">My Predictions</span>
               </Link>
-              {isAdmin && (
-                <Link href="/admin" className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-yellow-400 bg-yellow-400/10 hover:bg-yellow-400/20 rounded-full border border-yellow-400/30 transition">
-                  Admin
-                </Link>
-              )}
               <button
                 onClick={handleLogout}
                 className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-gray-400 bg-white/5 hover:bg-red-500/20 hover:text-red-400 rounded-full border border-white/10 transition"
@@ -148,10 +133,10 @@ export function Navbar() {
             </>
           ) : (
             <Link
-              href="/login"
+              href="/"
               className="px-4 py-1.5 text-sm font-semibold text-black bg-accent hover:bg-accent/80 rounded-full transition"
             >
-              Login
+              Home
             </Link>
           )}
         </div>

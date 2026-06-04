@@ -1,47 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 
-export default function UserHeader() {
-  const [user, setUser] = useState<{ email: string; username: string; isAdmin: boolean } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+interface UserHeaderProps {
+  user: { email: string; username: string; isAdmin: boolean } | null;
+  onLoginClick: () => void;
+  onLogout: () => void;
+}
 
-  useEffect(() => {
-    async function loadUser() {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (!authUser) {
-        setLoading(false);
-        return;
-      }
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("username, is_admin")
-        .eq("id", authUser.id)
-        .single();
-
-      setUser({
-        email: authUser.email || "",
-        username: profile?.username || authUser.email || "",
-        isAdmin: profile?.is_admin || false,
-      });
-      setLoading(false);
-    }
-    loadUser();
-  }, []);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/";
-  };
-
-  if (loading) return <div className="w-full h-12" />;
-
+export default function UserHeader({ user, onLoginClick, onLogout }: UserHeaderProps) {
   return (
-    <div className="w-full flex items-center justify-between px-4 sm:px-6 pt-4 pb-2">
+    <div className="w-full flex items-center justify-end px-4 sm:px-6 pt-4 pb-2">
       <div className="flex items-center gap-3">
         {user ? (
           <>
@@ -56,7 +25,7 @@ export default function UserHeader() {
               {user.username}
             </Link>
             <button
-              onClick={handleLogout}
+              onClick={onLogout}
               className="px-3 py-1.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm text-xs font-medium text-gray-300 hover:bg-red-500/20 hover:border-red-400/30 transition"
             >
               Logout
@@ -71,8 +40,8 @@ export default function UserHeader() {
             )}
           </>
         ) : (
-          <Link
-            href="/login"
+          <button
+            onClick={onLoginClick}
             className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm text-xs font-medium text-gray-300 hover:bg-white/10 transition"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -81,7 +50,7 @@ export default function UserHeader() {
               <line x1="15" y1="12" x2="3" y2="12" />
             </svg>
             Login / Sign Up
-          </Link>
+          </button>
         )}
       </div>
     </div>
