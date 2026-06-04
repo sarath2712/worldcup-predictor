@@ -16,7 +16,8 @@ export default function FixturesPage() {
         ← Back to Home
       </Link>
       <h1 className="text-4xl font-bold mb-2 flex items-center gap-3"><svg className="w-9 h-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> FIFA World Cup 2026</h1>
-      <p className="text-gray-400 mb-6">June 11 – July 19, 2026 | USA, Mexico & Canada</p>
+      <p className="text-gray-400 mb-1">June 11 – July 19, 2026 | USA, Mexico & Canada</p>
+      <p className="text-xs text-gray-500 mb-6">All times in IST (Indian Standard Time)</p>
 
       {/* Tabs */}
       <div className="flex gap-2 mb-8">
@@ -53,7 +54,7 @@ export default function FixturesPage() {
               <div className="divide-y divide-white/5">
                 {fixturesByDay[day].map((match, idx) => (
                   <div key={idx} className="px-4 sm:px-6 py-3 flex items-center gap-2 sm:gap-4 text-sm">
-                    <span className="text-gray-500 w-12 shrink-0 text-center">{match.time}</span>
+                    <span className="text-gray-500 w-14 shrink-0 text-center">{match.time} <span className="text-[9px] text-gray-600">IST</span></span>
                     <span className="text-xs text-gray-600 w-8 shrink-0">Gp {match.group}</span>
                     <span className="flex-1 text-right font-medium truncate">{match.team1}</span>
                     <span className="text-accent font-bold px-1">vs</span>

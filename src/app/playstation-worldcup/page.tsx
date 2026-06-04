@@ -154,7 +154,7 @@ export default function PlaystationWorldcupPage() {
           <h3 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-1.5"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l0 20M12 2l-4 4M12 2l4 4"/></svg> Common Rules</h3>
           <ul className="text-gray-400 text-sm space-y-1.5">
             <li>• Registration closes on <strong className="text-white">Wednesday, 10th June</strong>.</li>
-            <li>• Matches will be played on PS5 with EA FC 25.</li>
+            <li>• Matches will be played on <strong className="text-white">PS5</strong> with <strong className="text-white">EA FC 26</strong>.</li>
             <li>• Brackets will be seeded by skill level.</li>
           </ul>
         </div>
