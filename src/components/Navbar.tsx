@@ -35,7 +35,7 @@ export function Navbar() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    window.location.href = "/matches";
+    window.location.href = "/";
   };
 
   return (
@@ -112,6 +112,9 @@ export function Navbar() {
       {/* Navigation links */}
       <nav className="border-t border-white/5 bg-[#0b1121]/80">
         <div className="max-w-5xl mx-auto px-2 sm:px-4 py-2 sm:py-1.5 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+          <Link href="/" className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-gray-200 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full border border-white/10 transition">
+            ← Home
+          </Link>
           <Link href="/matches" className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-gray-200 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full border border-white/10 transition">
             Matches
           </Link>

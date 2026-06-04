@@ -31,15 +31,24 @@ const tiles = [
     emoji: "🎮",
     gradient: "from-indigo-500 to-indigo-900",
   },
+  {
+    title: "World Cup Fixture",
+    href: "/fixtures",
+    emoji: "📋",
+    gradient: "from-red-600 to-red-900",
+  },
 ];
 
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] py-12">
       {/* Title */}
-      <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-center bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-12">
+      <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-center bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-2">
         FIFAWC2026
       </h1>
+      <p className="text-xs sm:text-sm text-gray-400 tracking-[0.25em] uppercase text-center mb-12">
+        Sobha Lake Gardens
+      </p>
 
       {/* Tiles Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 max-w-3xl w-full px-4">
@@ -61,11 +70,6 @@ export default function Home() {
           </Link>
         ))}
       </div>
-
-      {/* Footer text */}
-      <p className="mt-16 text-xs sm:text-sm text-gray-500 tracking-[0.25em] uppercase text-center">
-        Sobha Lake Gardens
-      </p>
     </div>
   );
 }
