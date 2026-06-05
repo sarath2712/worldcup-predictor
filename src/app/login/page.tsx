@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -53,6 +54,11 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto mt-16 bg-white/5 border border-white/10 backdrop-blur-sm rounded-2xl p-8">
+      <div className="flex justify-end mb-2">
+        <Link href="/" className="text-sm text-gray-400 hover:text-white transition">
+          Skip &rarr;
+        </Link>
+      </div>
       <h1 className="text-3xl font-bold text-center mb-8">
         {isSignUp ? "Create Account" : "Login"}
       </h1>
