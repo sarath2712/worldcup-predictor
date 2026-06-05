@@ -345,7 +345,7 @@ export default function Home() {
             <svg className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 shrink-0 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.82 20 12 16.54 7.18 20l1.64-6.91L4 9l5.91-.74L12 2z"/></svg>
             <div className="text-center animate-pulse">
               <p className="text-xs sm:text-sm font-bold text-yellow-300">
-                🏆 YOUR SKILLS. YOUR PREDICTIONS. REAL CASH. 🏆
+                YOUR SKILLS. YOUR PREDICTIONS. REAL CASH.
               </p>
               <p className="text-[10px] sm:text-xs text-yellow-200/80 mt-0.5">
                 Join the PlayStation Tournament &amp; Prediction Contest — winners take home CASH PRIZES!
