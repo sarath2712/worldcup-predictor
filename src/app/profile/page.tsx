@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Prediction, Match } from "@/lib/types";
 import { format } from "date-fns";
+import Link from "next/link";
 
 type PredictionWithMatch = Prediction & { matches: Match };
 type Registration = { id: number; category: string; favourite_team: string; created_at: string };
@@ -64,6 +65,15 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto px-4 py-8">
+      <div className="flex gap-4 mb-2">
+        <Link href="/" className="text-sm text-gray-400 hover:text-white transition">
+          &larr; Home
+        </Link>
+        <Link href="/help" className="text-sm text-gray-400 hover:text-white transition">
+          My Help Tickets &rarr;
+        </Link>
+      </div>
+
       {/* Profile Info */}
       <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
         <h1 className="text-2xl font-bold mb-4">My Profile</h1>
