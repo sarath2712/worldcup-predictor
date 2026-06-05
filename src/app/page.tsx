@@ -188,7 +188,7 @@ export default function Home() {
 
   const handleLoginSuccess = () => {
     setShowLogin(false);
-    window.location.href = "/matches";
+    window.location.href = "/";
   };
 
   const handleTileClick = (tile: typeof tiles[0], e: React.MouseEvent) => {
