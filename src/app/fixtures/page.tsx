@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { format } from "date-fns";
+import { getFlag } from "@/lib/flags";
 import { groups, knockoutRounds } from "./data";
 
 type Tab = "fixtures" | "tables";
@@ -81,13 +82,29 @@ export default function FixturesPage() {
               </div>
               <div className="divide-y divide-white/5">
                 {dayMatches.map((match) => (
-                  <div key={match.id} className="px-4 sm:px-6 py-3 flex items-center gap-2 sm:gap-4 text-sm">
-                    <span className="text-gray-500 w-14 shrink-0 text-center">{format(new Date(match.kickoff_utc), "HH:mm")}</span>
-                    <span className="text-xs text-gray-600 w-12 shrink-0">{match.stage}</span>
-                    <span className="flex-1 text-right font-medium truncate">{match.home_team}</span>
-                    <span className="text-accent font-bold px-1">vs</span>
-                    <span className="flex-1 font-medium truncate">{match.away_team}</span>
-                    <span className="text-gray-500 text-xs w-28 shrink-0 text-right hidden sm:block">{match.venue || ""}</span>
+                  <div key={match.id} className="px-4 sm:px-6 py-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs px-2 py-0.5 bg-accent/10 text-accent rounded-full font-medium">
+                        {match.stage}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {format(new Date(match.kickoff_utc), "h:mm a")}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 flex items-center justify-end gap-2 min-w-0">
+                        <span className="text-sm font-medium text-right">{match.home_team}</span>
+                        <span className="text-xl shrink-0">{getFlag(match.home_team)}</span>
+                      </div>
+                      <span className="text-accent font-bold text-sm px-2">vs</span>
+                      <div className="flex-1 flex items-center gap-2 min-w-0">
+                        <span className="text-xl shrink-0">{getFlag(match.away_team)}</span>
+                        <span className="text-sm font-medium">{match.away_team}</span>
+                      </div>
+                    </div>
+                    {match.venue && (
+                      <p className="text-xs text-gray-500 text-center">📍 {match.venue}</p>
+                    )}
                   </div>
                 ))}
               </div>

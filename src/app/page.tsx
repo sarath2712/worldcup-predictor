@@ -86,7 +86,7 @@ const tiles = [
   },
   {
     title: "Women's Football",
-    subtitle: "SQUAD",
+    subtitle: "RISE & SHINE",
     href: "/womens-football",
     Icon: JerseyIcon,
     color: "from-pink-500 to-purple-600",
