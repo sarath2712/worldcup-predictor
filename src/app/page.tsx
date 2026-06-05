@@ -288,7 +288,7 @@ export default function Home() {
               href={tile.href}
               onClick={(e) => handleTileClick(tile, e)}
               className={`rounded-xl sm:rounded-2xl bg-gradient-to-br ${tile.color} backdrop-blur-md border border-white/20
-                flex flex-col items-start justify-end p-3 sm:p-5 aspect-[4/3] sm:aspect-square
+                flex flex-col items-start justify-end p-3 sm:p-5 h-[120px] sm:aspect-square sm:h-auto
                 hover:scale-105 hover:border-white/40 hover:shadow-2xl transition-all duration-300
                 group cursor-pointer relative overflow-hidden`}
             >
