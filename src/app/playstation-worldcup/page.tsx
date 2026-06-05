@@ -53,8 +53,8 @@ export default function PlaystationWorldcupPage() {
       <Link href="/" className="text-sm text-gray-400 hover:text-white transition mb-6 inline-block">
         ← Back to Home
       </Link>
-      <h1 className="text-3xl font-bold mb-2 flex items-center gap-3"><svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M8 10v4M6 12h4"/><circle cx="16" cy="10" r="1" fill="currentColor"/><circle cx="18" cy="12" r="1" fill="currentColor"/></svg> PLAYSTATION WORLD CUP — REGISTRATION</h1>
-      <p className="text-gray-400 mb-8">Register below to participate in the FIFA eTournament</p>
+      <h1 className="text-3xl font-bold mb-2 flex items-center gap-3"><svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M8 10v4M6 12h4"/><circle cx="16" cy="10" r="1" fill="currentColor"/><circle cx="18" cy="12" r="1" fill="currentColor"/></svg> FIFA WORLD CUP eTOURNAMENT — REGISTRATION</h1>
+      <p className="text-gray-400 mb-8">This is a FIFA eTournament on PlayStation. We will follow knockout-style brackets. Fixtures and time slots will be prepared and shared based on the total number of registrations received.</p>
 
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 mb-8">
         {success ? (
@@ -145,19 +145,17 @@ export default function PlaystationWorldcupPage() {
 
       {/* Info Section */}
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 space-y-4">
-        <h2 className="text-lg font-bold text-accent flex items-center gap-2"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Event Details</h2>
-        <p className="text-gray-300 text-sm leading-relaxed">
-          FIFA eTournament on PlayStation. Knockout-style brackets. 
-          Fixtures and time slots will be prepared and shared based on the total number of registrations received.
-        </p>
-        <div className="border-t border-white/10 pt-4">
-          <h3 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-1.5"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l0 20M12 2l-4 4M12 2l4 4"/></svg> Common Rules</h3>
-          <ul className="text-gray-400 text-sm space-y-1.5">
-            <li>• Registration closes on <strong className="text-white">Wednesday, 10th June</strong>.</li>
-            <li>• Matches will be played on <strong className="text-white">PS5</strong> with <strong className="text-white">EA FC 26</strong>.</li>
-            <li>• Brackets will be seeded by skill level.</li>
-          </ul>
-        </div>
+        <h2 className="text-lg font-bold text-accent flex items-center gap-2"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h6"/></svg> Common Rules</h2>
+        <ul className="text-gray-300 text-sm space-y-2">
+          <li className="flex items-start gap-2"><svg className="w-4 h-4 mt-0.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Registration closes on <strong className="text-white">Wednesday, 10th June</strong>.</span></li>
+          <li className="flex items-start gap-2"><svg className="w-4 h-4 mt-0.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M8 10v4M6 12h4"/><circle cx="16" cy="10" r="1" fill="currentColor"/><circle cx="18" cy="12" r="1" fill="currentColor"/></svg><span>Matches will be played on <strong className="text-white">PS5</strong> with <strong className="text-white">EA FC 26</strong>.</span></li>
+          <li className="flex items-start gap-2"><svg className="w-4 h-4 mt-0.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Opponents will be assigned based on the skill level provided during registration.</span></li>
+          <li className="flex items-start gap-2"><svg className="w-4 h-4 mt-0.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M8 10v4M6 12h4"/><circle cx="16" cy="10" r="1" fill="currentColor"/><circle cx="18" cy="12" r="1" fill="currentColor"/></svg><span>You are welcome to bring your own PS5, Xbox, or other compatible controllers.</span></li>
+          <li className="flex items-start gap-2"><svg className="w-4 h-4 mt-0.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M8 10v4M6 12h4"/><circle cx="16" cy="10" r="1" fill="currentColor"/><circle cx="18" cy="12" r="1" fill="currentColor"/></svg><span>The committee will arrange controllers for any participant who does not have one.</span></li>
+          <li className="flex items-start gap-2"><svg className="w-4 h-4 mt-0.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg><span>The game will be conducted in the <strong className="text-white">Club House Mini Theatre</strong>.</span></li>
+          <li className="flex items-start gap-2"><svg className="w-4 h-4 mt-0.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><span>If a participant does not turn up at their allotted slot, the opponent will be awarded a walk-over.</span></li>
+          <li className="flex items-start gap-2"><svg className="w-4 h-4 mt-0.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span>Please respect the rules and guidelines set by the committee.</span></li>
+        </ul>
         <div className="border-t border-white/10 pt-3">
           <p className="text-xs text-gray-500 italic">All decisions taken by the committee will be final. Please abide by the rules set.</p>
         </div>
