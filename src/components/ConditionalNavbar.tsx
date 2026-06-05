@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { Navbar } from "./Navbar";
 
-const PREDICTOR_ROUTES = ["/matches", "/tournament", "/leaderboard", "/rules", "/profile", "/admin-registrations"];
+const PREDICTOR_ROUTES = ["/matches", "/tournament", "/leaderboard", "/rules", "/profile"];
 
 export function ConditionalNavbar() {
   const pathname = usePathname();
