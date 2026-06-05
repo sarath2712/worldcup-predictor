@@ -158,6 +158,9 @@ export default function PlaystationWorldcupPage() {
             <li>• Brackets will be seeded by skill level.</li>
           </ul>
         </div>
+        <div className="border-t border-white/10 pt-3">
+          <p className="text-xs text-gray-500 italic">All decisions taken by the committee will be final. Please abide by the rules set.</p>
+        </div>
       </div>
     </div>
   );
