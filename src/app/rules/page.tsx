@@ -89,6 +89,24 @@ export default function RulesPage() {
         </div>
       </div>
 
+      {/* Deadlines */}
+      <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/10 bg-white/5">
+          <h3 className="text-xl font-bold text-accent flex items-center gap-2"><svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Prediction Deadlines</h3>
+          <p className="text-sm text-gray-400 mt-1">Important timing rules</p>
+        </div>
+        <div className="divide-y divide-white/5">
+          <div className="px-6 py-4 flex items-start gap-3">
+            <svg className="w-5 h-5 mt-0.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <p className="text-gray-300 text-sm">Every match prediction finishes <strong className="text-white">1 hour before</strong> the start of the match.</p>
+          </div>
+          <div className="px-6 py-4 flex items-start gap-3">
+            <svg className="w-5 h-5 mt-0.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <p className="text-gray-300 text-sm">Tournament Prediction will close on <strong className="text-white">June 11, 12:01 AM</strong>.</p>
+          </div>
+        </div>
+      </div>
+
       {/* Summary */}
       <div className="rounded-xl border border-accent/30 bg-accent/5 p-6 text-center">
         <p className="text-lg font-semibold text-accent">Maximum Points Per Match</p>
