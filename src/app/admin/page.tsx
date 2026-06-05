@@ -18,6 +18,7 @@ export default function AdminPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<number | null>(null);
+  const [filter, setFilter] = useState<"pending" | "completed" | "all">("pending");
   const [tournamentResults, setTournamentResults] = useState<TournamentResults>({
     actual_winner: "",
     actual_finalist: "",
@@ -132,15 +133,61 @@ export default function AdminPage() {
   if (loading) return <div className="text-center py-16">Loading...</div>;
   if (!isAdmin) return <div className="text-center py-16 text-red-600">Access denied. Admin only.</div>;
 
+  const pendingMatches = matches.filter((m) => m.home_score === null);
+  const completedMatches = matches.filter((m) => m.home_score !== null);
+  const filteredMatches = filter === "pending" ? pendingMatches : filter === "completed" ? completedMatches : matches;
+
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-bold">⚙️ Admin - Enter Results</h1>
-      <p className="text-sm text-gray-500">
-        Enter match scores, POTM, and scorers. Points are calculated automatically.
-      </p>
 
+      {/* Scoring Guide */}
+      <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
+        <h3 className="text-sm font-bold text-accent mb-2">Scoring Reference (What Users Predict)</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-300">
+          <div className="bg-white/5 rounded-lg p-2 text-center">
+            <p className="text-lg font-bold text-white">30</p>
+            <p>Exact Score</p>
+          </div>
+          <div className="bg-white/5 rounded-lg p-2 text-center">
+            <p className="text-lg font-bold text-white">10</p>
+            <p>Correct Winner</p>
+          </div>
+          <div className="bg-white/5 rounded-lg p-2 text-center">
+            <p className="text-lg font-bold text-white">20</p>
+            <p>POTM</p>
+          </div>
+          <div className="bg-white/5 rounded-lg p-2 text-center">
+            <p className="text-lg font-bold text-white">15</p>
+            <p>Each Scorer</p>
+          </div>
+        </div>
+        <p className="text-[11px] text-gray-500 mt-2">Fill in: Home Score, Away Score, Player of the Match, Goal Scorers (comma-separated). Points are auto-calculated on save.</p>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="flex items-center gap-2">
+        {(["pending", "completed", "all"] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              filter === f
+                ? "bg-accent text-black"
+                : "bg-white/10 text-gray-400 hover:bg-white/20"
+            }`}
+          >
+            {f === "pending" ? `Pending (${pendingMatches.length})` : f === "completed" ? `Completed (${completedMatches.length})` : `All (${matches.length})`}
+          </button>
+        ))}
+      </div>
+
+      {/* Matches List */}
       <div className="space-y-3">
-        {matches.map((match) => (
+        {filteredMatches.length === 0 && (
+          <p className="text-center text-gray-500 py-8">No matches in this category.</p>
+        )}
+        {filteredMatches.map((match) => (
           <AdminMatchRow
             key={match.id}
             match={match}
@@ -203,61 +250,83 @@ function AdminMatchRow({
   const [away, setAway] = useState(match.away_score?.toString() || "");
   const [potm, setPotm] = useState(match.actual_potm || "");
   const [scorers, setScorers] = useState(match.actual_scorers || "");
+  const isCompleted = match.home_score !== null;
+  const kickoff = new Date(match.kickoff_utc);
+  const isPast = kickoff < new Date();
 
   return (
-    <div className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm space-y-2">
+    <div className={`p-4 rounded-xl border backdrop-blur-sm space-y-3 ${isCompleted ? "bg-green-500/5 border-green-500/20" : isPast ? "bg-yellow-500/5 border-yellow-500/20" : "bg-white/5 border-white/10"}`}>
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="font-medium">{match.home_team} vs {match.away_team}</p>
+          <div className="flex items-center gap-2">
+            <p className="font-semibold">{match.home_team} vs {match.away_team}</p>
+            {isCompleted && <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-500/20 text-green-400 font-semibold">SCORED</span>}
+            {!isCompleted && isPast && <span className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-semibold">NEEDS RESULT</span>}
+            {!isCompleted && !isPast && <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-gray-500 font-semibold">UPCOMING</span>}
+          </div>
           <p className="text-xs text-gray-500">
-            {match.stage} · {format(new Date(match.kickoff_utc), "MMM d, HH:mm")} UTC
+            {match.stage} · {format(kickoff, "EEE, MMM d · HH:mm")}
           </p>
         </div>
+      </div>
 
-        <div className="flex items-center gap-2">
+      {/* Score inputs */}
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr_auto] gap-2 items-end">
+        <div>
+          <label className="text-[10px] text-gray-500 uppercase tracking-wider">{match.home_team} Goals</label>
           <input
             type="number"
             min="0"
             value={home}
             onChange={(e) => setHome(e.target.value)}
-            className="w-12 text-center border border-white/20 rounded py-1 bg-white/10 text-white"
-            placeholder="H"
+            className="w-full text-center border border-white/20 rounded-lg py-2 bg-white/10 text-white font-bold text-lg"
+            placeholder="0"
           />
-          <span>-</span>
+        </div>
+        <span className="text-gray-500 font-bold text-center pb-2 hidden sm:block">—</span>
+        <div>
+          <label className="text-[10px] text-gray-500 uppercase tracking-wider">{match.away_team} Goals</label>
           <input
             type="number"
             min="0"
             value={away}
             onChange={(e) => setAway(e.target.value)}
-            className="w-12 text-center border border-white/20 rounded py-1 bg-white/10 text-white"
-            placeholder="A"
+            className="w-full text-center border border-white/20 rounded-lg py-2 bg-white/10 text-white font-bold text-lg"
+            placeholder="0"
           />
-          <button
-            onClick={() => onSave(match.id, home, away, potm, scorers)}
-            disabled={saving || !home || !away}
-            className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg disabled:opacity-50 hover:bg-green-700 transition"
-          >
-            {saving ? "..." : match.home_score !== null ? "Update" : "Save"}
-          </button>
         </div>
+        <button
+          onClick={() => onSave(match.id, home, away, potm, scorers)}
+          disabled={saving || !home || !away}
+          className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg disabled:opacity-50 hover:bg-green-700 transition font-semibold"
+        >
+          {saving ? "Saving..." : isCompleted ? "Update & Recalculate" : "Save & Calculate Points"}
+        </button>
       </div>
 
       {/* POTM and Scorers */}
-      <div className="flex flex-col sm:flex-row gap-2 pt-1 border-t border-white/5">
-        <input
-          type="text"
-          value={potm}
-          onChange={(e) => setPotm(e.target.value)}
-          className="flex-1 border border-white/20 rounded px-2 py-1 bg-white/10 text-white text-xs"
-          placeholder="Player of the Match (20 pts)"
-        />
-        <input
-          type="text"
-          value={scorers}
-          onChange={(e) => setScorers(e.target.value)}
-          className="flex-1 border border-white/20 rounded px-2 py-1 bg-white/10 text-white text-xs"
-          placeholder="Scorers (comma-separated, 15 pts each)"
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-white/5">
+        <div>
+          <label className="text-[10px] text-gray-500 uppercase tracking-wider">Player of the Match (20 pts)</label>
+          <input
+            type="text"
+            value={potm}
+            onChange={(e) => setPotm(e.target.value)}
+            className="w-full border border-white/20 rounded-lg px-3 py-2 bg-white/10 text-white text-sm"
+            placeholder="e.g. Mbappé"
+          />
+        </div>
+        <div>
+          <label className="text-[10px] text-gray-500 uppercase tracking-wider">Goal Scorers — comma separated (15 pts each)</label>
+          <input
+            type="text"
+            value={scorers}
+            onChange={(e) => setScorers(e.target.value)}
+            className="w-full border border-white/20 rounded-lg px-3 py-2 bg-white/10 text-white text-sm"
+            placeholder="e.g. Mbappé, Messi, Ronaldo"
+          />
+        </div>
       </div>
     </div>
   );
