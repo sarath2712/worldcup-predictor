@@ -355,6 +355,18 @@ export default function Home() {
         <span className="text-sm font-semibold">Join Group</span>
       </a>
 
+      {/* Floating Contact for Help Button */}
+      <Link
+        href="/help"
+        className="fixed bottom-6 left-6 z-50 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white pl-4 pr-5 py-3 rounded-full shadow-lg shadow-blue-900/30 transition-all hover:scale-105"
+        title="Contact for Help"
+      >
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+        </svg>
+        <span className="text-sm font-semibold">Help</span>
+      </Link>
+
       {/* Login Modal */}
       <LoginModal open={showLogin} onClose={() => setShowLogin(false)} onSuccess={handleLoginSuccess} />
     </div>

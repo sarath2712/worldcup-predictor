@@ -38,6 +38,19 @@ type TournamentResults = {
   actual_best_goalkeeper: string;
 };
 
+type SupportQuery = {
+  id: string;
+  user_id: string;
+  user_email: string;
+  user_name: string | null;
+  subject: string;
+  message: string;
+  status: string;
+  admin_response: string | null;
+  responded_at: string | null;
+  created_at: string;
+};
+
 const categoryLabels: Record<string, string> = {
   mens: "Men's Football",
   womens: "Women's Football",
@@ -51,7 +64,7 @@ export default function AdminRegistrationsPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [activeTab, setActiveTab] = useState<"match-results" | "registrations" | "predictions">("match-results");
+  const [activeTab, setActiveTab] = useState<"match-results" | "registrations" | "predictions" | "support">("match-results");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [matchFilter, setMatchFilter] = useState<"pending" | "completed" | "all">("pending");
   const [saving, setSaving] = useState<number | null>(null);
@@ -63,6 +76,9 @@ export default function AdminRegistrationsPage() {
     actual_best_goalkeeper: "",
   });
   const [savingTournament, setSavingTournament] = useState(false);
+  const [supportQueries, setSupportQueries] = useState<SupportQuery[]>([]);
+  const [respondingTo, setRespondingTo] = useState<string | null>(null);
+  const [responseText, setResponseText] = useState("");
   const supabase = createClient();
 
   useEffect(() => {
@@ -128,6 +144,17 @@ export default function AdminRegistrationsPage() {
         });
       }
 
+      // Load support queries
+      try {
+        const { data: sq } = await supabase
+          .from("support_queries")
+          .select("*")
+          .order("created_at", { ascending: false });
+        if (sq) setSupportQueries(sq);
+      } catch {
+        // table may not exist yet
+      }
+
       setLoading(false);
     }
     load();
@@ -181,6 +208,38 @@ export default function AdminRegistrationsPage() {
     await supabase.rpc("calculate_tournament_points");
 
     setSavingTournament(false);
+  };
+
+  const respondToQuery = async (queryId: string) => {
+    if (!responseText.trim()) return;
+
+    await supabase
+      .from("support_queries")
+      .update({
+        admin_response: responseText,
+        status: "responded",
+        responded_at: new Date().toISOString(),
+      })
+      .eq("id", queryId);
+
+    setSupportQueries((prev) =>
+      prev.map((q) =>
+        q.id === queryId ? { ...q, admin_response: responseText, status: "responded", responded_at: new Date().toISOString() } : q
+      )
+    );
+    setRespondingTo(null);
+    setResponseText("");
+  };
+
+  const closeQuery = async (queryId: string) => {
+    await supabase
+      .from("support_queries")
+      .update({ status: "closed" })
+      .eq("id", queryId);
+
+    setSupportQueries((prev) =>
+      prev.map((q) => (q.id === queryId ? { ...q, status: "closed" } : q))
+    );
   };
 
   const filteredRegistrations =
@@ -271,6 +330,14 @@ export default function AdminRegistrationsPage() {
           }`}
         >
           Predictions ({predictions.length})
+        </button>
+        <button
+          onClick={() => setActiveTab("support")}
+          className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
+            activeTab === "support" ? "bg-accent text-black" : "bg-white/5 text-gray-400 hover:bg-white/10"
+          }`}
+        >
+          Support ({supportQueries.filter(q => q.status === "open").length})
         </button>
       </div>
 
@@ -490,6 +557,81 @@ export default function AdminRegistrationsPage() {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {/* ===== SUPPORT QUERIES TAB ===== */}
+      {activeTab === "support" && (
+        <div className="space-y-3">
+          {supportQueries.length === 0 && (
+            <p className="text-center text-gray-500 py-8">No support queries yet.</p>
+          )}
+          {supportQueries.map((q) => (
+            <div key={q.id} className={`rounded-xl border p-4 ${q.status === "closed" ? "border-gray-700 bg-white/[0.02]" : q.status === "responded" ? "border-green-500/20 bg-green-500/5" : "border-amber-500/20 bg-amber-500/5"}`}>
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <h3 className="font-medium">{q.subject}</h3>
+                  <p className="text-xs text-gray-500">{q.user_name || q.user_email} · {new Date(q.created_at).toLocaleDateString()}</p>
+                </div>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${q.status === "open" ? "bg-amber-500/20 text-amber-400" : q.status === "responded" ? "bg-green-500/20 text-green-400" : "bg-gray-500/20 text-gray-400"}`}>
+                  {q.status.toUpperCase()}
+                </span>
+              </div>
+              <p className="text-sm text-gray-300 mb-3">{q.message}</p>
+
+              {q.admin_response && (
+                <div className="mb-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <p className="text-[11px] text-green-500 font-semibold mb-1">YOUR RESPONSE</p>
+                  <p className="text-sm text-gray-300">{q.admin_response}</p>
+                </div>
+              )}
+
+              {q.status !== "closed" && (
+                <div className="flex gap-2">
+                  {respondingTo === q.id ? (
+                    <div className="flex-1 space-y-2">
+                      <textarea
+                        value={responseText}
+                        onChange={(e) => setResponseText(e.target.value)}
+                        rows={2}
+                        className="w-full px-3 py-2 border border-white/10 rounded-lg bg-white/5 text-white text-sm resize-none"
+                        placeholder="Type your response..."
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => respondToQuery(q.id)}
+                          className="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition"
+                        >
+                          Send Response
+                        </button>
+                        <button
+                          onClick={() => { setRespondingTo(null); setResponseText(""); }}
+                          className="px-3 py-1.5 bg-white/10 text-gray-400 text-xs rounded-lg hover:bg-white/20 transition"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => { setRespondingTo(q.id); setResponseText(""); }}
+                        className="px-3 py-1.5 bg-blue-600/20 text-blue-400 text-xs rounded-lg hover:bg-blue-600/30 transition"
+                      >
+                        Respond
+                      </button>
+                      <button
+                        onClick={() => closeQuery(q.id)}
+                        className="px-3 py-1.5 bg-white/10 text-gray-400 text-xs rounded-lg hover:bg-white/20 transition"
+                      >
+                        Close
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>
