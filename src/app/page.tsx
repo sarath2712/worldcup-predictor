@@ -257,7 +257,7 @@ export default function Home() {
       {/* Main content area with players and tiles */}
       <div className="relative w-full max-w-6xl px-4 flex items-center justify-center">
         {/* Ronaldo - left */}
-        <div className="absolute left-0 bottom-0 hidden md:block w-[280px] lg:w-[360px] xl:w-[420px] pointer-events-none">
+        <div className="absolute -left-16 lg:-left-20 xl:-left-24 bottom-0 hidden md:block w-[240px] lg:w-[300px] xl:w-[360px] pointer-events-none">
           <Image
             src="/players/ronaldo-landing.png"
             alt="Ronaldo"
@@ -269,7 +269,7 @@ export default function Home() {
         </div>
 
         {/* Messi - right */}
-        <div className="absolute right-0 bottom-0 hidden md:block w-[280px] lg:w-[360px] xl:w-[420px] pointer-events-none">
+        <div className="absolute -right-16 lg:-right-20 xl:-right-24 bottom-0 hidden md:block w-[240px] lg:w-[300px] xl:w-[360px] pointer-events-none">
           <Image
             src="/players/messi-landing.png"
             alt="Messi"
