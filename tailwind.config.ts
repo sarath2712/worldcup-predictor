@@ -9,6 +9,15 @@ const config: Config = {
         primary: "#8B1538",
         accent: "#D4AF37",
       },
+      animation: {
+        "bounce-slow": "bounce-slow 2s infinite",
+      },
+      keyframes: {
+        "bounce-slow": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-6px)" },
+        },
+      },
     },
   },
   plugins: [],
