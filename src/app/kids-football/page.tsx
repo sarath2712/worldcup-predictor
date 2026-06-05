@@ -25,7 +25,7 @@ export default function KidsFootballPage() {
           <h3 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-1.5"><svg className="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Common Rules</h3>
           <ul className="text-gray-400 text-sm space-y-1.5">
             <li>• Registration closes on <strong className="text-white">Wednesday, 10th June</strong>.</li>
-            <li>• Turf football shoes or normal shoes are allowed. <strong className="text-red-400">Please do not use spiked shoes.</strong></li>
+            <li>• Turf football shoes or normal shoes are allowed. <strong className="text-red-400">Please do not use Shoes with Studs or Spikes.</strong></li>
             <li>• Once teams are decided, everyone is kindly requested to bring their own team colours as mentioned by the committee.</li>
             <li>• Please play in a friendly spirit and at medium to low intensity.</li>
           </ul>
