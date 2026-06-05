@@ -91,9 +91,14 @@ export default function AdminRegistrationsPage() {
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">
-      <Link href="/" className="text-sm text-gray-400 hover:text-white transition mb-6 inline-block">
-        &larr; Back to Home
-      </Link>
+      <div className="flex gap-4 mb-6">
+        <Link href="/admin" className="text-sm text-gray-400 hover:text-white transition">
+          &larr; Admin Console
+        </Link>
+        <Link href="/" className="text-sm text-gray-400 hover:text-white transition">
+          &larr; Home
+        </Link>
+      </div>
 
       <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
         <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
