@@ -11,10 +11,14 @@ CREATE TABLE event_registrations (
   phone text NOT NULL,
   flat_number text NOT NULL,
   favourite_team text,
+  age integer,
   category text NOT NULL CHECK (category IN ('mens', 'womens', 'kids', 'playstation')),
   created_at timestamptz DEFAULT now(),
   UNIQUE(email, category)
 );
+
+-- To add age column to an existing table without dropping it:
+-- ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS age integer;
 
 -- Enable RLS
 ALTER TABLE event_registrations ENABLE ROW LEVEL SECURITY;

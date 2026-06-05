@@ -13,6 +13,7 @@ type Registration = {
   phone: string;
   flat_number: string;
   favourite_team: string;
+  age: number | null;
   category: string;
   created_at: string;
 };
@@ -406,6 +407,7 @@ export default function AdminRegistrationsPage() {
                     <th className="text-left px-4 py-3 font-medium">Phone</th>
                     <th className="text-left px-4 py-3 font-medium">Flat</th>
                     <th className="text-left px-4 py-3 font-medium">Team/Skill</th>
+                    <th className="text-left px-4 py-3 font-medium">Age</th>
                     <th className="text-left px-4 py-3 font-medium">Category</th>
                     <th className="text-left px-4 py-3 font-medium">Date</th>
                   </tr>
@@ -419,6 +421,7 @@ export default function AdminRegistrationsPage() {
                       <td className="px-4 py-2.5 text-gray-400">{reg.phone}</td>
                       <td className="px-4 py-2.5 text-gray-400">{reg.flat_number}</td>
                       <td className="px-4 py-2.5 text-gray-400">{reg.favourite_team || "-"}</td>
+                      <td className="px-4 py-2.5 text-gray-400">{reg.age || "-"}</td>
                       <td className="px-4 py-2.5">
                         <span className="px-2 py-0.5 rounded-full text-xs bg-white/10 text-gray-300">
                           {categoryLabels[reg.category] || reg.category}
@@ -431,7 +434,7 @@ export default function AdminRegistrationsPage() {
                   ))}
                   {filteredRegistrations.length === 0 && (
                     <tr>
-                      <td colSpan={8} className="text-center py-8 text-gray-500">
+                      <td colSpan={9} className="text-center py-8 text-gray-500">
                         No registrations found
                       </td>
                     </tr>

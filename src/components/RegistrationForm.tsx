@@ -4,7 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 interface RegistrationFormProps {
-  category: "mens" | "womens" | "kids";
+  category: "mens" | "womens" | "kids" | "playstation";
   title: string;
 }
 
@@ -14,6 +14,7 @@ export function RegistrationForm({ category, title }: RegistrationFormProps) {
   const [phone, setPhone] = useState("");
   const [flatNumber, setFlatNumber] = useState("");
   const [favouriteTeam, setFavouriteTeam] = useState("");
+  const [age, setAge] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -33,6 +34,7 @@ export function RegistrationForm({ category, title }: RegistrationFormProps) {
           phone,
           flat_number: flatNumber,
           favourite_team: favouriteTeam || null,
+          ...(category === "kids" && age ? { age: parseInt(age) } : {}),
           category,
         });
 
@@ -113,6 +115,22 @@ export function RegistrationForm({ category, title }: RegistrationFormProps) {
           placeholder="e.g. A-1234"
         />
       </div>
+
+      {category === "kids" && (
+        <div>
+          <label className="block text-sm font-medium mb-1 text-gray-300">Child&apos;s Age *</label>
+          <input
+            type="number"
+            min="1"
+            max="17"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
+            className="w-full px-4 py-2.5 border border-white/10 rounded-lg bg-white/5 focus:ring-2 focus:ring-primary focus:border-transparent text-white"
+            required
+            placeholder="e.g. 10"
+          />
+        </div>
+      )}
 
       <div>
         <label className="block text-sm font-medium mb-1 text-gray-300">Favourite Team <span className="text-gray-500">(Optional)</span></label>
