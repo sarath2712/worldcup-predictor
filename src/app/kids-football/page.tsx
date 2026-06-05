@@ -18,11 +18,11 @@ export default function KidsFootballPage() {
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 space-y-4">
         <h2 className="text-lg font-bold text-accent flex items-center gap-2"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Event Details</h2>
         <ul className="text-gray-300 text-sm space-y-2 leading-relaxed">
-          <li className="flex gap-2"><span className="text-accent">⚽</span> Matches will be played with <strong className="text-white">5–7 minute halves</strong>.</li>
-          <li className="flex gap-2"><span className="text-accent">👥</span> Please note that we cannot guarantee placement in your preferred team, as teams will be formed based on the registrations received.</li>
+          <li className="flex gap-2"><svg className="w-4 h-4 text-accent shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Matches will be played with <strong className="text-white">5–7 minute halves</strong>.</li>
+          <li className="flex gap-2"><svg className="w-4 h-4 text-accent shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Please note that we cannot guarantee placement in your preferred team, as teams will be formed based on the registrations received.</span></li>
         </ul>
         <div className="border-t border-white/10 pt-4">
-          <h3 className="text-sm font-semibold text-gray-300 mb-2">📌 Common Rules</h3>
+          <h3 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-1.5"><svg className="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Common Rules</h3>
           <ul className="text-gray-400 text-sm space-y-1.5">
             <li>• Registration closes on <strong className="text-white">Wednesday, 10th June</strong>.</li>
             <li>• Turf football shoes or normal shoes are allowed. <strong className="text-red-400">Please do not use spiked shoes.</strong></li>

@@ -1,14 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { fixturesByDay, groups, knockoutRounds } from "./data";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { format } from "date-fns";
+import { groups, knockoutRounds } from "./data";
 
 type Tab = "fixtures" | "tables";
+type MatchRow = { id: number; stage: string; home_team: string; away_team: string; kickoff_utc: string; venue: string | null };
 
 export default function FixturesPage() {
   const [tab, setTab] = useState<Tab>("fixtures");
-  const days = Object.keys(fixturesByDay);
+  const [matches, setMatches] = useState<MatchRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function loadMatches() {
+      const { data } = await supabase
+        .from("matches")
+        .select("id, stage, home_team, away_team, kickoff_utc, venue")
+        .order("kickoff_utc", { ascending: true });
+      setMatches(data || []);
+      setLoading(false);
+    }
+    loadMatches();
+  }, []);
+
+  // Group matches by date (IST - browser local time)
+  const grouped = matches.reduce((acc, match) => {
+    const dateKey = format(new Date(match.kickoff_utc), "EEE, MMM d");
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push(match);
+    return acc;
+  }, {} as Record<string, MatchRow[]>);
 
   return (
     <div className="max-w-5xl mx-auto py-8">
@@ -44,22 +69,25 @@ export default function FixturesPage() {
       </div>
 
       {tab === "fixtures" ? (
+        loading ? (
+          <div className="text-center py-16 text-gray-400">Loading fixtures...</div>
+        ) : (
         <div className="space-y-6">
-          {days.map((day) => (
+          {Object.entries(grouped).map(([day, dayMatches]) => (
             <div key={day} className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
               <div className="px-6 py-3 bg-accent/10 border-b border-white/10">
                 <h2 className="text-lg font-bold text-accent">{day}</h2>
-                <p className="text-xs text-gray-500">{fixturesByDay[day].length} matches</p>
+                <p className="text-xs text-gray-500">{dayMatches.length} matches</p>
               </div>
               <div className="divide-y divide-white/5">
-                {fixturesByDay[day].map((match, idx) => (
-                  <div key={idx} className="px-4 sm:px-6 py-3 flex items-center gap-2 sm:gap-4 text-sm">
-                    <span className="text-gray-500 w-14 shrink-0 text-center">{match.time} <span className="text-[9px] text-gray-600">IST</span></span>
-                    <span className="text-xs text-gray-600 w-8 shrink-0">Gp {match.group}</span>
-                    <span className="flex-1 text-right font-medium truncate">{match.team1}</span>
+                {dayMatches.map((match) => (
+                  <div key={match.id} className="px-4 sm:px-6 py-3 flex items-center gap-2 sm:gap-4 text-sm">
+                    <span className="text-gray-500 w-14 shrink-0 text-center">{format(new Date(match.kickoff_utc), "HH:mm")}</span>
+                    <span className="text-xs text-gray-600 w-12 shrink-0">{match.stage}</span>
+                    <span className="flex-1 text-right font-medium truncate">{match.home_team}</span>
                     <span className="text-accent font-bold px-1">vs</span>
-                    <span className="flex-1 font-medium truncate">{match.team2}</span>
-                    <span className="text-gray-500 text-xs w-28 shrink-0 text-right hidden sm:block">{match.venue}</span>
+                    <span className="flex-1 font-medium truncate">{match.away_team}</span>
+                    <span className="text-gray-500 text-xs w-28 shrink-0 text-right hidden sm:block">{match.venue || ""}</span>
                   </div>
                 ))}
               </div>
@@ -81,6 +109,7 @@ export default function FixturesPage() {
             ))}
           </div>
         </div>
+        )
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {groups.map((group) => (
