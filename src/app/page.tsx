@@ -354,22 +354,20 @@ export default function Home() {
                 </span>
               )}
 
-              {/* Counter badge */}
-              {tile.countKey && (tileCounts[tile.countKey] ?? 0) > 0 && (
-                <div className="absolute bottom-2 right-2 sm:bottom-auto sm:top-14 sm:right-4 flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-white/20">
-                  <span className="text-[10px] sm:text-xs font-bold text-white">{tileCounts[tile.countKey]}</span>
-                  <span className="text-[8px] sm:text-[10px] font-medium text-white/60">{tile.countKey === "prediction" ? "playing" : "joined"}</span>
-                </div>
-              )}
-
               {/* Title */}
               <span className="text-sm sm:text-lg font-bold text-white leading-tight">
                 {tile.title}
               </span>
-              {/* Subtitle */}
-              <span className="text-[8px] sm:text-xs font-semibold text-white/50 uppercase tracking-[0.15em] mt-0.5">
-                {tile.subtitle}
-              </span>
+              {/* Subtitle + Counter */}
+              <div className="flex items-center gap-2 mt-0.5 w-full">
+                <span className="text-[8px] sm:text-xs font-semibold text-white/50 uppercase tracking-[0.15em]">
+                  {tile.subtitle}
+                </span>
+                {tile.countKey && (tileCounts[tile.countKey] ?? 0) > 0 && (
+                  <span className="ml-auto text-[9px] sm:text-[11px] font-bold text-white/80 bg-black/30 backdrop-blur-sm px-1.5 py-0.5 rounded-full border border-white/20 whitespace-nowrap">
+                    {tileCounts[tile.countKey]} {tile.countKey === "prediction" ? "playing" : "joined"}
+                  </span>
+                )}
               </div>
             </Link>
           ))}
