@@ -199,9 +199,14 @@ export default function Home() {
           counts[r.category] = (counts[r.category] || 0) + 1;
         });
       }
-      // Prediction: unique users who have made any prediction
-      const { count: predCount } = await supabase.from("predictions").select("user_id", { count: "exact", head: true });
-      counts.prediction = predCount || 0;
+      // Prediction: count from leaderboard (public view) for users who have predicted
+      const { data: lb } = await supabase.from("leaderboard").select("user_id");
+      counts.prediction = lb?.length || 0;
+      // Fallback: if leaderboard is empty, try tournament_predictions count
+      if (!counts.prediction) {
+        const { count: tpCount } = await supabase.from("tournament_predictions").select("user_id", { count: "exact", head: true });
+        counts.prediction = tpCount || 0;
+      }
       setTileCounts(counts);
     }
     loadCounts();
