@@ -354,9 +354,9 @@ export default function Home() {
                 </span>
               )}
 
-              {/* Counter badge - bottom right */}
+              {/* Counter badge */}
               {tile.countKey && (tileCounts[tile.countKey] ?? 0) > 0 && (
-                <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-white/20">
+                <div className="absolute bottom-2 right-2 sm:bottom-auto sm:top-14 sm:right-4 flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-white/20">
                   <span className="text-[10px] sm:text-xs font-bold text-white">{tileCounts[tile.countKey]}</span>
                   <span className="text-[8px] sm:text-[10px] font-medium text-white/60">{tile.countKey === "prediction" ? "playing" : "joined"}</span>
                 </div>
