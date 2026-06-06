@@ -354,20 +354,22 @@ export default function Home() {
                 </span>
               )}
 
+              {/* Counter badge - bottom right */}
+              {tile.countKey && (tileCounts[tile.countKey] ?? 0) > 0 && (
+                <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-white/20">
+                  <span className="text-[10px] sm:text-xs font-bold text-white">{tileCounts[tile.countKey]}</span>
+                  <span className="text-[8px] sm:text-[10px] font-medium text-white/60">{tile.countKey === "prediction" ? "playing" : "joined"}</span>
+                </div>
+              )}
+
               {/* Title */}
               <span className="text-sm sm:text-lg font-bold text-white leading-tight">
                 {tile.title}
               </span>
-              {/* Subtitle + Counter */}
-              <div className="flex items-center justify-between w-full mt-0.5">
-                <span className="text-[8px] sm:text-xs font-semibold text-white/50 uppercase tracking-[0.15em]">
-                  {tile.subtitle}
-                </span>
-                {tile.countKey && (tileCounts[tile.countKey] ?? 0) > 0 && (
-                  <span className="text-[8px] sm:text-[10px] font-bold text-white/70 bg-white/15 px-1.5 py-0.5 rounded-full leading-none">
-                    {tileCounts[tile.countKey]} {tile.countKey === "prediction" ? "playing" : "joined"}
-                  </span>
-                )}
+              {/* Subtitle */}
+              <span className="text-[8px] sm:text-xs font-semibold text-white/50 uppercase tracking-[0.15em] mt-0.5">
+                {tile.subtitle}
+              </span>
               </div>
             </Link>
           ))}
