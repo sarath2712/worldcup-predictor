@@ -31,8 +31,8 @@ export default function LeaderboardPage() {
       {entries.length === 0 ? (
         <p className="text-gray-400">No predictions scored yet. Check back after the first match!</p>
       ) : (
-        <div className="bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm overflow-hidden">
-          <table className="w-full">
+        <div className="bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm overflow-x-auto">
+          <table className="w-full min-w-[500px]">
             <thead className="bg-white/5">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>

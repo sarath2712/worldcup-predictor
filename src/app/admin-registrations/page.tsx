@@ -21,13 +21,13 @@ type Registration = {
 type Prediction = {
   id: number;
   user_id: string;
-  winner: string;
-  runner_up: string;
-  top_scorer: string;
-  best_player: string;
-  best_goalkeeper: string;
+  predicted_winner: string;
+  predicted_finalist: string;
+  predicted_top_scorer: string;
+  predicted_best_player: string;
+  predicted_best_goalkeeper: string;
   created_at: string;
-  profiles?: { full_name: string; email: string };
+  profiles?: { username: string; };
 };
 
 type TournamentResults = {
@@ -36,6 +36,18 @@ type TournamentResults = {
   actual_top_scorer: string;
   actual_best_player: string;
   actual_best_goalkeeper: string;
+};
+
+type MatchPrediction = {
+  id: number;
+  user_id: string;
+  match_id: number;
+  predicted_home: number;
+  predicted_away: number;
+  points: number | null;
+  created_at: string;
+  profiles?: { username: string };
+  matches?: { home_team: string; away_team: string; kickoff_utc: string };
 };
 
 type SupportQuery = {
@@ -61,6 +73,7 @@ const categoryLabels: Record<string, string> = {
 export default function AdminRegistrationsPage() {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [matchPredictions, setMatchPredictions] = useState<MatchPrediction[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -108,15 +121,26 @@ export default function AdminRegistrationsPage() {
 
       if (regs) setRegistrations(regs);
 
-      // Load predictions
+      // Load tournament predictions
       try {
         const { data: preds } = await supabase
-          .from("predictions")
-          .select("*, profiles(full_name, email)")
+          .from("tournament_predictions")
+          .select("*, profiles(username)")
           .order("created_at", { ascending: false });
         if (preds) setPredictions(preds);
       } catch {
-        // predictions table may not exist
+        // table may not exist
+      }
+
+      // Load match predictions
+      try {
+        const { data: mpreds } = await supabase
+          .from("predictions")
+          .select("*, profiles(username), matches(home_team, away_team, kickoff_utc)")
+          .order("created_at", { ascending: false });
+        if (mpreds) setMatchPredictions(mpreds);
+      } catch {
+        // table may not exist
       }
 
       // Load matches
@@ -300,8 +324,8 @@ export default function AdminRegistrationsPage() {
           <p className="text-xs text-gray-400">Scored Matches</p>
         </div>
         <div className="rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-800/20 border border-white/10 p-4">
-          <p className="text-2xl font-bold">{predictions.length}</p>
-          <p className="text-xs text-gray-400">Predictions</p>
+          <p className="text-2xl font-bold">{matchPredictions.length + predictions.length}</p>
+          <p className="text-xs text-gray-400">Total Predictions</p>
         </div>
       </div>
 
@@ -515,47 +539,125 @@ export default function AdminRegistrationsPage() {
 
       {/* ===== PREDICTIONS TAB ===== */}
       {activeTab === "predictions" && (
-        <div className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-white/10 text-gray-400 text-xs">
-                  <th className="text-left px-4 py-3 font-medium">#</th>
-                  <th className="text-left px-4 py-3 font-medium">User</th>
-                  <th className="text-left px-4 py-3 font-medium">Winner</th>
-                  <th className="text-left px-4 py-3 font-medium">Runner-up</th>
-                  <th className="text-left px-4 py-3 font-medium">Top Scorer</th>
-                  <th className="text-left px-4 py-3 font-medium">Best Player</th>
-                  <th className="text-left px-4 py-3 font-medium">Best GK</th>
-                  <th className="text-left px-4 py-3 font-medium">Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {predictions.map((pred, idx) => (
-                  <tr key={pred.id} className="border-b border-white/5 hover:bg-white/5">
-                    <td className="px-4 py-2.5 text-gray-500">{idx + 1}</td>
-                    <td className="px-4 py-2.5 font-medium">
-                      {pred.profiles?.full_name || pred.profiles?.email || pred.user_id?.slice(0, 8)}
-                    </td>
-                    <td className="px-4 py-2.5">{pred.winner || "-"}</td>
-                    <td className="px-4 py-2.5 text-gray-400">{pred.runner_up || "-"}</td>
-                    <td className="px-4 py-2.5 text-gray-400">{pred.top_scorer || "-"}</td>
-                    <td className="px-4 py-2.5 text-gray-400">{pred.best_player || "-"}</td>
-                    <td className="px-4 py-2.5 text-gray-400">{pred.best_goalkeeper || "-"}</td>
-                    <td className="px-4 py-2.5 text-gray-500 text-xs">
-                      {new Date(pred.created_at).toLocaleDateString()}
-                    </td>
+        <div className="space-y-6">
+          {/* Prediction Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="rounded-xl bg-gradient-to-br from-indigo-600/20 to-indigo-800/20 border border-white/10 p-4">
+              <p className="text-2xl font-bold">{new Set([...matchPredictions.map(p => p.user_id), ...predictions.map(p => p.user_id)]).size}</p>
+              <p className="text-xs text-gray-400">Users Participating</p>
+            </div>
+            <div className="rounded-xl bg-gradient-to-br from-cyan-600/20 to-cyan-800/20 border border-white/10 p-4">
+              <p className="text-2xl font-bold">{matchPredictions.length}</p>
+              <p className="text-xs text-gray-400">Match Predictions</p>
+            </div>
+            <div className="rounded-xl bg-gradient-to-br from-pink-600/20 to-pink-800/20 border border-white/10 p-4">
+              <p className="text-2xl font-bold">{predictions.length}</p>
+              <p className="text-xs text-gray-400">Tournament Predictions</p>
+            </div>
+            <div className="rounded-xl bg-gradient-to-br from-emerald-600/20 to-emerald-800/20 border border-white/10 p-4">
+              <p className="text-2xl font-bold">{new Set(matchPredictions.map(p => p.user_id)).size}</p>
+              <p className="text-xs text-gray-400">Match Predictors</p>
+            </div>
+          </div>
+
+          {/* Per-user summary */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
+            <div className="px-4 py-3 border-b border-white/10">
+              <h3 className="text-sm font-semibold text-gray-300">Per-User Prediction Summary</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10 text-gray-400 text-xs">
+                    <th className="text-left px-4 py-3 font-medium">#</th>
+                    <th className="text-left px-4 py-3 font-medium">User</th>
+                    <th className="text-center px-4 py-3 font-medium">Match Predictions</th>
+                    <th className="text-center px-4 py-3 font-medium">Tournament</th>
+                    <th className="text-center px-4 py-3 font-medium">Total Points</th>
                   </tr>
-                ))}
-                {predictions.length === 0 && (
-                  <tr>
-                    <td colSpan={8} className="text-center py-8 text-gray-500">
-                      No predictions found
-                    </td>
+                </thead>
+                <tbody>
+                  {(() => {
+                    const userMap = new Map<string, { username: string; matchCount: number; hasTournament: boolean; points: number }>();
+                    matchPredictions.forEach((mp) => {
+                      const uid = mp.user_id;
+                      const existing = userMap.get(uid) || { username: mp.profiles?.username || uid.slice(0, 8), matchCount: 0, hasTournament: false, points: 0 };
+                      existing.matchCount++;
+                      existing.points += mp.points || 0;
+                      userMap.set(uid, existing);
+                    });
+                    predictions.forEach((tp) => {
+                      const uid = tp.user_id;
+                      const existing = userMap.get(uid) || { username: tp.profiles?.username || uid.slice(0, 8), matchCount: 0, hasTournament: false, points: 0 };
+                      existing.hasTournament = true;
+                      if (tp.profiles?.username) existing.username = tp.profiles.username;
+                      userMap.set(uid, existing);
+                    });
+                    const users = Array.from(userMap.entries()).sort((a, b) => b[1].matchCount - a[1].matchCount);
+                    if (users.length === 0) return (
+                      <tr><td colSpan={5} className="text-center py-8 text-gray-500">No predictions yet</td></tr>
+                    );
+                    return users.map(([uid, u], idx) => (
+                      <tr key={uid} className="border-b border-white/5 hover:bg-white/5">
+                        <td className="px-4 py-2.5 text-gray-500">{idx + 1}</td>
+                        <td className="px-4 py-2.5 font-medium">{u.username}</td>
+                        <td className="px-4 py-2.5 text-center">{u.matchCount}</td>
+                        <td className="px-4 py-2.5 text-center">{u.hasTournament ? <span className="text-green-400">✓</span> : <span className="text-gray-600">—</span>}</td>
+                        <td className="px-4 py-2.5 text-center font-semibold text-accent">{u.points}</td>
+                      </tr>
+                    ));
+                  })()}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Tournament Predictions Table */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
+            <div className="px-4 py-3 border-b border-white/10">
+              <h3 className="text-sm font-semibold text-gray-300">Tournament Predictions ({predictions.length})</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10 text-gray-400 text-xs">
+                    <th className="text-left px-4 py-3 font-medium">#</th>
+                    <th className="text-left px-4 py-3 font-medium">User</th>
+                    <th className="text-left px-4 py-3 font-medium">Winner</th>
+                    <th className="text-left px-4 py-3 font-medium">Runner-up</th>
+                    <th className="text-left px-4 py-3 font-medium">Top Scorer</th>
+                    <th className="text-left px-4 py-3 font-medium">Best Player</th>
+                    <th className="text-left px-4 py-3 font-medium">Best GK</th>
+                    <th className="text-left px-4 py-3 font-medium">Date</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {predictions.map((pred, idx) => (
+                    <tr key={pred.id} className="border-b border-white/5 hover:bg-white/5">
+                      <td className="px-4 py-2.5 text-gray-500">{idx + 1}</td>
+                      <td className="px-4 py-2.5 font-medium">
+                        {pred.profiles?.username || pred.user_id?.slice(0, 8)}
+                      </td>
+                      <td className="px-4 py-2.5">{pred.predicted_winner || "-"}</td>
+                      <td className="px-4 py-2.5 text-gray-400">{pred.predicted_finalist || "-"}</td>
+                      <td className="px-4 py-2.5 text-gray-400">{pred.predicted_top_scorer || "-"}</td>
+                      <td className="px-4 py-2.5 text-gray-400">{pred.predicted_best_player || "-"}</td>
+                      <td className="px-4 py-2.5 text-gray-400">{pred.predicted_best_goalkeeper || "-"}</td>
+                      <td className="px-4 py-2.5 text-gray-500 text-xs">
+                        {new Date(pred.created_at).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                  {predictions.length === 0 && (
+                    <tr>
+                      <td colSpan={8} className="text-center py-8 text-gray-500">
+                        No tournament predictions yet
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
