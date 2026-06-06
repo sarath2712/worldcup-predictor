@@ -69,13 +69,16 @@ function ArrowIcon({ className = "" }: { className?: string }) {
   );
 }
 
-const tiles = [
+type TileCategory = "mens" | "womens" | "kids" | "playstation" | "prediction" | null;
+
+const tiles: { title: string; subtitle: string; href: string; Icon: typeof JerseyIcon; color: string; countKey: TileCategory }[] = [
   {
     title: "Men's Football",
     subtitle: "CLASH OF THE TITANS",
     href: "/mens-football",
     Icon: JerseyIcon,
     color: "from-blue-500 to-blue-700",
+    countKey: "mens",
   },
   {
     title: "Kids Football",
@@ -83,6 +86,7 @@ const tiles = [
     href: "/kids-football",
     Icon: StarIcon,
     color: "from-green-500 to-green-700",
+    countKey: "kids",
   },
   {
     title: "Women's Football",
@@ -90,6 +94,7 @@ const tiles = [
     href: "/womens-football",
     Icon: JerseyIcon,
     color: "from-pink-500 to-purple-600",
+    countKey: "womens",
   },
   {
     title: "World Cup Prediction",
@@ -97,6 +102,7 @@ const tiles = [
     href: "/matches",
     Icon: TrophyIcon,
     color: "from-amber-400 to-amber-600",
+    countKey: "prediction",
   },
   {
     title: "PlayStation World Cup",
@@ -104,6 +110,7 @@ const tiles = [
     href: "/playstation-worldcup",
     Icon: GamepadIcon,
     color: "from-indigo-500 to-purple-700",
+    countKey: "playstation",
   },
   {
     title: "World Cup Fixture",
@@ -111,6 +118,7 @@ const tiles = [
     href: "/fixtures",
     Icon: CalendarIcon,
     color: "from-red-500 to-red-600",
+    countKey: null,
   },
 ];
 
@@ -159,6 +167,7 @@ function Countdown() {
 export default function Home() {
   const [user, setUser] = useState<{ email: string; username: string; isAdmin: boolean } | null>(null);
   const [showLogin, setShowLogin] = useState(false);
+  const [tileCounts, setTileCounts] = useState<Record<string, number>>({});
   const supabase = createClient();
 
   useEffect(() => {
@@ -179,6 +188,23 @@ export default function Home() {
       });
     }
     loadUser();
+
+    // Load tile counts
+    async function loadCounts() {
+      const counts: Record<string, number> = {};
+      // Registration counts by category
+      const { data: regs } = await supabase.from("event_registrations").select("category");
+      if (regs) {
+        regs.forEach((r: { category: string }) => {
+          counts[r.category] = (counts[r.category] || 0) + 1;
+        });
+      }
+      // Prediction: unique users who have made any prediction
+      const { count: predCount } = await supabase.from("predictions").select("user_id", { count: "exact", head: true });
+      counts.prediction = predCount || 0;
+      setTileCounts(counts);
+    }
+    loadCounts();
   }, []);
 
   const handleLogout = async () => {
@@ -332,10 +358,17 @@ export default function Home() {
               <span className="text-sm sm:text-lg font-bold text-white leading-tight">
                 {tile.title}
               </span>
-              {/* Subtitle */}
-              <span className="text-[8px] sm:text-xs font-semibold text-white/50 uppercase tracking-[0.15em] mt-0.5">
-                {tile.subtitle}
-              </span>
+              {/* Subtitle + Counter */}
+              <div className="flex items-center justify-between w-full mt-0.5">
+                <span className="text-[8px] sm:text-xs font-semibold text-white/50 uppercase tracking-[0.15em]">
+                  {tile.subtitle}
+                </span>
+                {tile.countKey && (tileCounts[tile.countKey] ?? 0) > 0 && (
+                  <span className="text-[8px] sm:text-[10px] font-bold text-white/70 bg-white/15 px-1.5 py-0.5 rounded-full leading-none">
+                    {tileCounts[tile.countKey]} {tile.countKey === "prediction" ? "playing" : "joined"}
+                  </span>
+                )}
+              </div>
             </Link>
           ))}
 
