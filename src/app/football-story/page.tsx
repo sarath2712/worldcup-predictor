@@ -127,7 +127,22 @@ export default function FootballStoryPage() {
         </svg>
         WHAT&apos;S YOUR FOOTBALL STORY?
       </h1>
-      <p className="text-gray-400 mb-8">Write your football story in your own handwriting, scan or photograph it, and upload below!</p>
+
+      <div className="text-gray-300 mb-8 space-y-4 text-sm leading-relaxed">
+        <p>
+          Maybe it&apos;s something you saw: a goal that made you leap off the sofa, a final that went to the last kick, a player who made the impossible look easy. Maybe it&apos;s something you lived: the match you watched with your father, the night your colony spilled into the streets, the first time your kid kicked a ball back to you.
+        </p>
+        <p>
+          Or maybe it hasn&apos;t happened yet — the dream. Your country lifting the cup. Being in the stadium when it does. The match you&apos;d give anything to witness.
+        </p>
+        <p>
+          Write it down. Real or remembered or still to come. The moment, the match, the dream. Tell us what football means to you.
+        </p>
+        <p className="font-semibold text-accent">Best entries win.</p>
+        <p className="text-xs text-gray-400 border-t border-white/10 pt-3">
+          <span className="font-semibold text-white">Rules:</span> Handwritten only. Scan and upload the file. Each file must be less than 1 MB.
+        </p>
+      </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 mb-8">
         <form onSubmit={handleSubmit} className="space-y-4">
