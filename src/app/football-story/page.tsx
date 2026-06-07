@@ -200,14 +200,13 @@ export default function FootballStoryPage() {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*,.pdf,.doc,.docx"
                 onChange={handleFileChange}
                 className="w-full px-4 py-2.5 border border-white/10 rounded-lg bg-white/5 text-white file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/20 file:text-primary hover:file:bg-primary/30 file:cursor-pointer"
                 required
               />
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              Max 1 MB. Accepted: Images (JPG, PNG, HEIC), PDF, DOC.
+              Max 1 MB. All image and scanner formats accepted.
             </p>
             {fileError && (
               <p className="text-xs text-red-400 mt-1">{fileError}</p>
