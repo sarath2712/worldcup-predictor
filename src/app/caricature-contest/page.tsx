@@ -140,7 +140,7 @@ export default function CaricatureContestPage() {
           Pull out the big nose, the wild hair, the impossible legs, the trophy held just a little too proudly. Make us laugh. Make us point and say <em>that&apos;s exactly him</em>.
         </p>
         <p>
-          Footballers, fans, legends, your own mad uncle who thinks he&apos;s Messi — anyone from the beautiful game is fair play. Pencil, paint, tablet, napkin. Talent optional. Cheek mandatory.
+          Footballers, fans, legends, your own mad uncle who thinks he&apos;s Messi. Anyone from the beautiful game is fair play. Pencil, paint, napkin. Talent optional. Cheek mandatory.
         </p>
         <p className="font-semibold text-accent">Bring the player. We&apos;ll bring the laughs. Best caricature wins.</p>
         <p className="text-xs text-gray-400 border-t border-white/10 pt-3">
