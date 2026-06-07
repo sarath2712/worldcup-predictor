@@ -415,6 +415,21 @@ export default function Home() {
               )}
             </Link>
           ))}
+
+          {/* Cash Prize Banner - spans full width */}
+          <div className="col-span-2 sm:col-span-4 rounded-lg sm:rounded-xl bg-gradient-to-r from-yellow-500/20 via-amber-500/30 to-yellow-500/20 border border-yellow-400/30 backdrop-blur-md px-3 py-2 flex items-center justify-center gap-2 overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/10 to-transparent animate-shimmer" />
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 shrink-0 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.82 20 12 16.54 7.18 20l1.64-6.91L4 9l5.91-.74L12 2z"/></svg>
+            <div className="text-center">
+              <p className="text-[9px] sm:text-xs font-bold text-yellow-300 whitespace-nowrap">
+                YOUR SKILLS. YOUR PREDICTIONS. REAL CASH.
+              </p>
+              <p className="text-[8px] sm:text-[10px] text-yellow-200/80">
+                PlayStation Tournament &amp; Prediction Contest — winners take home CASH PRIZES!
+              </p>
+            </div>
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 shrink-0 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.82 20 12 16.54 7.18 20l1.64-6.91L4 9l5.91-.74L12 2z"/></svg>
+          </div>
         </div>
         {/* Spacer for floating buttons */}
         <div className="h-12" />
