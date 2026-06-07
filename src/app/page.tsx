@@ -227,22 +227,26 @@ export default function Home() {
     // Load tile counts
     async function loadCounts() {
       const counts: Record<string, number> = {};
-      // Registration counts by category
-      const { data: regs } = await supabase.from("event_registrations").select("category");
-      if (regs) {
-        regs.forEach((r: { category: string }) => {
-          counts[r.category] = (counts[r.category] || 0) + 1;
-        });
+      try {
+        // Registration counts by category
+        const { data: regs } = await supabase.from("event_registrations").select("category");
+        if (regs) {
+          regs.forEach((r: { category: string }) => {
+            counts[r.category] = (counts[r.category] || 0) + 1;
+          });
+        }
+        // Unique users who signed up for predictions (profiles count)
+        const { count: userCount } = await supabase.from("profiles").select("id", { count: "exact", head: true });
+        counts.prediction = userCount || 0;
+        // Caricature entries
+        const { count: caricatureCount } = await supabase.from("caricature_entries").select("id", { count: "exact", head: true });
+        counts.caricature = caricatureCount || 0;
+        // Football stories
+        const { count: storyCount } = await supabase.from("football_stories").select("id", { count: "exact", head: true });
+        counts.story = storyCount || 0;
+      } catch {
+        // Tables may not exist yet — silently ignore
       }
-      // Unique users who signed up for predictions (profiles count)
-      const { count: userCount } = await supabase.from("profiles").select("id", { count: "exact", head: true });
-      counts.prediction = userCount || 0;
-      // Caricature entries
-      const { count: caricatureCount } = await supabase.from("caricature_entries").select("id", { count: "exact", head: true });
-      counts.caricature = caricatureCount || 0;
-      // Football stories
-      const { count: storyCount } = await supabase.from("football_stories").select("id", { count: "exact", head: true });
-      counts.story = storyCount || 0;
       setTileCounts(counts);
     }
     loadCounts();
