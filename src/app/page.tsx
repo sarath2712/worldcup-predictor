@@ -394,13 +394,6 @@ export default function Home() {
                 </span>
               )}
 
-              {/* Cash Prize tag */}
-              {["/playstation-worldcup", "/matches", "/football-quiz", "/football-story"].includes(tile.href) && (
-                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-[30%] px-2 py-0.5 rounded-full bg-green-400/80 border border-green-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-green-400/30">
-                  Cash Prize
-                </span>
-              )}
-
               {/* Title */}
               <span className="text-sm sm:text-lg font-bold text-white leading-tight">
                 {tile.title}
