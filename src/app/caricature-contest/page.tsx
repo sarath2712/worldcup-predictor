@@ -130,11 +130,21 @@ export default function CaricatureContestPage() {
 
       <div className="text-gray-300 mb-8 space-y-4 text-sm leading-relaxed">
         <p>
-          Draw your favourite football star, team, or any football moment — as a caricature! Let your creativity flow. It can be funny, dramatic, or artistic.
+          Every fan has a face that lives in their head.
         </p>
-        <p className="font-semibold text-accent">Open to ALL age groups. Best entries win.</p>
+        <p>
+          The keeper frozen mid-dive. The striker with arms wide, shirt over his head. The manager losing his mind on the touchline. The player you love so much you&apos;ve memorised the way he celebrates.
+        </p>
+        <p className="font-semibold text-white">Now draw them.</p>
+        <p>
+          Pull out the big nose, the wild hair, the impossible legs, the trophy held just a little too proudly. Make us laugh. Make us point and say <em>that&apos;s exactly him</em>.
+        </p>
+        <p>
+          Footballers, fans, legends, your own mad uncle who thinks he&apos;s Messi — anyone from the beautiful game is fair play. Pencil, paint, tablet, napkin. Talent optional. Cheek mandatory.
+        </p>
+        <p className="font-semibold text-accent">Bring the player. We&apos;ll bring the laughs. Best caricature wins.</p>
         <p className="text-xs text-gray-400 border-t border-white/10 pt-3">
-          <span className="font-semibold text-white">Rules:</span> Hand-drawn only. Scan or photograph your drawing and upload below. Each file must be less than 1 MB.
+          <span className="font-semibold text-white">Rules:</span> Open to ALL age groups. Scan or photograph your drawing and upload below. Each file must be less than 1 MB.
         </p>
       </div>
 
