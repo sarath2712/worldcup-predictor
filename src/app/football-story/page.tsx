@@ -130,10 +130,10 @@ export default function FootballStoryPage() {
 
       <div className="text-gray-300 mb-8 space-y-4 text-sm leading-relaxed">
         <p>
-          Maybe it&apos;s something you saw: a goal that made you leap off the sofa, a final that went to the last kick, a player who made the impossible look easy. Maybe it&apos;s something you lived: the match you watched with your father, the night your colony spilled into the streets, the first time your kid kicked a ball back to you.
+          Maybe it&apos;s something you saw, a goal that made you leap off the sofa, a final that went to the last kick, a player who made the impossible look easy. Maybe it&apos;s something you lived, the match you watched with your father, the night your colony spilled into the streets, the first time your kid kicked a ball back to you.
         </p>
         <p>
-          Or maybe it hasn&apos;t happened yet — the dream. Your country lifting the cup. Being in the stadium when it does. The match you&apos;d give anything to witness.
+          Or maybe it hasn&apos;t happened yet, the dream. Your country lifting the cup. Being in the stadium when it does. The match you&apos;d give anything to witness.
         </p>
         <p>
           Write it down. Real or remembered or still to come. The moment, the match, the dream. Tell us what football means to you.
