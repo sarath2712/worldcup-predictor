@@ -61,6 +61,24 @@ function CalendarIcon({ className = "" }: { className?: string }) {
   );
 }
 
+function QuizIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+      <circle cx="12" cy="17" r="0.5" fill="currentColor"/>
+    </svg>
+  );
+}
+
+function PenIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+    </svg>
+  );
+}
+
 function ArrowIcon({ className = "" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -69,7 +87,7 @@ function ArrowIcon({ className = "" }: { className?: string }) {
   );
 }
 
-type TileCategory = "mens" | "womens" | "kids" | "playstation" | "prediction" | null;
+type TileCategory = "mens" | "womens" | "kids" | "playstation" | "prediction" | "quiz" | "story" | null;
 
 const tiles: { title: string; subtitle: string; href: string; Icon: typeof JerseyIcon; color: string; countKey: TileCategory }[] = [
   {
@@ -119,6 +137,22 @@ const tiles: { title: string; subtitle: string; href: string; Icon: typeof Jerse
     Icon: CalendarIcon,
     color: "from-red-500 to-red-600",
     countKey: null,
+  },
+  {
+    title: "Football Quiz",
+    subtitle: "TEST YOUR KNOWLEDGE",
+    href: "/football-quiz",
+    Icon: QuizIcon,
+    color: "from-teal-500 to-emerald-700",
+    countKey: "quiz" as TileCategory,
+  },
+  {
+    title: "Your Football Story",
+    subtitle: "SHARE YOUR PASSION",
+    href: "/football-story",
+    Icon: PenIcon,
+    color: "from-rose-500 to-orange-600",
+    countKey: "story" as TileCategory,
   },
 ];
 
@@ -202,6 +236,12 @@ export default function Home() {
       // Unique users who signed up for predictions (profiles count)
       const { count: userCount } = await supabase.from("profiles").select("id", { count: "exact", head: true });
       counts.prediction = userCount || 0;
+      // Quiz registrations
+      const { count: quizCount } = await supabase.from("quiz_registrations").select("id", { count: "exact", head: true });
+      counts.quiz = quizCount || 0;
+      // Football stories
+      const { count: storyCount } = await supabase.from("football_stories").select("id", { count: "exact", head: true });
+      counts.story = storyCount || 0;
       setTileCounts(counts);
     }
     loadCounts();
@@ -348,7 +388,7 @@ export default function Home() {
               )}
 
               {/* Register Now tag on registration tiles */}
-              {["/mens-football", "/kids-football", "/womens-football", "/playstation-worldcup"].includes(tile.href) && (
+              {["/mens-football", "/kids-football", "/womens-football", "/playstation-worldcup", "/football-quiz", "/football-story"].includes(tile.href) && (
                 <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-[38%] px-2 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
                   Register Now
                 </span>
@@ -365,26 +405,11 @@ export default function Home() {
               {/* Counter - only on mobile */}
               {tile.countKey && (tileCounts[tile.countKey] ?? 0) > 0 && (
                 <span className="sm:hidden text-[9px] font-bold text-white/80 bg-black/30 px-1.5 py-0.5 rounded-full border border-white/20 mt-1">
-                  {tileCounts[tile.countKey]} {tile.countKey === "prediction" ? "playing" : "joined"}
+                  {tileCounts[tile.countKey]} {tile.countKey === "prediction" ? "playing" : tile.countKey === "story" ? "shared" : "joined"}
                 </span>
               )}
             </Link>
           ))}
-
-          {/* Cash Prize Banner - spans 2 columns on mobile, 3 on desktop */}
-          <div className="col-span-2 sm:col-span-3 rounded-xl sm:rounded-2xl bg-gradient-to-r from-yellow-500/20 via-amber-500/30 to-yellow-500/20 border border-yellow-400/30 backdrop-blur-md p-3 sm:p-4 flex items-center justify-center gap-2 overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/10 to-transparent animate-shimmer" />
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 shrink-0 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.82 20 12 16.54 7.18 20l1.64-6.91L4 9l5.91-.74L12 2z"/></svg>
-            <div className="text-center animate-pulse">
-              <p className="text-[10px] sm:text-sm font-bold text-yellow-300 whitespace-nowrap">
-                YOUR SKILLS. YOUR PREDICTIONS. REAL CASH.
-              </p>
-              <p className="text-[10px] sm:text-xs text-yellow-200/80 mt-0.5">
-                Join the PlayStation Tournament &amp; Prediction Contest — winners take home CASH PRIZES!
-              </p>
-            </div>
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 shrink-0 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.82 20 12 16.54 7.18 20l1.64-6.91L4 9l5.91-.74L12 2z"/></svg>
-          </div>
         </div>
       </div>
 
