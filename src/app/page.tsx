@@ -61,12 +61,13 @@ function CalendarIcon({ className = "" }: { className?: string }) {
   );
 }
 
-function QuizIcon({ className = "" }: { className?: string }) {
+function PaletteIcon({ className = "" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-      <circle cx="12" cy="17" r="0.5" fill="currentColor"/>
+      <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+      <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+      <path d="M2 2l7.586 7.586"/>
+      <circle cx="11" cy="11" r="2"/>
     </svg>
   );
 }
@@ -87,7 +88,7 @@ function ArrowIcon({ className = "" }: { className?: string }) {
   );
 }
 
-type TileCategory = "mens" | "womens" | "kids" | "playstation" | "prediction" | "quiz" | "story" | null;
+type TileCategory = "mens" | "womens" | "kids" | "playstation" | "prediction" | "caricature" | "story" | null;
 
 const tiles: { title: string; subtitle: string; href: string; Icon: typeof JerseyIcon; color: string; countKey: TileCategory }[] = [
   {
@@ -139,12 +140,12 @@ const tiles: { title: string; subtitle: string; href: string; Icon: typeof Jerse
     countKey: null,
   },
   {
-    title: "Football Quiz",
-    subtitle: "TEST YOUR KNOWLEDGE",
-    href: "/football-quiz",
-    Icon: QuizIcon,
+    title: "Caricature Contest",
+    subtitle: "DRAW & WIN",
+    href: "/caricature-contest",
+    Icon: PaletteIcon,
     color: "from-teal-500 to-emerald-700",
-    countKey: "quiz" as TileCategory,
+    countKey: "caricature" as TileCategory,
   },
   {
     title: "Your Football Story",
@@ -236,9 +237,9 @@ export default function Home() {
       // Unique users who signed up for predictions (profiles count)
       const { count: userCount } = await supabase.from("profiles").select("id", { count: "exact", head: true });
       counts.prediction = userCount || 0;
-      // Quiz registrations
-      const { count: quizCount } = await supabase.from("quiz_registrations").select("id", { count: "exact", head: true });
-      counts.quiz = quizCount || 0;
+      // Caricature entries
+      const { count: caricatureCount } = await supabase.from("caricature_entries").select("id", { count: "exact", head: true });
+      counts.caricature = caricatureCount || 0;
       // Football stories
       const { count: storyCount } = await supabase.from("football_stories").select("id", { count: "exact", head: true });
       counts.story = storyCount || 0;

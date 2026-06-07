@@ -1,28 +1,31 @@
--- Football Quiz & Story tables
+-- Caricature Contest & Football Story tables
 -- Run this in Supabase SQL Editor (Dashboard > SQL Editor > New Query)
 
--- ========== QUIZ REGISTRATIONS ==========
-CREATE TABLE IF NOT EXISTS quiz_registrations (
+-- ========== CARICATURE ENTRIES ==========
+CREATE TABLE IF NOT EXISTS caricature_entries (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   name text NOT NULL,
   email text NOT NULL UNIQUE,
   phone text NOT NULL,
   flat_number text NOT NULL,
+  file_url text NOT NULL,
+  file_name text,
+  file_size integer,
   created_at timestamptz DEFAULT now()
 );
 
-ALTER TABLE quiz_registrations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE caricature_entries ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Allow public insert quiz" ON quiz_registrations
+CREATE POLICY "Allow public insert caricature" ON caricature_entries
   FOR INSERT TO anon, authenticated
   WITH CHECK (true);
 
-CREATE POLICY "Allow public select quiz" ON quiz_registrations
+CREATE POLICY "Allow public select caricature" ON caricature_entries
   FOR SELECT TO anon, authenticated
   USING (true);
 
-GRANT INSERT, SELECT ON quiz_registrations TO anon;
-GRANT INSERT, SELECT ON quiz_registrations TO authenticated;
+GRANT INSERT, SELECT ON caricature_entries TO anon;
+GRANT INSERT, SELECT ON caricature_entries TO authenticated;
 
 -- ========== FOOTBALL STORIES ==========
 CREATE TABLE IF NOT EXISTS football_stories (

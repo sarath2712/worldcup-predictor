@@ -1,37 +1,88 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
-export default function FootballQuizPage() {
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
+
+export default function CaricatureContestPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [flatNumber, setFlatNumber] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFileError("");
+    const selected = e.target.files?.[0];
+    if (!selected) {
+      setFile(null);
+      return;
+    }
+    if (selected.size > MAX_FILE_SIZE) {
+      setFileError("File size must be under 1 MB. Please compress or resize your image.");
+      setFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+    setFile(selected);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!file) {
+      setError("Please upload your caricature drawing.");
+      return;
+    }
+
     setSubmitting(true);
 
     try {
+      const fileExt = file.name.split(".").pop() || "jpg";
+      const fileName = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${fileExt}`;
+      const filePath = `caricatures/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("football-stories")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        setError("Failed to upload file: " + uploadError.message);
+        setSubmitting(false);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from("football-stories")
+        .getPublicUrl(filePath);
+
       const { error: insertError } = await supabase
-        .from("quiz_registrations")
+        .from("caricature_entries")
         .insert({
           name,
           email,
           phone,
           flat_number: flatNumber,
+          file_url: urlData.publicUrl,
+          file_name: file.name,
+          file_size: file.size,
         });
 
       if (insertError) {
         if (insertError.code === "23505") {
-          setError("You have already registered for the Football Quiz.");
+          setError("You have already submitted a caricature entry.");
         } else {
           setError(insertError.message);
         }
@@ -53,9 +104,9 @@ export default function FootballQuizPage() {
         </Link>
         <div className="rounded-2xl border border-green-500/30 bg-green-500/10 p-8 text-center">
           <svg className="w-10 h-10 text-green-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-          <h3 className="text-xl font-bold text-green-400 mb-2">Registration Successful!</h3>
+          <h3 className="text-xl font-bold text-green-400 mb-2">Entry Submitted!</h3>
           <p className="text-gray-400 text-sm">
-            You&apos;ve been registered for the Football Quiz. Quiz details will be shared soon!
+            Your caricature has been uploaded successfully. Best entries win!
           </p>
         </div>
       </div>
@@ -69,13 +120,23 @@ export default function FootballQuizPage() {
       </Link>
       <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
         <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-          <circle cx="12" cy="17" r="0.5" fill="currentColor"/>
+          <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+          <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+          <path d="M2 2l7.586 7.586"/>
+          <circle cx="11" cy="11" r="2"/>
         </svg>
-        FOOTBALL QUIZ — REGISTRATION
+        CARICATURE CONTEST
       </h1>
-      <p className="text-gray-400 mb-8">Think you know football? Register now and prove it!</p>
+
+      <div className="text-gray-300 mb-8 space-y-4 text-sm leading-relaxed">
+        <p>
+          Draw your favourite football star, team, or any football moment — as a caricature! Let your creativity flow. It can be funny, dramatic, or artistic.
+        </p>
+        <p className="font-semibold text-accent">Open to ALL age groups. Best entries win.</p>
+        <p className="text-xs text-gray-400 border-t border-white/10 pt-3">
+          <span className="font-semibold text-white">Rules:</span> Hand-drawn only. Scan or photograph your drawing and upload below. Each file must be less than 1 MB.
+        </p>
+      </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 mb-8">
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -127,6 +188,31 @@ export default function FootballQuizPage() {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-300">Upload Your Drawing *</label>
+            <div className="relative">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,.pdf"
+                onChange={handleFileChange}
+                className="w-full px-4 py-2.5 border border-white/10 rounded-lg bg-white/5 text-white file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/20 file:text-primary hover:file:bg-primary/30 file:cursor-pointer"
+                required
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Max 1 MB. Accepted: Images (JPG, PNG, HEIC), PDF.
+            </p>
+            {fileError && (
+              <p className="text-xs text-red-400 mt-1">{fileError}</p>
+            )}
+            {file && !fileError && (
+              <p className="text-xs text-green-400 mt-1">
+                ✓ {file.name} ({(file.size / 1024).toFixed(0)} KB)
+              </p>
+            )}
+          </div>
+
           {error && (
             <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
               {error}
@@ -138,24 +224,9 @@ export default function FootballQuizPage() {
             disabled={submitting}
             className="w-full py-3 bg-gradient-to-r from-primary to-primary/80 text-white font-semibold rounded-lg hover:opacity-90 transition disabled:opacity-50"
           >
-            {submitting ? "Registering..." : "Register for Quiz"}
+            {submitting ? "Uploading..." : "Submit Your Caricature"}
           </button>
         </form>
-      </div>
-
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 space-y-4">
-        <h2 className="text-lg font-bold text-accent flex items-center gap-2">
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-          Quiz Details
-        </h2>
-        <ul className="text-gray-300 text-sm space-y-2 leading-relaxed">
-          <li className="flex gap-2"><svg className="w-4 h-4 text-accent shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/></svg> Test your knowledge about FIFA World Cup history, players, and records.</li>
-          <li className="flex gap-2"><svg className="w-4 h-4 text-accent shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/></svg> Open to all age groups — everyone can participate!</li>
-          <li className="flex gap-2"><svg className="w-4 h-4 text-accent shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Quiz format and timing will be shared after registration closes.</li>
-        </ul>
-        <div className="border-t border-white/10 pt-3">
-          <p className="text-xs text-gray-500 italic">All decisions taken by the committee will be final.</p>
-        </div>
       </div>
     </div>
   );
