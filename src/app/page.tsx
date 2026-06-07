@@ -347,14 +347,14 @@ export default function Home() {
         </div>
 
         {/* Tiles Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 max-w-[580px] w-full relative z-10">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 max-w-[680px] w-full relative z-10">
           {tiles.map((tile) => (
             <Link
               key={tile.title}
               href={tile.href}
               onClick={(e) => handleTileClick(tile, e)}
               className={`rounded-xl sm:rounded-2xl bg-gradient-to-br ${tile.color} backdrop-blur-md border border-white/20
-                flex flex-col items-start justify-end p-3 sm:p-5 h-[120px] sm:aspect-square sm:h-auto
+                flex flex-col items-start justify-end p-3 sm:p-4 h-[120px] sm:h-[140px]
                 hover:scale-105 hover:border-white/40 hover:shadow-2xl transition-all duration-300
                 group cursor-pointer relative overflow-hidden`}
             >
@@ -388,9 +388,16 @@ export default function Home() {
               )}
 
               {/* Register Now tag on registration tiles */}
-              {["/mens-football", "/kids-football", "/womens-football", "/playstation-worldcup", "/football-quiz", "/football-story"].includes(tile.href) && (
-                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-[38%] px-2 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
+              {["/mens-football", "/kids-football", "/womens-football"].includes(tile.href) && (
+                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-[30%] px-2 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
                   Register Now
+                </span>
+              )}
+
+              {/* Cash Prize tag */}
+              {["/playstation-worldcup", "/matches", "/football-quiz", "/football-story"].includes(tile.href) && (
+                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-[30%] px-2 py-0.5 rounded-full bg-green-400/80 border border-green-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-green-400/30">
+                  Cash Prize
                 </span>
               )}
 
