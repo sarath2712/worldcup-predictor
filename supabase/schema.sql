@@ -119,16 +119,16 @@ create policy "Users can update own predictions before deadline"
 
 -- Scoring function: call after admin enters a result
 -- Points: Exact score = 30, Correct outcome (W/D/L) = 10, Wrong = 0
--- POTM = 20, Each correct scorer = 15
+-- POTM = 20, Correct "Team Scored First" = 15
 create or replace function public.calculate_points(p_match_id bigint)
 returns void as $$
 declare
   v_actual_potm text;
-  v_actual_scorers text[];
+  v_actual_first_goal text;
 begin
   -- Get actual match extras
-  select actual_potm, string_to_array(actual_scorers, ',')
-  into v_actual_potm, v_actual_scorers
+  select actual_potm, actual_scorers
+  into v_actual_potm, v_actual_first_goal
   from public.matches where id = p_match_id;
 
   -- Score predictions (exact score = 30, correct outcome = 10, wrong = 0)
@@ -147,7 +147,7 @@ begin
   end
   where match_id = p_match_id;
 
-  -- Score match extras (POTM = 20, each correct scorer = 15)
+  -- Score match extras (POTM = 20, correct first goal team = 15)
   update public.match_extras me
   set points = (
     -- POTM points
@@ -155,15 +155,11 @@ begin
           and lower(trim(me.predicted_potm)) = lower(trim(v_actual_potm))
      then 20 else 0 end)
     +
-    -- Scorer points (15 per correct scorer)
-    coalesce((
-      select count(*) * 15
-      from unnest(string_to_array(me.predicted_scorers, ',')) as ps(name)
-      where v_actual_scorers is not null
-        and lower(trim(ps.name)) = any(
-          select lower(trim(s)) from unnest(v_actual_scorers) as s
-        )
-    ), 0)
+    -- First goal points (15 if correct team/none matches)
+    (case when v_actual_first_goal is not null
+          and me.predicted_scorers is not null
+          and lower(trim(me.predicted_scorers)) = lower(trim(v_actual_first_goal))
+     then 15 else 0 end)
   )::integer
   where me.match_id = p_match_id;
 end;

@@ -116,7 +116,7 @@ function MatchCard({
   const [home, setHome] = useState(prediction?.predicted_home?.toString() || "");
   const [away, setAway] = useState(prediction?.predicted_away?.toString() || "");
   const [potm, setPotm] = useState(matchExtras?.predicted_potm || "");
-  const [scorers, setScorers] = useState(matchExtras?.predicted_scorers || "");
+  const [firstGoal, setFirstGoal] = useState(matchExtras?.predicted_scorers || "");
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const [timeLeft, setTimeLeft] = useState("");
@@ -174,13 +174,13 @@ function MatchCard({
       .select()
       .single();
 
-    // Save match extras (POTM & scorers)
-    if (potm || scorers) {
+    // Save match extras (POTM & first goal)
+    if (potm || firstGoal) {
       const extrasPayload = {
         user_id: user.id,
         match_id: match.id,
         predicted_potm: potm || null,
-        predicted_scorers: scorers || null,
+        predicted_scorers: firstGoal || null,
         updated_at: new Date().toISOString(),
       };
       const { data: extData } = await supabase
@@ -279,13 +279,16 @@ function MatchCard({
               placeholder="Player of the Match"
               className="text-xs px-3 py-1.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-gray-500"
             />
-            <input
-              type="text"
-              value={scorers}
-              onChange={(e) => setScorers(e.target.value)}
-              placeholder="Scorers (comma-separated)"
-              className="text-xs px-3 py-1.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-gray-500"
-            />
+            <select
+              value={firstGoal}
+              onChange={(e) => setFirstGoal(e.target.value)}
+              className="text-xs px-3 py-1.5 border border-white/20 rounded-lg bg-white/10 text-white"
+            >
+              <option value="">Team Scored First?</option>
+              <option value={match.home_team}>{match.home_team}</option>
+              <option value={match.away_team}>{match.away_team}</option>
+              <option value="None">None (0-0)</option>
+            </select>
           </div>
           <div className="flex items-center gap-2">
             <button

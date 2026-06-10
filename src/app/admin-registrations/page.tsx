@@ -386,10 +386,10 @@ export default function AdminRegistrationsPage() {
               </div>
               <div className="bg-white/5 rounded-lg p-2 text-center">
                 <p className="text-lg font-bold text-white">15</p>
-                <p>Each Scorer</p>
+                <p>First Goal</p>
               </div>
             </div>
-            <p className="text-[11px] text-gray-500 mt-2">Fill in: Home Score, Away Score, Player of the Match, Goal Scorers (comma-separated). Points are auto-calculated on save.</p>
+            <p className="text-[11px] text-gray-500 mt-2">Fill in: Home Score, Away Score, Player of the Match, Team Scored First. Points are auto-calculated on save.</p>
           </div>
 
           {/* Match Filter Tabs */}
@@ -752,7 +752,7 @@ function AdminMatchRow({
   const [home, setHome] = useState(match.home_score?.toString() || "");
   const [away, setAway] = useState(match.away_score?.toString() || "");
   const [potm, setPotm] = useState(match.actual_potm || "");
-  const [scorers, setScorers] = useState(match.actual_scorers || "");
+  const [firstGoal, setFirstGoal] = useState(match.actual_scorers || "");
   const isCompleted = match.home_score !== null;
   const kickoff = new Date(match.kickoff_utc);
   const isPast = kickoff < new Date();
@@ -800,7 +800,7 @@ function AdminMatchRow({
           />
         </div>
         <button
-          onClick={() => onSave(match.id, home, away, potm, scorers)}
+          onClick={() => onSave(match.id, home, away, potm, firstGoal)}
           disabled={saving || !home || !away}
           className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg disabled:opacity-50 hover:bg-green-700 transition font-semibold"
         >
@@ -821,14 +821,17 @@ function AdminMatchRow({
           />
         </div>
         <div>
-          <label className="text-[10px] text-gray-500 uppercase tracking-wider">Goal Scorers — comma separated (15 pts each)</label>
-          <input
-            type="text"
-            value={scorers}
-            onChange={(e) => setScorers(e.target.value)}
+          <label className="text-[10px] text-gray-500 uppercase tracking-wider">Team Scored First (15 pts)</label>
+          <select
+            value={firstGoal}
+            onChange={(e) => setFirstGoal(e.target.value)}
             className="w-full border border-white/20 rounded-lg px-3 py-2 bg-white/10 text-white text-sm"
-            placeholder="e.g. Mbappé, Messi, Ronaldo"
-          />
+          >
+            <option value="">Select team...</option>
+            <option value={match.home_team}>{match.home_team}</option>
+            <option value={match.away_team}>{match.away_team}</option>
+            <option value="None">None (0-0)</option>
+          </select>
         </div>
       </div>
     </div>
