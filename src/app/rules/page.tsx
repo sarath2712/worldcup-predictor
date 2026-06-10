@@ -30,7 +30,7 @@ export default function RulesPage() {
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <p className="font-medium text-white">Player of the Match (POTM)</p>
-              <p className="text-sm text-gray-400">Predict the best player of the match</p>
+              <p className="text-sm text-gray-400">Knockout stages only</p>
             </div>
             <span className="text-2xl font-bold text-accent">20</span>
           </div>

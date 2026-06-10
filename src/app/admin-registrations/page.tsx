@@ -808,18 +808,20 @@ function AdminMatchRow({
         </button>
       </div>
 
-      {/* POTM and Scorers */}
+      {/* POTM and First Goal */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-white/5">
-        <div>
-          <label className="text-[10px] text-gray-500 uppercase tracking-wider">Player of the Match (20 pts)</label>
-          <input
-            type="text"
-            value={potm}
-            onChange={(e) => setPotm(e.target.value)}
-            className="w-full border border-white/20 rounded-lg px-3 py-2 bg-white/10 text-white text-sm"
-            placeholder="e.g. Mbappé"
-          />
-        </div>
+        {!match.stage.startsWith("Group") && (
+          <div>
+            <label className="text-[10px] text-gray-500 uppercase tracking-wider">Player of the Match (20 pts)</label>
+            <input
+              type="text"
+              value={potm}
+              onChange={(e) => setPotm(e.target.value)}
+              className="w-full border border-white/20 rounded-lg px-3 py-2 bg-white/10 text-white text-sm"
+              placeholder="e.g. Mbappé"
+            />
+          </div>
+        )}
         <div>
           <label className="text-[10px] text-gray-500 uppercase tracking-wider">Team Scored First (15 pts)</label>
           <select

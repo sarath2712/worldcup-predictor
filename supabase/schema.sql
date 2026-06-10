@@ -119,16 +119,17 @@ create policy "Users can update own predictions before deadline"
 
 -- Scoring function: call after admin enters a result
 -- Points: Exact score = 30, Correct outcome (W/D/L) = 10, Wrong = 0
--- POTM = 20, Correct "Team Scored First" = 15
+-- POTM = 20 (knockout only), Correct "Team Scored First" = 15
 create or replace function public.calculate_points(p_match_id bigint)
 returns void as $$
 declare
   v_actual_potm text;
   v_actual_first_goal text;
+  v_stage text;
 begin
   -- Get actual match extras
-  select actual_potm, actual_scorers
-  into v_actual_potm, v_actual_first_goal
+  select actual_potm, actual_scorers, stage
+  into v_actual_potm, v_actual_first_goal, v_stage
   from public.matches where id = p_match_id;
 
   -- Score predictions (exact score = 30, correct outcome = 10, wrong = 0)
@@ -147,11 +148,12 @@ begin
   end
   where match_id = p_match_id;
 
-  -- Score match extras (POTM = 20, correct first goal team = 15)
+  -- Score match extras (POTM = 20 only for knockout stages, first goal = 15)
   update public.match_extras me
   set points = (
-    -- POTM points
-    (case when v_actual_potm is not null
+    -- POTM points (only for non-group-stage matches)
+    (case when v_stage not like 'Group%'
+          and v_actual_potm is not null
           and lower(trim(me.predicted_potm)) = lower(trim(v_actual_potm))
      then 20 else 0 end)
     +

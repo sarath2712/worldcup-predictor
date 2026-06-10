@@ -272,13 +272,15 @@ function MatchCard({
       {user && !isLocked && !hasResult && (
         <div className="mt-3 space-y-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input
-              type="text"
-              value={potm}
-              onChange={(e) => setPotm(e.target.value)}
-              placeholder="Player of the Match"
-              className="text-xs px-3 py-1.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-gray-500"
-            />
+            {!match.stage.startsWith("Group") && (
+              <input
+                type="text"
+                value={potm}
+                onChange={(e) => setPotm(e.target.value)}
+                placeholder="Player of the Match"
+                className="text-xs px-3 py-1.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-gray-500"
+              />
+            )}
             <select
               value={firstGoal}
               onChange={(e) => setFirstGoal(e.target.value)}

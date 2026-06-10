@@ -65,7 +65,7 @@ export default function LeaderboardPage() {
       )}
 
       <div className="text-sm text-gray-400 bg-white/5 border border-white/10 p-4 rounded-lg space-y-1">
-        <p><strong>Match Scoring:</strong> Exact score = 30 pts | Correct outcome = 10 pts | POTM = 20 pts | First Goal = 15 pts</p>
+        <p><strong>Match Scoring:</strong> Exact score = 30 pts | Correct outcome = 10 pts | POTM (knockout only) = 20 pts | First Goal = 15 pts</p>
         <p><strong>Tournament:</strong> Winner = 200 pts | Finalist = 180 pts | Golden Boot/Ball/Glove = 150 pts each</p>
       </div>
     </div>
