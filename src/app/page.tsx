@@ -393,9 +393,15 @@ export default function Home() {
               )}
 
               {/* Registration Closed tag on registration tiles */}
-              {["/mens-football", "/kids-football", "/womens-football", "/playstation-worldcup"].includes(tile.href) && (
+              {["/mens-football", "/kids-football", "/womens-football"].includes(tile.href) && (
                 <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-[30%] px-2 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide shadow-lg shadow-yellow-400/30">
                   Registration Closed
+                </span>
+              )}
+              {/* Register Now tag on PlayStation tile */}
+              {tile.href === "/playstation-worldcup" && (
+                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-[30%] px-2 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
+                  Register Now
                 </span>
               )}
 
