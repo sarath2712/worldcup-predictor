@@ -1,16 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { RegistrationForm } from "@/components/RegistrationForm";
-
-type Registration = {
-  name: string;
-  flat_number: string;
-  favourite_team: string | null;
-  created_at: string;
-};
 
 const teams = [
   {
@@ -64,20 +52,6 @@ const teams = [
 ];
 
 export default function MensFootballPage() {
-  const [registrations, setRegistrations] = useState<Registration[]>([]);
-  const supabase = createClient();
-
-  useEffect(() => {
-    async function load() {
-      const { data } = await supabase
-        .from("event_registrations")
-        .select("name, flat_number, favourite_team, created_at")
-        .eq("category", "mens")
-        .order("created_at", { ascending: true });
-      setRegistrations(data || []);
-    }
-    load();
-  }, []);
 
   return (
     <div className="max-w-2xl mx-auto py-12">
@@ -104,34 +78,6 @@ export default function MensFootballPage() {
           </div>
         ))}
       </div>
-
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 mb-8">
-        <RegistrationForm category="mens" title="Men's Football" closed={false} />
-      </div>
-
-      {/* Registered Players */}
-      {registrations.length > 0 && (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 mb-8">
-          <h2 className="text-lg font-bold text-accent mb-4 flex items-center gap-2">
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            Registered Players ({registrations.length})
-          </h2>
-          <div className="space-y-2">
-            {registrations.map((r, i) => (
-              <div key={i} className="flex items-center justify-between rounded-lg bg-white/5 border border-white/5 px-4 py-2.5 text-sm">
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-gray-500 font-mono w-5">{i + 1}</span>
-                  <span className="font-medium text-white">{r.name}</span>
-                </div>
-                <div className="flex items-center gap-4 text-xs text-gray-400">
-                  <span>Flat: {r.flat_number}</span>
-                  {r.favourite_team && <span>{r.favourite_team}</span>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Info Section */}
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 space-y-4">
