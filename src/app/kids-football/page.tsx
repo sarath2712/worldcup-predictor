@@ -25,6 +25,7 @@ const teams = [
       { name: "Aadhrit Pandey", age: 8, flat: "6074", phone: "9741226877", email: "pandeyabhavya2510@gmail.com", isCaptain: false },
       { name: "Kiara", age: 7, flat: "2174", phone: "9611101157", email: "sap.kunalap@gmail.com", isCaptain: false },
       { name: "Avyaan Biswas", age: 7, flat: "4121", phone: "9049813810", email: "biswasgaurav1@gmail.com", isCaptain: false },
+      { name: "Dhruv Saharan", age: 11, flat: "4082", phone: "9886020304", email: "saharanram@yahoo.com", isCaptain: false },
     ],
   },
   {
