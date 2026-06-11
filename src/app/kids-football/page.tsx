@@ -79,10 +79,10 @@ export default function KidsFootballPage() {
                     <span className="text-xs text-gray-500">(Age {p.age})</span>
                     {p.isCaptain && <span className="text-[10px] px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 rounded font-bold">CAPTAIN</span>}
                   </div>
-                  <div className="grid grid-cols-3 gap-1 text-xs text-gray-400">
+                  <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-gray-400">
                     <span>Flat: {p.flat}</span>
                     <span>Ph: {p.phone}</span>
-                    <span className="truncate">{p.email}</span>
+                    <span>{p.email}</span>
                   </div>
                 </div>
               ))}
