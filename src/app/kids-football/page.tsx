@@ -4,73 +4,53 @@ const teams = [
   {
     name: "Team 1",
     players: [
-      { name: "Shriragini Kowtarapu", age: 14, flat: "8104", phone: "9163010000", email: "sairamragini@gmail.com", isCaptain: true },
+      { name: "Nivin Saju", age: 12, flat: "6133", phone: "9495527837", email: "sajukallur@gmail.com", isCaptain: true },
+      { name: "Aditya Sai Uppala", age: 14, flat: "-", phone: "-", email: "-", isCaptain: false },
+      { name: "Swayash Jha", age: 12, flat: "3042", phone: "8861847081", email: "sdivyajha2008@gmail.com", isCaptain: false },
       { name: "Aaron Bennett", age: 10, flat: "L-6063", phone: "9945081024", email: "antben.1216@gmail.com", isCaptain: false },
-      { name: "Naval Geete", age: 8, flat: "3034", phone: "9428573450", email: "geete.ashvin@gmail.com", isCaptain: false },
+      { name: "Alvin Jibi", age: 10, flat: "3051", phone: "9880356389", email: "jibijose@yahoo.com", isCaptain: false },
+      { name: "Hanah M Mathew", age: 8, flat: "4164", phone: "7022369049", email: "mithinmathew007@gmail.com", isCaptain: false },
       { name: "Nithin Nambiar", age: 7, flat: "2172", phone: "8951582345", email: "nithin.nbr@hotmail.com", isCaptain: false },
+      { name: "Rajen Shaw", age: 7, flat: "2024", phone: "9632570011", email: "sumitshaw007@gmail.com", isCaptain: false },
     ],
   },
   {
     name: "Team 2",
     players: [
       { name: "Aryush", age: 14, flat: "8152", phone: "9819267116", email: "robloxsecure067@gmail.com", isCaptain: true },
+      { name: "Johan Shinu Mathew", age: 12, flat: "6164", phone: "8097294569", email: "johanshinu2014@gmail.com", isCaptain: false },
       { name: "Aayansh Singh", age: 11, flat: "5033", phone: "9590986094", email: "adivya3.singh@gmail.com", isCaptain: false },
-      { name: "Uddeshya", age: 8, flat: "5143", phone: "8652224778", email: "utkarshi.p@gmail.com", isCaptain: false },
+      { name: "Krishang Sinha", age: 11, flat: "8041", phone: "8660903376", email: "kummadhuri.s@gmail.com", isCaptain: false },
+      { name: "Riyanshu Guha", age: 9, flat: "8014", phone: "8095456785", email: "soumyak.guha@gmail.com", isCaptain: false },
+      { name: "Aadhrit Pandey", age: 8, flat: "6074", phone: "9741226877", email: "pandeyabhavya2510@gmail.com", isCaptain: false },
       { name: "Kiara", age: 7, flat: "2174", phone: "9611101157", email: "sap.kunalap@gmail.com", isCaptain: false },
+      { name: "Avyaan Biswas", age: 7, flat: "4121", phone: "9049813810", email: "biswasgaurav1@gmail.com", isCaptain: false },
     ],
   },
   {
     name: "Team 3",
     players: [
       { name: "Aaradhya Rawat", age: 13, flat: "7062", phone: "9873183855", email: "anilrawat15882ar@gmail.com", isCaptain: true },
+      { name: "Antonio Rishon", age: 13, flat: "L-6063", phone: "9880603407", email: "ash.norbert@gmail.com", isCaptain: false },
       { name: "Priyanshu", age: 11, flat: "8003", phone: "6361686119", email: "9supriyapatil@gmail.com", isCaptain: false },
-      { name: "Gianna Takhelmayum", age: 7, flat: "4042", phone: "9916246693", email: "gitrajit@gmail.com", isCaptain: false },
+      { name: "Hreyansh", age: 11, flat: "5183", phone: "9845783377", email: "shweta.nic@gmail.com", isCaptain: false },
+      { name: "Surbhi Salode", age: 9, flat: "7171", phone: "9178300000", email: "surbhisalode19@gmail.com", isCaptain: false },
+      { name: "Uddeshya", age: 8, flat: "5143", phone: "8652224778", email: "utkarshi.p@gmail.com", isCaptain: false },
       { name: "Magizhan Ganeshan", age: 7, flat: "3143", phone: "9500174822", email: "tamilselviamity@gmail.com", isCaptain: false },
+      { name: "Surya Raj", age: 7, flat: "2152", phone: "9185540000", email: "lakshmibs512@gmail.com", isCaptain: false },
     ],
   },
   {
     name: "Team 4",
     players: [
-      { name: "Ritvik Chaturvedi", age: 11, flat: "5133", phone: "7406601601", email: "response.ritvik@gmail.com", isCaptain: true },
-      { name: "Kavinhav Satheshbabu", age: 13, flat: "7154", phone: "8095266595", email: "kavinhav.s@gmail.com", isCaptain: false },
-      { name: "Aadhrit Pandey", age: 8, flat: "6074", phone: "9741226877", email: "pandeyabhavya2510@gmail.com", isCaptain: false },
-      { name: "Mayank Chauhan", age: 7, flat: "3104", phone: "9196630000", email: "mayank.r.chauhan@gmail.com", isCaptain: false },
-    ],
-  },
-  {
-    name: "Team 5",
-    players: [
       { name: "Utkarsh", age: 13, flat: "5183", phone: "9845783377", email: "shemendrakumar@hotmail.com", isCaptain: true },
+      { name: "Kavinhav Satheshbabu", age: 13, flat: "7154", phone: "8095266595", email: "kavinhav.s@gmail.com", isCaptain: false },
       { name: "Aaryan Abhilash", age: 11, flat: "5124", phone: "9197390000", email: "abhilash.chalippat@gmail.com", isCaptain: false },
-      { name: "Riyanshu Guha", age: 9, flat: "8014", phone: "8095456785", email: "soumyak.guha@gmail.com", isCaptain: false },
-      { name: "Surya Raj", age: 7, flat: "2152", phone: "9185540000", email: "lakshmibs512@gmail.com", isCaptain: false },
-    ],
-  },
-  {
-    name: "Team 6",
-    players: [
-      { name: "Antonio Rishon", age: 13, flat: "L-6063", phone: "9880603407", email: "ash.norbert@gmail.com", isCaptain: true },
-      { name: "Johan Shinu Mathew", age: 12, flat: "6164", phone: "8097294569", email: "johanshinu2014@gmail.com", isCaptain: false },
-      { name: "Surbhi Salode", age: 9, flat: "7171", phone: "9178300000", email: "surbhisalode19@gmail.com", isCaptain: false },
-      { name: "Avyaan Biswas", age: 7, flat: "4121", phone: "9049813810", email: "biswasgaurav1@gmail.com", isCaptain: false },
-    ],
-  },
-  {
-    name: "Team 7",
-    players: [
-      { name: "Nivin Saju", age: 12, flat: "6133", phone: "9495527837", email: "sajukallur@gmail.com", isCaptain: true },
-      { name: "Hreyansh", age: 11, flat: "5183", phone: "9845783377", email: "shweta.nic@gmail.com", isCaptain: false },
+      { name: "Ritvik Chaturvedi", age: 11, flat: "5133", phone: "7406601601", email: "response.ritvik@gmail.com", isCaptain: false },
       { name: "Suyukth", age: 9, flat: "-", phone: "-", email: "drgknareshgoud@gmail.com", isCaptain: false },
-      { name: "Hanah M Mathew", age: 8, flat: "4164", phone: "7022369049", email: "mithinmathew007@gmail.com", isCaptain: false },
-    ],
-  },
-  {
-    name: "Team 8",
-    players: [
-      { name: "Swayash Jha", age: 12, flat: "3042", phone: "8861847081", email: "sdivyajha2008@gmail.com", isCaptain: true },
-      { name: "Krishang Sinha", age: 11, flat: "8041", phone: "8660903376", email: "kummadhuri.s@gmail.com", isCaptain: false },
-      { name: "Alvin Jibi", age: 10, flat: "3051", phone: "9880356389", email: "jibijose@yahoo.com", isCaptain: false },
-      { name: "Rajen Shaw", age: 7, flat: "2024", phone: "9632570011", email: "sumitshaw007@gmail.com", isCaptain: false },
+      { name: "Naval Geete", age: 8, flat: "3034", phone: "9428573450", email: "geete.ashvin@gmail.com", isCaptain: false },
+      { name: "Gianna Takhelmayum", age: 7, flat: "4042", phone: "9916246693", email: "gitrajit@gmail.com", isCaptain: false },
+      { name: "Mayank Chauhan", age: 7, flat: "3104", phone: "9196630000", email: "mayank.r.chauhan@gmail.com", isCaptain: false },
     ],
   },
 ];
@@ -85,7 +65,7 @@ export default function KidsFootballPage() {
         <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.82 20 12 16.54 7.18 20l1.64-6.91L4 9l5.91-.74L12 2z"/></svg>
         KIDS&apos; FOOTBALL — TEAMS
       </h1>
-      <p className="text-gray-400 mb-8">8 Teams &middot; 32 Players &middot; Ages 7–14</p>
+      <p className="text-gray-400 mb-8">4 Teams &middot; 32 Players &middot; Ages 7–14</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {teams.map((team) => (
