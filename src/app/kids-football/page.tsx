@@ -43,8 +43,8 @@ const teams = [
   {
     name: "Team 4",
     players: [
-      { name: "Utkarsh", age: 13, flat: "5183", phone: "9845783377", email: "shemendrakumar@hotmail.com", isCaptain: true },
-      { name: "Kunal", age: 13, flat: "5111", phone: "7353483115", email: "-", isCaptain: false },
+      { name: "Kunal", age: 13, flat: "5111", phone: "7353483115", email: "-", isCaptain: true },
+      { name: "Utkarsh", age: 13, flat: "5183", phone: "9845783377", email: "shemendrakumar@hotmail.com", isCaptain: false },
       { name: "Aaryan Abhilash", age: 11, flat: "5124", phone: "9197390000", email: "abhilash.chalippat@gmail.com", isCaptain: false },
       { name: "Ritvik Chaturvedi", age: 11, flat: "5133", phone: "7406601601", email: "response.ritvik@gmail.com", isCaptain: false },
       { name: "Suyukth", age: 9, flat: "-", phone: "-", email: "drgknareshgoud@gmail.com", isCaptain: false },
