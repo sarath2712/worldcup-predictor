@@ -12,6 +12,57 @@ type Registration = {
   created_at: string;
 };
 
+const teams = [
+  {
+    name: "Team 1",
+    players: [
+      { name: "Chirag", isCaptain: true },
+      { name: "Sushant Kumar", isCaptain: false },
+      { name: "Rohan", isCaptain: false },
+      { name: "Franklin", isCaptain: false },
+      { name: "Kishor", isCaptain: false },
+      { name: "Rithwik Sasikumar", isCaptain: false },
+      { name: "Tushar", isCaptain: false },
+    ],
+  },
+  {
+    name: "Team 2",
+    players: [
+      { name: "Kshiraj", isCaptain: true },
+      { name: "Shriragini Kowtarapu", isCaptain: false },
+      { name: "Sagar Kateel", isCaptain: false },
+      { name: "Gitrajit", isCaptain: false },
+      { name: "Jay Patel", isCaptain: false },
+      { name: "Chethan", isCaptain: false },
+      { name: "Satyaki Das", isCaptain: false },
+    ],
+  },
+  {
+    name: "Team 3",
+    players: [
+      { name: "Anil Rawat", isCaptain: true },
+      { name: "Pankaj Kumawat", isCaptain: false },
+      { name: "Sriram S", isCaptain: false },
+      { name: "Pavan Itagi", isCaptain: false },
+      { name: "Sachin Shiragola", isCaptain: false },
+      { name: "Mitesh", isCaptain: false },
+      { name: "Arjun", isCaptain: false },
+      { name: "Pikanshu Kumar", isCaptain: false },
+    ],
+  },
+  {
+    name: "Team 4",
+    players: [
+      { name: "Mithin Mathew", isCaptain: true },
+      { name: "Mithun", isCaptain: false },
+      { name: "Nithin Nambiar", isCaptain: false },
+      { name: "Praveesh", isCaptain: false },
+      { name: "Suvin", isCaptain: false },
+      { name: "Shanthibhushan", isCaptain: false },
+    ],
+  },
+];
+
 export default function MensFootballPage() {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const supabase = createClient();
@@ -33,8 +84,26 @@ export default function MensFootballPage() {
       <Link href="/" className="text-sm text-gray-400 hover:text-white transition mb-6 inline-block">
         &larr; Back to Home
       </Link>
-      <h1 className="text-3xl font-bold mb-2 flex items-center gap-3"><svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg> MEN&apos;S FOOTBALL — REGISTRATION</h1>
-      <p className="text-gray-400 mb-8">Registration is open to participants aged 14 years and above</p>
+      <h1 className="text-3xl font-bold mb-2 flex items-center gap-3"><svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg> MEN&apos;S FOOTBALL — TEAMS</h1>
+      <p className="text-gray-400 mb-8">4 Teams &middot; 28 Players</p>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {teams.map((team) => (
+          <div key={team.name} className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-3">
+            <h2 className="text-lg font-bold text-accent">{team.name}</h2>
+            <div className="space-y-2">
+              {team.players.map((p) => (
+                <div key={p.name} className={`rounded-lg p-3 text-sm ${p.isCaptain ? "bg-yellow-500/10 border border-yellow-500/30" : "bg-white/5 border border-white/5"}`}>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-white">{p.name}</span>
+                    {p.isCaptain && <span className="text-[10px] px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 rounded font-bold">CAPTAIN</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 mb-8">
         <RegistrationForm category="mens" title="Men's Football" closed={false} />
