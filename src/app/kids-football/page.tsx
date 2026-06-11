@@ -34,7 +34,7 @@ const teams = [
       { name: "Antonio Rishon", age: 13, flat: "L-6063", phone: "9880603407", email: "ash.norbert@gmail.com", isCaptain: false },
       { name: "Priyanshu", age: 11, flat: "8003", phone: "6361686119", email: "9supriyapatil@gmail.com", isCaptain: false },
       { name: "Hreyansh", age: 11, flat: "5183", phone: "9845783377", email: "shweta.nic@gmail.com", isCaptain: false },
-      { name: "Surbhi Salode", age: 9, flat: "7171", phone: "9178300000", email: "surbhisalode19@gmail.com", isCaptain: false },
+      { name: "Liyan Deshmukh", age: 9, flat: "7171", phone: "9178300000", email: "surbhisalode19@gmail.com", isCaptain: false },
       { name: "Uddeshya", age: 8, flat: "5143", phone: "8652224778", email: "utkarshi.p@gmail.com", isCaptain: false },
       { name: "Magizhan Ganeshan", age: 7, flat: "3143", phone: "9500174822", email: "tamilselviamity@gmail.com", isCaptain: false },
       { name: "Surya Raj", age: 7, flat: "2152", phone: "9185540000", email: "lakshmibs512@gmail.com", isCaptain: false },
