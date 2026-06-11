@@ -4,50 +4,50 @@ const teams = [
   {
     name: "Team 1",
     players: [
-      { name: "Chirag", isCaptain: true },
-      { name: "Sushant Kumar", isCaptain: false },
-      { name: "Rohan", isCaptain: false },
-      { name: "Franklin", isCaptain: false },
-      { name: "Kishor", isCaptain: false },
-      { name: "Rithwik Sasikumar", isCaptain: false },
-      { name: "Tushar", isCaptain: false },
+      { name: "Chirag Tyagh", flat: "A1001", phone: "9599206101", email: "-", isCaptain: true },
+      { name: "Sushant Kumar", flat: "2122", phone: "9643173925", email: "dashingsasuke@gmail.com", isCaptain: false },
+      { name: "Rohan", flat: "5154", phone: "6363478396", email: "rohanreddy4640@gmail.com", isCaptain: false },
+      { name: "Franklin Francis", flat: "8124", phone: "9986885362", email: "franklinfrancis995@gmail.com", isCaptain: false },
+      { name: "Kishor", flat: "1067", phone: "8722814666", email: "kishor.rcr.08@gmail.com", isCaptain: false },
+      { name: "Rithwik Sasikumar", flat: "2173", phone: "9447755778", email: "rithwik7sasikumar@gmail.com", isCaptain: false },
+      { name: "Tushar", flat: "7111", phone: "9833588079", email: "tusharpawar3004@gmail.com", isCaptain: false },
     ],
   },
   {
     name: "Team 2",
     players: [
-      { name: "Kshiraj", isCaptain: true },
-      { name: "Shriragini Kowtarapu", isCaptain: false },
-      { name: "Sagar Kateel", isCaptain: false },
-      { name: "Gitrajit", isCaptain: false },
-      { name: "Jay Patel", isCaptain: false },
-      { name: "Chethan", isCaptain: false },
-      { name: "Satyaki Das", isCaptain: false },
+      { name: "Kshiraj Nair", flat: "8062", phone: "9880306334", email: "kshiraj2004@gmail.com", isCaptain: true },
+      { name: "Shriragini Kowtarapu", flat: "8104", phone: "6300819297", email: "sairamragini@gmail.com", isCaptain: false },
+      { name: "Sagar Kateel", flat: "Q-8004", phone: "9820208013", email: "sagarkateel03@gmail.com", isCaptain: false },
+      { name: "Gitrajit", flat: "4042", phone: "7899177567", email: "gitrajit@gmail.com", isCaptain: false },
+      { name: "Jay Patel", flat: "2132", phone: "8867822498", email: "jay08ec70@gmail.com", isCaptain: false },
+      { name: "Chethan", flat: "8002", phone: "7899363535", email: "-", isCaptain: false },
+      { name: "Satyaki Das", flat: "1076", phone: "9147768578", email: "satyakidas.work@gmail.com", isCaptain: false },
     ],
   },
   {
     name: "Team 3",
     players: [
-      { name: "Anil Rawat", isCaptain: true },
-      { name: "Pankaj Kumawat", isCaptain: false },
-      { name: "Sriram S", isCaptain: false },
-      { name: "Pavan Itagi", isCaptain: false },
-      { name: "Sachin Shiragola", isCaptain: false },
-      { name: "Mitesh", isCaptain: false },
-      { name: "Arjun", isCaptain: false },
-      { name: "Pikanshu Kumar", isCaptain: false },
+      { name: "Anil Rawat", flat: "7062", phone: "9873183855", email: "anilrawat15882ar@gmail.com", isCaptain: true },
+      { name: "Pankaj Kumawat", flat: "2061", phone: "9794326484", email: "pankajkumawat845@gmail.com", isCaptain: false },
+      { name: "Sriram S", flat: "7131", phone: "9746033649", email: "sriramsharp@gmail.com", isCaptain: false },
+      { name: "Pavan Itagi", flat: "8043", phone: "8971497765", email: "itagi75@gmail.com", isCaptain: false },
+      { name: "Sachin Shiragola", flat: "6174", phone: "9591811199", email: "sachin.shiragola@gmail.com", isCaptain: false },
+      { name: "Mitesh Rao V", flat: "7012", phone: "7829914246", email: "mallika.melingi@gmail.com", isCaptain: false },
+      { name: "Arjun", flat: "5182", phone: "9902641107", email: "-", isCaptain: false },
+      { name: "Pikanshu Kumar", flat: "7082", phone: "9835419814", email: "pikanshu.kr@gmail.com", isCaptain: false },
     ],
   },
   {
     name: "Team 4",
     players: [
-      { name: "Mithin Mathew", isCaptain: true },
-      { name: "Mithun", isCaptain: false },
-      { name: "Nithin Nambiar", isCaptain: false },
-      { name: "Praveesh", isCaptain: false },
-      { name: "Suvin", isCaptain: false },
-      { name: "Shanthibhushan", isCaptain: false },
-      { name: "Sarath", isCaptain: false },
+      { name: "Mithin Mathew", flat: "4164", phone: "7022369049", email: "mithinmathew007@gmail.com", isCaptain: true },
+      { name: "Mithun", flat: "7081", phone: "9052707150", email: "-", isCaptain: false },
+      { name: "Nithin Nambiar", flat: "2172", phone: "8951582345", email: "nithin.nbr@hotmail.com", isCaptain: false },
+      { name: "Praveesh", flat: "-", phone: "-", email: "-", isCaptain: false },
+      { name: "Suvin", flat: "6152", phone: "9035689838", email: "-", isCaptain: false },
+      { name: "Shanthibhushan", flat: "7013", phone: "9980997800", email: "shanthibhushanb@yahoo.co.in", isCaptain: false },
+      { name: "Sarath", flat: "7163", phone: "9496353463", email: "-", isCaptain: false },
     ],
   },
 ];
@@ -69,9 +69,14 @@ export default function MensFootballPage() {
             <div className="space-y-2">
               {team.players.map((p) => (
                 <div key={p.name} className={`rounded-lg p-3 text-sm ${p.isCaptain ? "bg-yellow-500/10 border border-yellow-500/30" : "bg-white/5 border border-white/5"}`}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 mb-1">
                     <span className="font-semibold text-white">{p.name}</span>
                     {p.isCaptain && <span className="text-[10px] px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 rounded font-bold">CAPTAIN</span>}
+                  </div>
+                  <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-gray-400">
+                    <span>Flat: {p.flat}</span>
+                    <span>Ph: {p.phone}</span>
+                    <span>{p.email}</span>
                   </div>
                 </div>
               ))}
