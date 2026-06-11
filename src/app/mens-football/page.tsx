@@ -47,6 +47,7 @@ const teams = [
       { name: "Praveesh", isCaptain: false },
       { name: "Suvin", isCaptain: false },
       { name: "Shanthibhushan", isCaptain: false },
+      { name: "Sarath", isCaptain: false },
     ],
   },
 ];
