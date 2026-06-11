@@ -11,7 +11,7 @@ export default function MensFootballPage() {
       <p className="text-gray-400 mb-8">Registration is open to participants aged 14 years and above</p>
 
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 mb-8">
-        <RegistrationForm category="mens" title="Men's Football" />
+        <RegistrationForm category="mens" title="Men's Football" closed={false} />
       </div>
 
       {/* Info Section */}
