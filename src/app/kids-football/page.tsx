@@ -51,6 +51,7 @@ const teams = [
       { name: "Naval Geete", age: 8, flat: "3034", phone: "9428573450", email: "geete.ashvin@gmail.com", isCaptain: false },
       { name: "Gianna Takhelmayum", age: 7, flat: "4042", phone: "9916246693", email: "gitrajit@gmail.com", isCaptain: false },
       { name: "Mayank Chauhan", age: 7, flat: "3104", phone: "9196630000", email: "mayank.r.chauhan@gmail.com", isCaptain: false },
+      { name: "Satyam Pandey", age: 11, flat: "8073", phone: "-", email: "Sumant21k@gmail.com", isCaptain: false },
     ],
   },
 ];
