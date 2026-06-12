@@ -16,14 +16,14 @@ export default function RulesPage() {
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <p className="font-medium text-white">Exact Score Prediction</p>
-              <p className="text-sm text-gray-400">Predict the correct scoreline</p>
+              <p className="text-sm text-gray-400">Predict the correct scoreline (includes winner bonus)</p>
             </div>
             <span className="text-2xl font-bold text-accent">30</span>
           </div>
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
-              <p className="font-medium text-white">Match Winner Prediction</p>
-              <p className="text-sm text-gray-400">Predict the winning team (or draw)</p>
+              <p className="font-medium text-white">Correct Winner / Draw Only</p>
+              <p className="text-sm text-gray-400">Right outcome but wrong scoreline</p>
             </div>
             <span className="text-2xl font-bold text-accent">10</span>
           </div>
@@ -110,9 +110,9 @@ export default function RulesPage() {
       {/* Summary */}
       <div className="rounded-xl border border-accent/30 bg-accent/5 p-6 text-center">
         <p className="text-lg font-semibold text-accent">Maximum Points Per Match</p>
-        <p className="text-3xl font-black text-white mt-2">30 + 10 + 20 + 15</p>
+        <p className="text-3xl font-black text-white mt-2">30 + 20 + 15 = 65</p>
         <p className="text-sm text-gray-400 mt-2">
-          Score predictions + Winner + POTM + First Goal
+          Exact Score (includes winner) + POTM + First Goal
         </p>
       </div>
     </div>
