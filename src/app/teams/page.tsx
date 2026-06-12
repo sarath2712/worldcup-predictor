@@ -92,7 +92,7 @@ const mensTeams: Team[] = [
     name: "Team 2",
     players: [
       { name: "Kshiraj Nair", flat: "8062", phone: "9880306334", email: "kshiraj2004@gmail.com", isCaptain: true },
-      { name: "Shriragini Kowtarapu", flat: "8104", phone: "6300819297", email: "sairamragini@gmail.com", isCaptain: false },
+      { name: "Pikanshu Kumar", flat: "7082", phone: "9835419814", email: "pikanshu.kr@gmail.com", isCaptain: false },
       { name: "Sagar Kateel", flat: "Q-8004", phone: "9820208013", email: "sagarkateel03@gmail.com", isCaptain: false },
       { name: "Gitrajit", flat: "4042", phone: "7899177567", email: "gitrajit@gmail.com", isCaptain: false },
       { name: "Jay Patel", flat: "2132", phone: "8867822498", email: "jay08ec70@gmail.com", isCaptain: false },
@@ -110,7 +110,6 @@ const mensTeams: Team[] = [
       { name: "Sachin Shiragola", flat: "6174", phone: "9591811199", email: "sachin.shiragola@gmail.com", isCaptain: false },
       { name: "Mitesh Rao V", flat: "7012", phone: "7829914246", email: "mallika.melingi@gmail.com", isCaptain: false },
       { name: "Arjun", flat: "5182", phone: "9902641107", email: "-", isCaptain: false },
-      { name: "Pikanshu Kumar", flat: "7082", phone: "9835419814", email: "pikanshu.kr@gmail.com", isCaptain: false },
     ],
   },
   {
