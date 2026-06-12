@@ -24,6 +24,18 @@ export default function MatchesPage() {
       }
       setUser(user);
 
+      // Auto-sync scores from ESPN before loading matches
+      const today = new Date().toISOString().split("T")[0].replace(/-/g, "");
+      try {
+        await fetch("/api/sync-scores", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ date: today }),
+        });
+      } catch {
+        // Silent fail — sync is best-effort
+      }
+
       const { data: matchData } = await supabase
         .from("matches")
         .select("*")
