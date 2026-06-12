@@ -215,6 +215,7 @@ export default function Home() {
   const [user, setUser] = useState<{ email: string; username: string; isAdmin: boolean } | null>(null);
   const [showLogin, setShowLogin] = useState(false);
   const [tileCounts, setTileCounts] = useState<Record<string, number>>({});
+  const [upcomingMatches, setUpcomingMatches] = useState<{ home_team: string; away_team: string; kickoff_utc: string }[]>([]);
   const supabase = createClient();
 
   useEffect(() => {
@@ -262,6 +263,18 @@ export default function Home() {
       setTileCounts(counts);
     }
     loadCounts();
+
+    // Load next 3 upcoming matches
+    async function loadUpcoming() {
+      const { data } = await supabase
+        .from("matches")
+        .select("home_team, away_team, kickoff_utc")
+        .is("home_score", null)
+        .order("kickoff_utc", { ascending: true })
+        .limit(3);
+      setUpcomingMatches(data || []);
+    }
+    loadUpcoming();
   }, []);
 
   const handleLogout = async () => {
@@ -332,13 +345,36 @@ export default function Home() {
         Sobha Lake Gardens
       </p>
 
-      {/* Countdown timer */}
-      <div className="mb-4 sm:mb-10">
-        <Countdown />
+      {/* Upcoming matches */}
+      <div className="mb-4 sm:mb-8 w-full max-w-[680px] px-4">
+        {upcomingMatches.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-3">
+            <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider">Next</span>
+            {upcomingMatches.map((m, i) => {
+              const kickoff = new Date(m.kickoff_utc);
+              const timeStr = kickoff.toLocaleString("en-IN", {
+                timeZone: "Asia/Kolkata",
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+              });
+              return (
+                <div key={i} className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-2.5 py-1">
+                  <span className="text-[10px] sm:text-xs font-semibold text-white">{m.home_team}</span>
+                  <span className="text-[9px] text-gray-500">vs</span>
+                  <span className="text-[10px] sm:text-xs font-semibold text-white">{m.away_team}</span>
+                  <span className="text-[8px] sm:text-[9px] text-gray-400 ml-0.5">{timeStr}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Main content area with players and tiles */}
-      <div className="relative w-full max-w-6xl px-4 flex items-center justify-center">
+      <div className="relative w-full max-w-6xl px-4 flex items-center justify-center sm:mt-4">
         {/* Ronaldo - left */}
         <div className="absolute -left-16 lg:-left-20 xl:-left-24 bottom-0 hidden md:block w-[240px] lg:w-[300px] xl:w-[360px] pointer-events-none">
           <Image
