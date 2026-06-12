@@ -148,45 +148,45 @@ export default function TodaySchedulePage() {
       {/* General */}
       <div className="rounded-xl border border-white/10 bg-white/5 p-5 mb-4">
         <h3 className="text-sm font-bold text-white mb-3">General Rules</h3>
-        <ul className="space-y-2 text-sm text-gray-300">
-          <li className="flex gap-2"><span className="text-accent shrink-0">&#x2022;</span>All standard football rules apply.</li>
-          <li className="flex gap-2"><span className="text-accent shrink-0">&#x2022;</span>Teams must report to the ground <strong className="text-white">30 minutes</strong> before their scheduled match.</li>
-          <li className="flex gap-2"><span className="text-accent shrink-0">&#x2022;</span>3 minute changeover between matches.</li>
-          <li className="flex gap-2"><span className="text-accent shrink-0">&#x2022;</span>Referee&apos;s decision is final.</li>
+        <ul className="space-y-2 text-sm text-gray-300 list-disc list-inside">
+          <li>All standard football rules apply.</li>
+          <li>Teams must report to the ground <strong className="text-white">30 minutes</strong> before their scheduled match.</li>
+          <li>3 minute changeover between matches.</li>
+          <li>Referee&apos;s decision is final.</li>
         </ul>
       </div>
 
       {/* Kids Rules */}
       <div className="rounded-xl border border-green-500/30 bg-green-500/10 p-5 mb-4">
         <h3 className="text-sm font-bold text-green-400 mb-3">Kids Football Rules</h3>
-        <ul className="space-y-2 text-sm text-gray-300">
-          <li className="flex gap-2"><span className="text-green-400 shrink-0">&#x2022;</span><strong className="text-white">Format:</strong> 5 outfield players + 1 Goalkeeper (5+1)</li>
-          <li className="flex gap-2"><span className="text-green-400 shrink-0">&#x2022;</span><strong className="text-white">Match Duration:</strong> 7 min half + 2 min break + 7 min half = 16 minutes</li>
-          <li className="flex gap-2"><span className="text-green-400 shrink-0">&#x2022;</span><div><strong className="text-white">Squad Rotation:</strong> Each team has 8–9 players including girls. Captains must rotate players at half-time or during stoppages.<br /><span className="text-green-300">Every player must get a chance to play. No player should sit out for an entire match.</span></div></li>
-          <li className="flex gap-2"><span className="text-green-400 shrink-0">&#x2022;</span>Rolling substitutions allowed at any stoppage with referee&apos;s permission.</li>
-          <li className="flex gap-2"><span className="text-green-400 shrink-0">&#x2022;</span>If drawn after full time, penalty shootout (3 kicks each, then sudden death).</li>
+        <ul className="space-y-2 text-sm text-gray-300 list-disc list-inside marker:text-green-400">
+          <li><strong className="text-white">Format:</strong> 5 outfield players + 1 Goalkeeper (5+1)</li>
+          <li><strong className="text-white">Match Duration:</strong> 7 min half + 2 min break + 7 min half = 16 minutes</li>
+          <li><strong className="text-white">Squad Rotation:</strong> Each team has 8–9 players including girls. Captains must rotate players at half-time or during stoppages. <span className="text-green-300">Every player must get a chance to play. No player should sit out for an entire match.</span></li>
+          <li>Rolling substitutions allowed at any stoppage with referee&apos;s permission.</li>
+          <li>If drawn after full time, penalty shootout (3 kicks each, then sudden death).</li>
         </ul>
       </div>
 
       {/* Mens Rules */}
       <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-5 mb-4">
         <h3 className="text-sm font-bold text-blue-400 mb-3">Men&apos;s Football Rules</h3>
-        <ul className="space-y-2 text-sm text-gray-300">
-          <li className="flex gap-2"><span className="text-blue-400 shrink-0">&#x2022;</span><strong className="text-white">Format:</strong> 4 outfield players + 1 Goalkeeper (4+1)</li>
-          <li className="flex gap-2"><span className="text-blue-400 shrink-0">&#x2022;</span><strong className="text-white">Match Duration:</strong> 10 min half + 2 min break + 10 min half = 22 minutes</li>
-          <li className="flex gap-2"><span className="text-blue-400 shrink-0">&#x2022;</span>Rolling substitutions allowed.</li>
-          <li className="flex gap-2"><span className="text-blue-400 shrink-0">&#x2022;</span>If drawn after full time, penalty shootout (3 kicks each, then sudden death).</li>
+        <ul className="space-y-2 text-sm text-gray-300 list-disc list-inside marker:text-blue-400">
+          <li><strong className="text-white">Format:</strong> 4 outfield players + 1 Goalkeeper (4+1)</li>
+          <li><strong className="text-white">Match Duration:</strong> 10 min half + 2 min break + 10 min half = 22 minutes</li>
+          <li>Rolling substitutions allowed.</li>
+          <li>If drawn after full time, penalty shootout (3 kicks each, then sudden death).</li>
         </ul>
       </div>
 
       {/* Womens Rules */}
       <div className="rounded-xl border border-pink-500/30 bg-pink-500/10 p-5 mb-4">
         <h3 className="text-sm font-bold text-pink-400 mb-3">Women&apos;s Football Rules (Penalty Shootout)</h3>
-        <ul className="space-y-2 text-sm text-gray-300">
-          <li className="flex gap-2"><span className="text-pink-400 shrink-0">&#x2022;</span><strong className="text-white">Format:</strong> Penalty shootout only (no open play).</li>
-          <li className="flex gap-2"><span className="text-pink-400 shrink-0">&#x2022;</span><strong className="text-white">1 kick per player.</strong> Each team takes <strong className="text-white">5 penalty kicks</strong>.</li>
-          <li className="flex gap-2"><span className="text-pink-400 shrink-0">&#x2022;</span>If scores are level after 5 kicks each, it goes to <strong className="text-white">sudden death</strong> — the team that misses first loses.</li>
-          <li className="flex gap-2"><span className="text-pink-400 shrink-0">&#x2022;</span>Each match lasts approximately 15 minutes.</li>
+        <ul className="space-y-2 text-sm text-gray-300 list-disc list-inside marker:text-pink-400">
+          <li><strong className="text-white">Format:</strong> Penalty shootout only (no open play).</li>
+          <li><strong className="text-white">1 kick per player.</strong> Each team takes <strong className="text-white">5 penalty kicks.</strong></li>
+          <li>If scores are level after 5 kicks each, it goes to <strong className="text-white">sudden death</strong> — the team that misses first loses.</li>
+          <li>Each match lasts approximately 15 minutes.</li>
         </ul>
       </div>
     </div>
