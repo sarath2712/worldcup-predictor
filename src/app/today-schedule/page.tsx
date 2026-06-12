@@ -162,8 +162,8 @@ export default function TodaySchedulePage() {
         <ul className="space-y-2 text-sm text-gray-300">
           <li className="flex gap-2"><span className="text-green-400 shrink-0">&#x2022;</span><strong className="text-white">Format:</strong> 5 outfield players + 1 Goalkeeper (5+1)</li>
           <li className="flex gap-2"><span className="text-green-400 shrink-0">&#x2022;</span><strong className="text-white">Match Duration:</strong> 7 min half + 2 min break + 7 min half = 16 minutes</li>
-          <li className="flex gap-2"><span className="text-green-400 shrink-0">&#x2022;</span><strong className="text-white">Squad Rotation:</strong> Each team has 8–9 players. Captains <strong className="text-white">must rotate players</strong> at half-time or during stoppages so that <strong className="text-white">every player gets a chance to play</strong>. No player should sit out for an entire match.</li>
-          <li className="flex gap-2"><span className="text-green-400 shrink-0">&#x2022;</span>Rolling substitutions are allowed at any stoppage with referee&apos;s permission.</li>
+          <li className="flex gap-2"><span className="text-green-400 shrink-0">&#x2022;</span><div><strong className="text-white">Squad Rotation:</strong> Each team has 8–9 players including girls. Captains must rotate players at half-time or during stoppages.<br /><span className="text-green-300">Every player must get a chance to play. No player should sit out for an entire match.</span></div></li>
+          <li className="flex gap-2"><span className="text-green-400 shrink-0">&#x2022;</span>Rolling substitutions allowed at any stoppage with referee&apos;s permission.</li>
           <li className="flex gap-2"><span className="text-green-400 shrink-0">&#x2022;</span>If drawn after full time, penalty shootout (3 kicks each, then sudden death).</li>
         </ul>
       </div>

@@ -112,28 +112,20 @@ type TileCategory = "mens" | "womens" | "kids" | "playstation" | "prediction" | 
 
 const tiles: { title: string; subtitle: string; href: string; Icon: typeof JerseyIcon; color: string; countKey: TileCategory }[] = [
   {
-    title: "Men's Football",
-    subtitle: "CLASH OF THE TITANS",
-    href: "/mens-football",
-    Icon: JerseyIcon,
-    color: "from-blue-500 to-blue-700",
-    countKey: "mens",
+    title: "All Teams",
+    subtitle: "KIDS · MENS · WOMENS",
+    href: "/teams",
+    Icon: TeamIcon,
+    color: "from-cyan-500 to-blue-600",
+    countKey: null,
   },
   {
-    title: "Kids Football",
-    subtitle: "FUTURE STARS",
-    href: "/kids-football",
-    Icon: StarIcon,
-    color: "from-green-500 to-green-700",
-    countKey: "kids",
-  },
-  {
-    title: "Women's Football",
-    subtitle: "RISE & SHINE",
-    href: "/womens-football",
-    Icon: JerseyIcon,
-    color: "from-pink-500 to-purple-600",
-    countKey: "womens",
+    title: "Today's Schedule",
+    subtitle: "MATCH TIMES",
+    href: "/today-schedule",
+    Icon: ClockIcon,
+    color: "from-orange-500 to-red-600",
+    countKey: null,
   },
   {
     title: "World Cup Prediction",
@@ -174,22 +166,6 @@ const tiles: { title: string; subtitle: string; href: string; Icon: typeof Jerse
     Icon: PenIcon,
     color: "from-rose-500 to-orange-600",
     countKey: "story" as TileCategory,
-  },
-  {
-    title: "All Teams",
-    subtitle: "KIDS · MENS · WOMENS",
-    href: "/teams",
-    Icon: TeamIcon,
-    color: "from-cyan-500 to-blue-600",
-    countKey: null,
-  },
-  {
-    title: "Today's Schedule",
-    subtitle: "MATCH TIMES",
-    href: "/today-schedule",
-    Icon: ClockIcon,
-    color: "from-orange-500 to-red-600",
-    countKey: null,
   },
 ];
 
@@ -428,24 +404,6 @@ export default function Home() {
                 </span>
               )}
 
-              {/* Teams Ready tag on womens football */}
-              {tile.href === "/womens-football" && (
-                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-[30%] px-2 py-0.5 rounded-full bg-green-400/80 border border-green-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-green-400/30">
-                  Teams Ready
-                </span>
-              )}
-              {/* Teams Ready tag on kids football */}
-              {tile.href === "/kids-football" && (
-                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-[30%] px-2 py-0.5 rounded-full bg-green-400/80 border border-green-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-green-400/30">
-                  Teams Ready
-                </span>
-              )}
-              {/* Teams Ready tag on mens football */}
-              {tile.href === "/mens-football" && (
-                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-[30%] px-2 py-0.5 rounded-full bg-green-400/80 border border-green-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-green-400/30">
-                  Teams Ready
-                </span>
-              )}
               {/* Register Now tag on PlayStation tile */}
               {tile.href === "/playstation-worldcup" && (
                 <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-[30%] px-2 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
