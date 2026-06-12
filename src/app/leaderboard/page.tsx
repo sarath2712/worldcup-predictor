@@ -91,7 +91,7 @@ export default function LeaderboardPage() {
     }
 
     msg += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-    msg += "🔗 worldcup-predictor.vercel.app";
+    msg += "🔗 https://www.slgevents.in/matches";
 
     return msg;
   }
