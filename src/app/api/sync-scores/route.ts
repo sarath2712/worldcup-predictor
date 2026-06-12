@@ -35,9 +35,42 @@ type SyncResult = {
 
 export async function POST(request: Request) {
   try {
-    // Parse optional date param
+    // Parse optional params
     const body = await request.json().catch(() => ({}));
     const dateParam = body.date; // format: YYYYMMDD
+    const force = body.force === true; // skip time check
+
+    // 2. Connect to Supabase with service role or anon key
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    // Check if there are any unscored matches that started within last 4 hours
+    // (covers ~2h match + 1h buffer + timezone slack)
+    // Skip this check if force=true (manual sync from admin page)
+    if (!force) {
+      const fourHoursAgo = new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString();
+      const thirtyMinFromNow = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+
+      const { data: pendingMatches } = await supabase
+        .from("matches")
+        .select("id")
+        .is("home_score", null)
+        .lte("kickoff_utc", thirtyMinFromNow)
+        .gte("kickoff_utc", fourHoursAgo)
+        .limit(1);
+
+      if (!pendingMatches || pendingMatches.length === 0) {
+        return NextResponse.json({
+          message: "No active or recently finished matches to sync",
+          matched: 0,
+          updated: 0,
+          skipped_reason: "outside_match_window",
+        });
+      }
+    }
 
     // Build ESPN URL
     let espnUrl = ESPN_WC_URL;
@@ -65,13 +98,6 @@ export async function POST(request: Request) {
         updated: 0,
       });
     }
-
-    // 2. Connect to Supabase with service role or anon key
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY ||
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
 
     const result: SyncResult = {
       matched: 0,

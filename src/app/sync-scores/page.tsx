@@ -65,7 +65,7 @@ export default function SyncScoresPage() {
       const res = await fetch("/api/sync-scores", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date }),
+        body: JSON.stringify({ date, force: true }),
       });
       const data = await res.json();
       if (data.error) {
