@@ -57,6 +57,7 @@ const kidsTeams: Team[] = [
       { name: "Uddeshya", age: 8, flat: "5143", phone: "8652224778", email: "utkarshi.p@gmail.com", isCaptain: false },
       { name: "Magizhan Ganeshan", age: 7, flat: "3143", phone: "9500174822", email: "tamilselviamity@gmail.com", isCaptain: false },
       { name: "Surya Raj", age: 7, flat: "2152", phone: "9185540000", email: "lakshmibs512@gmail.com", isCaptain: false },
+      { name: "Krishna", age: 14, flat: "-", phone: "-", email: "-", isCaptain: false },
     ],
   },
   {
