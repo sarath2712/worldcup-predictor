@@ -19,8 +19,8 @@ export default function TournamentPage() {
   const [bestPlayer, setBestPlayer] = useState("");
   const [bestGk, setBestGk] = useState("");
 
-  // Tournament starts June 11, 2026 19:00 UTC
-  const tournamentStart = new Date("2026-06-11T19:00:00Z");
+  // Extended deadline: June 12, 2026 11:59 PM IST (18:29 UTC)
+  const tournamentStart = new Date("2026-06-12T18:29:00Z");
   const isLocked = new Date() >= tournamentStart;
 
   useEffect(() => {

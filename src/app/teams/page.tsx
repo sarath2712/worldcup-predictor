@@ -170,9 +170,9 @@ const womensTeams: Team[] = [
 ];
 
 const sections = [
-  { key: "kids", label: "Kids", icon: "⚽", color: "from-green-500 to-green-700", teams: kidsTeams, subtitle: "4 Teams · 34 Players · Ages 7–14" },
-  { key: "mens", label: "Men's", icon: "🏟️", color: "from-blue-500 to-blue-700", teams: mensTeams, subtitle: "4 Teams · 29 Players" },
-  { key: "womens", label: "Women's", icon: "🌟", color: "from-pink-500 to-purple-600", teams: womensTeams, subtitle: "4 Teams · 20 Players" },
+  { key: "kids", label: "Kids", color: "from-green-500 to-green-700", teams: kidsTeams, subtitle: "4 Teams · 34 Players · Ages 7–14" },
+  { key: "mens", label: "Men's", color: "from-blue-500 to-blue-700", teams: mensTeams, subtitle: "4 Teams · 29 Players" },
+  { key: "womens", label: "Women's", color: "from-pink-500 to-purple-600", teams: womensTeams, subtitle: "4 Teams · 20 Players" },
 ] as const;
 
 export default function TeamsPage() {
@@ -207,7 +207,7 @@ export default function TeamsPage() {
                 : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-white"
             }`}
           >
-            {s.icon} {s.label}
+            {s.label}
           </button>
         ))}
       </div>
