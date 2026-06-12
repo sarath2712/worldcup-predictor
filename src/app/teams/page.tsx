@@ -29,6 +29,7 @@ const kidsTeams: Team[] = [
       { name: "Hanah M Mathew", age: 8, flat: "4164", phone: "7022369049", email: "mithinmathew007@gmail.com", isCaptain: false },
       { name: "Nithin Nambiar", age: 7, flat: "2172", phone: "8951582345", email: "nithin.nbr@hotmail.com", isCaptain: false },
       { name: "Rajen Shaw", age: 7, flat: "2024", phone: "9632570011", email: "sumitshaw007@gmail.com", isCaptain: false },
+      { name: "Aryan Singh", flat: "2112", phone: "7022258494", email: "prabhat1607@gmail.com", isCaptain: false },
     ],
   },
   {
@@ -170,7 +171,7 @@ const womensTeams: Team[] = [
 ];
 
 const sections = [
-  { key: "kids", label: "Kids", color: "from-green-500 to-green-700", teams: kidsTeams, subtitle: "4 Teams · 34 Players · Ages 7–14" },
+  { key: "kids", label: "Kids", color: "from-green-500 to-green-700", teams: kidsTeams, subtitle: "4 Teams · 35 Players · Ages 7–14" },
   { key: "mens", label: "Men's", color: "from-blue-500 to-blue-700", teams: mensTeams, subtitle: "4 Teams · 29 Players" },
   { key: "womens", label: "Women's", color: "from-pink-500 to-purple-600", teams: womensTeams, subtitle: "4 Teams · 20 Players" },
 ] as const;
