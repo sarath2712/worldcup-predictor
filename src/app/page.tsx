@@ -80,6 +80,26 @@ function PenIcon({ className = "" }: { className?: string }) {
   );
 }
 
+function TeamIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 00-3-3.87" />
+      <path d="M16 3.13a4 4 0 010 7.75" />
+    </svg>
+  );
+}
+
+function ClockIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 6v6l4 2" />
+    </svg>
+  );
+}
+
 function ArrowIcon({ className = "" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -154,6 +174,22 @@ const tiles: { title: string; subtitle: string; href: string; Icon: typeof Jerse
     Icon: PenIcon,
     color: "from-rose-500 to-orange-600",
     countKey: "story" as TileCategory,
+  },
+  {
+    title: "All Teams",
+    subtitle: "KIDS · MENS · WOMENS",
+    href: "/teams",
+    Icon: TeamIcon,
+    color: "from-cyan-500 to-blue-600",
+    countKey: null,
+  },
+  {
+    title: "Today's Schedule",
+    subtitle: "MATCH TIMES",
+    href: "/today-schedule",
+    Icon: ClockIcon,
+    color: "from-orange-500 to-red-600",
+    countKey: null,
   },
 ];
 
