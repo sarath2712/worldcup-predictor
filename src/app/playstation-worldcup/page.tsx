@@ -241,12 +241,6 @@ export default function PlaystationWorldcupPage() {
         ))}
       </div>
 
-      {/* Closing */}
-      <div className="rounded-xl border border-green-500/20 bg-green-500/5 px-4 py-3 mt-6 text-center">
-        <p className="text-xs text-green-400 font-bold">Closing &amp; Winner Photo</p>
-        <p className="text-xs text-gray-400">Sun 6 Jul, 4:55 - 5:00 PM</p>
-      </div>
-
       {/* Champion Trophy */}
       <div className="mt-10 mb-4 flex flex-col items-center">
         <img src="/trophy.png" alt="Champion Trophy" className="w-32 h-32 object-contain drop-shadow-[0_0_24px_rgba(255,215,0,0.5)]" />
