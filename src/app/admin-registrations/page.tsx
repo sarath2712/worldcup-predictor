@@ -92,6 +92,7 @@ export default function AdminRegistrationsPage() {
   const [supportQueries, setSupportQueries] = useState<SupportQuery[]>([]);
   const [respondingTo, setRespondingTo] = useState<string | null>(null);
   const [responseText, setResponseText] = useState("");
+  const [copied, setCopied] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -266,6 +267,65 @@ export default function AdminRegistrationsPage() {
     );
   };
 
+  function buildWhatsAppMessage(): string {
+    const scored = matches.filter((m) => m.home_score !== null).sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime());
+    const recentMatch = scored[0] || null;
+    const upcoming = matches.filter((m) => m.home_score === null).sort((a, b) => new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime()).slice(0, 3);
+
+    let msg = "*FIFA WC 2026 — PREDICTION LEADERBOARD*\n";
+    msg += "---------------------------------------\n";
+    if (recentMatch) {
+      msg += `After: ${recentMatch.home_team} ${recentMatch.home_score}-${recentMatch.away_score} ${recentMatch.away_team}\n`;
+    }
+    msg += "\n*TOP 10*\n\n";
+
+    // We'll fetch leaderboard inline
+    return msg;
+  }
+
+  async function handleAdminShare() {
+    const { data: lb } = await supabase.from("leaderboard").select("*").order("total_points", { ascending: false }).limit(10);
+    const scored = matches.filter((m) => m.home_score !== null).sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime());
+    const recentMatch = scored[0] || null;
+    const upcoming = matches.filter((m) => m.home_score === null).sort((a, b) => new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime()).slice(0, 3);
+
+    let msg = "*FIFA WC 2026 — PREDICTION LEADERBOARD*\n";
+    msg += "---------------------------------------\n";
+    if (recentMatch) {
+      msg += `After: ${recentMatch.home_team} ${recentMatch.home_score}-${recentMatch.away_score} ${recentMatch.away_team}\n`;
+    }
+    msg += "\n*TOP 10*\n\n";
+    for (const entry of (lb || [])) {
+      const rank = String(entry.rank).padStart(2, " ");
+      const exact = entry.exact_scores > 0 ? ` (${entry.exact_scores} exact)` : "";
+      msg += `${rank}. ${entry.username} — *${entry.total_points} pts*${exact}\n`;
+    }
+    if (upcoming.length > 0) {
+      msg += "\n*UPCOMING MATCHES*\n";
+      for (const m of upcoming) {
+        const kickoff = new Date(m.kickoff_utc);
+        const ist = kickoff.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true });
+        msg += `${m.home_team} vs ${m.away_team} — ${ist} IST\n`;
+      }
+      msg += "\nPredict before kickoff!\n";
+    }
+    msg += "---------------------------------------\n";
+    msg += "https://www.slgevents.in/matches";
+    return msg;
+  }
+
+  async function handleShareWhatsApp() {
+    const msg = await handleAdminShare();
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+  }
+
+  async function handleCopy() {
+    const msg = await handleAdminShare();
+    await navigator.clipboard.writeText(msg);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
   const filteredRegistrations =
     filterCategory === "all"
       ? registrations
@@ -327,6 +387,16 @@ export default function AdminRegistrationsPage() {
           <p className="text-2xl font-bold">{matchPredictions.length + predictions.length}</p>
           <p className="text-xs text-gray-400">Total Predictions</p>
         </div>
+      </div>
+
+      {/* Share Leaderboard */}
+      <div className="flex gap-3 mb-8">
+        <button onClick={handleShareWhatsApp} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
+          Share Leaderboard to WhatsApp
+        </button>
+        <button onClick={handleCopy} className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          {copied ? "Copied!" : "Copy Message"}
+        </button>
       </div>
 
       {/* Tabs */}
