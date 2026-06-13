@@ -153,11 +153,11 @@ const tiles: { title: string; subtitle: string; href: string; Icon: typeof Jerse
     countKey: null,
   },
   {
-    title: "Today's Schedule",
-    subtitle: "MATCH TIMES",
-    href: "/today-schedule",
-    Icon: ClockIcon,
-    color: "from-orange-500 to-red-600",
+    title: "Winners",
+    subtitle: "CHAMPIONS",
+    href: "/teams",
+    Icon: TrophyIcon,
+    color: "from-yellow-500 to-amber-600",
     countKey: null,
   },
   {
@@ -248,7 +248,6 @@ export default function Home() {
   const [user, setUser] = useState<{ email: string; username: string; isAdmin: boolean } | null>(null);
   const [showLogin, setShowLogin] = useState(false);
   const [tileCounts, setTileCounts] = useState<Record<string, number>>({});
-  const [upcomingMatches, setUpcomingMatches] = useState<{ home_team: string; away_team: string; kickoff_utc: string }[]>([]);
   const supabase = createClient();
 
   useEffect(() => {
@@ -296,18 +295,6 @@ export default function Home() {
       setTileCounts(counts);
     }
     loadCounts();
-
-    // Load next 3 upcoming matches
-    async function loadUpcoming() {
-      const { data } = await supabase
-        .from("matches")
-        .select("home_team, away_team, kickoff_utc")
-        .is("home_score", null)
-        .order("kickoff_utc", { ascending: true })
-        .limit(3);
-      setUpcomingMatches(data || []);
-    }
-    loadUpcoming();
   }, []);
 
   const handleLogout = async () => {
@@ -378,39 +365,53 @@ export default function Home() {
         Sobha Lake Gardens
       </p>
 
-      {/* Upcoming matches */}
+      {/* Winners Section */}
       <div className="mb-4 sm:mb-8 w-full max-w-[680px] px-4">
-        {upcomingMatches.length > 0 && (
-          <div className="flex flex-col items-center gap-2">
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-green-400 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="currentColor"/></svg>
-              <span className="text-[10px] sm:text-xs font-bold text-green-400 uppercase tracking-wider">Upcoming Matches</span>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-center gap-2">
+            <svg className="w-4 h-4 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.82 20 12 16.54 7.18 20l1.64-6.91L4 9l5.91-.74L12 2z"/></svg>
+            <span className="text-[10px] sm:text-xs font-bold text-yellow-400 uppercase tracking-wider">Tournament Winners</span>
+            <svg className="w-4 h-4 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.82 20 12 16.54 7.18 20l1.64-6.91L4 9l5.91-.74L12 2z"/></svg>
+          </div>
+
+          {/* Kids Winners */}
+          <div className="bg-gradient-to-r from-green-500/10 to-green-500/5 border border-green-500/20 rounded-xl p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-bold text-green-400">⚽ Kids</span>
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
-              {upcomingMatches.map((m, i) => {
-                const kickoff = new Date(m.kickoff_utc);
-                const timeStr = kickoff.toLocaleString("en-IN", {
-                  timeZone: "Asia/Kolkata",
-                  month: "short",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                  hour12: true,
-                });
-                return (
-                  <div key={i} className="group flex items-center gap-2 bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/10 rounded-xl px-3 py-2 w-full sm:w-auto hover:border-green-500/30 transition-all">
-                    <span className="text-base">{getFlag(m.home_team)}</span>
-                    <span className="text-[11px] sm:text-xs font-bold text-white">{m.home_team}</span>
-                    <span className="text-[9px] font-bold text-gray-500 bg-white/5 rounded px-1.5 py-0.5">VS</span>
-                    <span className="text-[11px] sm:text-xs font-bold text-white">{m.away_team}</span>
-                    <span className="text-base">{getFlag(m.away_team)}</span>
-                    <span className="text-[8px] sm:text-[9px] text-gray-400 ml-auto sm:ml-1 bg-white/5 rounded-full px-2 py-0.5">{timeStr}</span>
-                  </div>
-                );
-              })}
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <span className="text-sm">🏆</span>
+                <span className="text-[10px] sm:text-xs font-bold text-yellow-300">CHAMPIONS — Team 3</span>
+              </div>
+              <p className="text-[9px] sm:text-[10px] text-gray-300 pl-6">Aaradhya Rawat (C), Antonio Rishon, Priyanshu, Hreyansh, Aaron Bennett, Uddeshya, Magizhan Ganeshan, Surya Raj, Krishna</p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-sm">🥈</span>
+                <span className="text-[10px] sm:text-xs font-bold text-gray-300">RUNNERS-UP — Team 4</span>
+              </div>
+              <p className="text-[9px] sm:text-[10px] text-gray-400 pl-6">Kunal (C), Utkarsh, Aaryan Abhilash, Ritvik Chaturvedi, Suyukth, Naval Geete, Gianna Takhelmayum, Mayank Chauhan, Satyam Pandey</p>
             </div>
           </div>
-        )}
+
+          {/* Women Winners */}
+          <div className="bg-gradient-to-r from-pink-500/10 to-purple-500/5 border border-pink-500/20 rounded-xl p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-bold text-pink-400">⚽ Women</span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <span className="text-sm">🏆</span>
+                <span className="text-[10px] sm:text-xs font-bold text-yellow-300">CHAMPIONS — Team 1</span>
+              </div>
+              <p className="text-[9px] sm:text-[10px] text-gray-300 pl-6">Preemy (C), Srilakshmi, Tanya, Reshma, Aiswarya</p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-sm">🥈</span>
+                <span className="text-[10px] sm:text-xs font-bold text-gray-300">RUNNERS-UP — Team 2</span>
+              </div>
+              <p className="text-[9px] sm:text-[10px] text-gray-400 pl-6">Sushravya (C), Ahana, Aswathi, Fathima, Archana</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Main content area with players and tiles */}
