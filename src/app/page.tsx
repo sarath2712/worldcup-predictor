@@ -440,10 +440,10 @@ export default function Home() {
                 </span>
               )}
 
-              {/* Register Now tag on PlayStation tile */}
+              {/* Starts date tag on PlayStation tile */}
               {tile.href === "/playstation-worldcup" && (
-                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[60px] px-2 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
-                  Register Now
+                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[60px] px-2 py-0.5 rounded-full bg-cyan-400/80 border border-cyan-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide shadow-lg shadow-cyan-400/30">
+                  Starts 28 Jun
                 </span>
               )}
 
