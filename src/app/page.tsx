@@ -7,6 +7,39 @@ import UserHeader from "@/components/UserHeader";
 import LoginModal from "@/components/LoginModal";
 import { createClient } from "@/lib/supabase/client";
 
+const FLAGS: Record<string, string> = {
+  "USA": "\u{1F1FA}\u{1F1F8}", "Mexico": "\u{1F1F2}\u{1F1FD}", "Canada": "\u{1F1E8}\u{1F1E6}",
+  "Brazil": "\u{1F1E7}\u{1F1F7}", "Argentina": "\u{1F1E6}\u{1F1F7}", "Colombia": "\u{1F1E8}\u{1F1F4}",
+  "Uruguay": "\u{1F1FA}\u{1F1FE}", "Ecuador": "\u{1F1EA}\u{1F1E8}", "Paraguay": "\u{1F1F5}\u{1F1FE}",
+  "Chile": "\u{1F1E8}\u{1F1F1}", "Peru": "\u{1F1F5}\u{1F1EA}", "Venezuela": "\u{1F1FB}\u{1F1EA}",
+  "Bolivia": "\u{1F1E7}\u{1F1F4}", "Panama": "\u{1F1F5}\u{1F1E6}", "Costa Rica": "\u{1F1E8}\u{1F1F7}",
+  "Honduras": "\u{1F1ED}\u{1F1F3}", "Jamaica": "\u{1F1EF}\u{1F1F2}", "El Salvador": "\u{1F1F8}\u{1F1FB}",
+  "England": "\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}",
+  "France": "\u{1F1EB}\u{1F1F7}", "Germany": "\u{1F1E9}\u{1F1EA}", "Spain": "\u{1F1EA}\u{1F1F8}",
+  "Portugal": "\u{1F1F5}\u{1F1F9}", "Netherlands": "\u{1F1F3}\u{1F1F1}", "Belgium": "\u{1F1E7}\u{1F1EA}",
+  "Italy": "\u{1F1EE}\u{1F1F9}", "Croatia": "\u{1F1ED}\u{1F1F7}", "Denmark": "\u{1F1E9}\u{1F1F0}",
+  "Switzerland": "\u{1F1E8}\u{1F1ED}", "Poland": "\u{1F1F5}\u{1F1F1}", "Serbia": "\u{1F1F7}\u{1F1F8}",
+  "Scotland": "\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}",
+  "Wales": "\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}",
+  "Austria": "\u{1F1E6}\u{1F1F9}", "Czech Republic": "\u{1F1E8}\u{1F1FF}", "Czechia": "\u{1F1E8}\u{1F1FF}",
+  "Turkey": "\u{1F1F9}\u{1F1F7}", "Ukraine": "\u{1F1FA}\u{1F1E6}", "Sweden": "\u{1F1F8}\u{1F1EA}",
+  "Norway": "\u{1F1F3}\u{1F1F4}", "Hungary": "\u{1F1ED}\u{1F1FA}", "Greece": "\u{1F1EC}\u{1F1F7}",
+  "Romania": "\u{1F1F7}\u{1F1F4}", "Slovakia": "\u{1F1F8}\u{1F1F0}", "Slovenia": "\u{1F1F8}\u{1F1EE}",
+  "Albania": "\u{1F1E6}\u{1F1F1}", "Finland": "\u{1F1EB}\u{1F1EE}",
+  "Japan": "\u{1F1EF}\u{1F1F5}", "South Korea": "\u{1F1F0}\u{1F1F7}", "Australia": "\u{1F1E6}\u{1F1FA}",
+  "Iran": "\u{1F1EE}\u{1F1F7}", "Saudi Arabia": "\u{1F1F8}\u{1F1E6}", "Qatar": "\u{1F1F6}\u{1F1E6}",
+  "China": "\u{1F1E8}\u{1F1F3}", "India": "\u{1F1EE}\u{1F1F3}", "Indonesia": "\u{1F1EE}\u{1F1E9}",
+  "Morocco": "\u{1F1F2}\u{1F1E6}", "Senegal": "\u{1F1F8}\u{1F1F3}", "Nigeria": "\u{1F1F3}\u{1F1EC}",
+  "Egypt": "\u{1F1EA}\u{1F1EC}", "Cameroon": "\u{1F1E8}\u{1F1F2}", "Ghana": "\u{1F1EC}\u{1F1ED}",
+  "Tunisia": "\u{1F1F9}\u{1F1F3}", "Algeria": "\u{1F1E9}\u{1F1FF}", "South Africa": "\u{1F1FF}\u{1F1E6}",
+  "Ivory Coast": "\u{1F1E8}\u{1F1EE}", "DR Congo": "\u{1F1E8}\u{1F1E9}",
+  "New Zealand": "\u{1F1F3}\u{1F1FF}", "Russia": "\u{1F1F7}\u{1F1FA}",
+  "Ireland": "\u{1F1EE}\u{1F1EA}", "Iceland": "\u{1F1EE}\u{1F1F8}",
+};
+function getFlag(team: string): string {
+  return FLAGS[team] || "\u{26BD}";
+}
+
 /* SVG Icon components - clean, standard icons */
 function JerseyIcon({ className = "" }: { className?: string }) {
   return (
@@ -348,27 +381,34 @@ export default function Home() {
       {/* Upcoming matches */}
       <div className="mb-4 sm:mb-8 w-full max-w-[680px] px-4">
         {upcomingMatches.length > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-3">
-            <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider">Next</span>
-            {upcomingMatches.map((m, i) => {
-              const kickoff = new Date(m.kickoff_utc);
-              const timeStr = kickoff.toLocaleString("en-IN", {
-                timeZone: "Asia/Kolkata",
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
-              });
-              return (
-                <div key={i} className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-2.5 py-1">
-                  <span className="text-[10px] sm:text-xs font-semibold text-white">{m.home_team}</span>
-                  <span className="text-[9px] text-gray-500">vs</span>
-                  <span className="text-[10px] sm:text-xs font-semibold text-white">{m.away_team}</span>
-                  <span className="text-[8px] sm:text-[9px] text-gray-400 ml-0.5">{timeStr}</span>
-                </div>
-              );
-            })}
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-green-400 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="currentColor"/></svg>
+              <span className="text-[10px] sm:text-xs font-bold text-green-400 uppercase tracking-wider">Upcoming Matches</span>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              {upcomingMatches.map((m, i) => {
+                const kickoff = new Date(m.kickoff_utc);
+                const timeStr = kickoff.toLocaleString("en-IN", {
+                  timeZone: "Asia/Kolkata",
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                });
+                return (
+                  <div key={i} className="group flex items-center gap-2 bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/10 rounded-xl px-3 py-2 w-full sm:w-auto hover:border-green-500/30 transition-all">
+                    <span className="text-base">{getFlag(m.home_team)}</span>
+                    <span className="text-[11px] sm:text-xs font-bold text-white">{m.home_team}</span>
+                    <span className="text-[9px] font-bold text-gray-500 bg-white/5 rounded px-1.5 py-0.5">VS</span>
+                    <span className="text-[11px] sm:text-xs font-bold text-white">{m.away_team}</span>
+                    <span className="text-base">{getFlag(m.away_team)}</span>
+                    <span className="text-[8px] sm:text-[9px] text-gray-400 ml-auto sm:ml-1 bg-white/5 rounded-full px-2 py-0.5">{timeStr}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
