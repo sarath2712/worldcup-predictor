@@ -401,13 +401,14 @@ export default function Home() {
 
         {/* Tiles Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2.5 max-w-[680px] w-full relative z-10">
-          {tiles.map((tile) => (
+          {tiles.map((tile, idx) => (
             <Link
               key={tile.title}
               href={tile.href}
               onClick={(e) => handleTileClick(tile, e)}
               className={`rounded-lg sm:rounded-xl bg-gradient-to-br ${tile.color} backdrop-blur-md border border-white/20
                 flex flex-col items-start justify-end p-2.5 sm:p-3.5 h-[100px] sm:h-[120px]
+                ${tiles.length % 2 === 1 && idx === tiles.length - 1 ? "col-start-1 col-end-3 sm:col-start-auto sm:col-end-auto mx-auto w-1/2 sm:w-auto" : ""}
                 hover:scale-105 hover:border-white/40 hover:shadow-2xl transition-all duration-300
                 group cursor-pointer relative overflow-hidden`}
             >
@@ -443,7 +444,7 @@ export default function Home() {
               {/* Starts date tag on PlayStation tile */}
               {tile.href === "/playstation-worldcup" && (
                 <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[60px] px-2 py-0.5 rounded-full bg-cyan-400/80 border border-cyan-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide shadow-lg shadow-cyan-400/30">
-                  Starts 28 Jun
+                  Starts 20 Jun
                 </span>
               )}
 
