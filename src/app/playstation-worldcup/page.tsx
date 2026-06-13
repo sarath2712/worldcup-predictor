@@ -1,22 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+
+const ADMIN_USERS = [
+  "c650a8d0-428e-49e3-a225-f2787bd8fd77", // SARATHJS
+  "13883ac7-d7e1-4007-9d45-3ed2b69c1f44", // Mithin Mathew
+];
 
 type Match = { id: string; p1: string; p2: string; time: string };
 type Round = { title: string; date: string; matches: Match[] };
+type Score = { match_id: string; score_p1: number; score_p2: number };
 
 const fixtures: Round[] = [
   {
     title: "Preliminary / Play-in",
-    date: "Sat 20 Jun",
+    date: "Sat 28 Jun",
     matches: [
       { id: "P0", p1: "Chirag Tyagi", p2: "Mausami Tanna", time: "2:10-2:25 PM" },
     ],
   },
   {
     title: "Round of 32 - Day 1",
-    date: "Sat 20 Jun",
+    date: "Sat 28 Jun",
     matches: [
       { id: "M1", p1: "Sachin Shiragola", p2: "Pavan Itagi", time: "2:25-2:40 PM" },
       { id: "M2", p1: "Kshiraj Nair", p2: "Sriram", time: "2:40-2:55 PM" },
@@ -30,7 +37,7 @@ const fixtures: Round[] = [
   },
   {
     title: "Round of 32 - Day 2",
-    date: "Sun 21 Jun",
+    date: "Sun 29 Jun",
     matches: [
       { id: "M9", p1: "Mithin Mathew", p2: "Mitesh Rao V", time: "2:10-2:25 PM" },
       { id: "M10", p1: "Pikanshu Kumar", p2: "Mahesh Tirupati", time: "2:25-2:40 PM" },
@@ -44,7 +51,7 @@ const fixtures: Round[] = [
   },
   {
     title: "Round of 16",
-    date: "Sat 27 Jun",
+    date: "Sat 5 Jul",
     matches: [
       { id: "M17", p1: "Winner M1", p2: "Winner M2", time: "2:10-2:25 PM" },
       { id: "M18", p1: "Winner M3", p2: "Winner M4", time: "2:25-2:40 PM" },
@@ -58,7 +65,7 @@ const fixtures: Round[] = [
   },
   {
     title: "Quarter-Finals",
-    date: "Sun 28 Jun",
+    date: "Sun 6 Jul",
     matches: [
       { id: "QF1", p1: "Winner M17", p2: "Winner M18", time: "2:10-2:28 PM" },
       { id: "QF2", p1: "Winner M19", p2: "Winner M20", time: "2:28-2:46 PM" },
@@ -68,7 +75,7 @@ const fixtures: Round[] = [
   },
   {
     title: "Semi-Finals",
-    date: "Sun 28 Jun",
+    date: "Sun 6 Jul",
     matches: [
       { id: "SF1", p1: "Winner QF1", p2: "Winner QF2", time: "3:32-3:52 PM" },
       { id: "SF2", p1: "Winner QF3", p2: "Winner QF4", time: "3:52-4:12 PM" },
@@ -76,14 +83,14 @@ const fixtures: Round[] = [
   },
   {
     title: "3rd Place (Optional)",
-    date: "Sun 28 Jun",
+    date: "Sun 6 Jul",
     matches: [
       { id: "3rd", p1: "Loser SF1", p2: "Loser SF2", time: "4:12-4:30 PM" },
     ],
   },
   {
     title: "Final",
-    date: "Sun 28 Jun",
+    date: "Sun 6 Jul",
     matches: [
       { id: "F", p1: "Winner SF1", p2: "Winner SF2", time: "4:30-4:55 PM" },
     ],
@@ -92,6 +99,40 @@ const fixtures: Round[] = [
 
 export default function PlaystationWorldcupPage() {
   const [expandedRound, setExpandedRound] = useState<number | null>(null);
+  const [scores, setScores] = useState<Record<string, Score>>({});
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [saving, setSaving] = useState<string | null>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function load() {
+      // Check admin
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user && ADMIN_USERS.includes(user.id)) {
+        setIsAdmin(true);
+      }
+      // Load scores
+      const { data } = await supabase
+        .from("ps_scores")
+        .select("match_id, score_p1, score_p2");
+      if (data) {
+        const map: Record<string, Score> = {};
+        data.forEach((s: Score) => { map[s.match_id] = s; });
+        setScores(map);
+      }
+    }
+    load();
+  }, []);
+
+  async function saveScore(matchId: string, scoreP1: number, scoreP2: number) {
+    setSaving(matchId);
+    await supabase.from("ps_scores").upsert(
+      { match_id: matchId, score_p1: scoreP1, score_p2: scoreP2 },
+      { onConflict: "match_id" }
+    );
+    setScores((prev) => ({ ...prev, [matchId]: { match_id: matchId, score_p1: scoreP1, score_p2: scoreP2 } }));
+    setSaving(null);
+  }
 
   return (
     <div className="max-w-3xl mx-auto py-8 px-4">
@@ -112,32 +153,36 @@ export default function PlaystationWorldcupPage() {
 
       {/* Tournament Info Capsules */}
       <div className="flex flex-wrap gap-2 mb-6">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 text-xs text-blue-300">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 px-3 py-1.5 text-xs font-bold text-purple-300">
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          28 Jun - 6 Jul
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 text-xs font-bold text-blue-300">
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
           Clubhouse Mini Theatre
         </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 text-xs text-blue-300">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 text-xs font-bold text-blue-300">
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
           Venue: 2:00 - 5:00 PM
         </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 text-xs text-blue-300">
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 text-xs font-bold text-blue-300">
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
           Report by 1:45 PM
         </span>
       </div>
 
       {/* Game Rules Capsule */}
       <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 px-4 py-3 mb-4">
-        <p className="text-xs font-semibold text-cyan-400 mb-1 flex items-center gap-1.5">
+        <p className="text-xs font-bold text-cyan-400 mb-1 flex items-center gap-1.5">
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
           Game Rules
         </p>
-        <p className="text-xs text-gray-300">4-min halves till Quarter-Finals | 6-min halves from Quarter-Finals onwards | Direct penalties if drawn</p>
+        <p className="text-xs text-gray-300 font-medium">4-min halves till Quarter-Finals | 6-min halves from Quarter-Finals onwards | Direct penalties if drawn</p>
       </div>
 
       {/* Important Rules */}
       <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-4 mb-8">
-        <p className="text-sm font-semibold text-amber-400 mb-3 flex items-center gap-1.5">
+        <p className="text-sm font-bold text-amber-400 mb-3 flex items-center gap-1.5">
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           Important Guidelines
         </p>
@@ -179,25 +224,22 @@ export default function PlaystationWorldcupPage() {
               className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-white/5 transition"
             >
               <div>
-                <p className="text-sm font-semibold text-white">{round.title}</p>
-                <p className="text-xs text-gray-400">{round.date} &middot; {round.matches.length} match{round.matches.length > 1 ? "es" : ""}</p>
+                <p className="text-sm font-bold text-white">{round.title}</p>
+                <p className="text-xs text-gray-400 font-medium">{round.date} &middot; {round.matches.length} match{round.matches.length > 1 ? "es" : ""}</p>
               </div>
               <svg className={`w-5 h-5 text-gray-400 transition-transform ${expandedRound === idx ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             {expandedRound === idx && (
               <div className="border-t border-white/5 divide-y divide-white/5">
                 {round.matches.map((m) => (
-                  <div key={m.id} className="px-4 py-2.5 flex items-center gap-3">
-                    <span className="text-[10px] font-mono font-bold text-gray-500 w-8 shrink-0">{m.id}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-white truncate">
-                        <span className="font-medium">{m.p1}</span>
-                        <span className="text-gray-500 mx-1.5">vs</span>
-                        <span className="font-medium">{m.p2}</span>
-                      </p>
-                    </div>
-                    <span className="text-[11px] text-gray-400 shrink-0">{m.time}</span>
-                  </div>
+                  <MatchRow
+                    key={m.id}
+                    match={m}
+                    score={scores[m.id]}
+                    isAdmin={isAdmin}
+                    saving={saving === m.id}
+                    onSave={saveScore}
+                  />
                 ))}
               </div>
             )}
@@ -207,9 +249,95 @@ export default function PlaystationWorldcupPage() {
 
       {/* Closing */}
       <div className="rounded-xl border border-green-500/20 bg-green-500/5 px-4 py-3 mt-6 text-center">
-        <p className="text-xs text-green-400 font-semibold">Closing &amp; Winner Photo</p>
-        <p className="text-xs text-gray-400">Sun 28 Jun, 4:55 - 5:00 PM</p>
+        <p className="text-xs text-green-400 font-bold">Closing &amp; Winner Photo</p>
+        <p className="text-xs text-gray-400">Sun 6 Jul, 4:55 - 5:00 PM</p>
       </div>
+    </div>
+  );
+}
+
+function MatchRow({ match, score, isAdmin, saving, onSave }: {
+  match: Match;
+  score?: Score;
+  isAdmin: boolean;
+  saving: boolean;
+  onSave: (matchId: string, s1: number, s2: number) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [s1, setS1] = useState(score?.score_p1 ?? 0);
+  const [s2, setS2] = useState(score?.score_p2 ?? 0);
+
+  useEffect(() => {
+    if (score) { setS1(score.score_p1); setS2(score.score_p2); }
+  }, [score]);
+
+  const hasScore = score !== undefined;
+
+  return (
+    <div className="px-4 py-3">
+      <div className="flex items-center gap-3">
+        <span className="text-[10px] font-mono font-bold text-gray-500 w-8 shrink-0">{match.id}</span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 text-sm">
+            <span className={`font-medium ${hasScore && score!.score_p1 > score!.score_p2 ? "text-green-400" : "text-white"}`}>{match.p1}</span>
+            {hasScore ? (
+              <span className="font-bold text-white bg-white/10 rounded px-2 py-0.5 text-xs">{score!.score_p1} - {score!.score_p2}</span>
+            ) : (
+              <span className="text-gray-500 text-xs">vs</span>
+            )}
+            <span className={`font-medium ${hasScore && score!.score_p2 > score!.score_p1 ? "text-green-400" : "text-white"}`}>{match.p2}</span>
+          </div>
+        </div>
+        <span className="text-[11px] text-gray-400 shrink-0">{match.time}</span>
+      </div>
+
+      {/* Admin score input */}
+      {isAdmin && (
+        <div className="mt-2 ml-11">
+          {!editing ? (
+            <button
+              onClick={() => setEditing(true)}
+              className="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1"
+            >
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              {hasScore ? "Edit Score" : "Add Score"}
+            </button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                min="0"
+                max="99"
+                value={s1}
+                onChange={(e) => setS1(Number(e.target.value))}
+                className="w-10 h-7 rounded bg-white/10 border border-white/20 text-center text-xs text-white focus:border-blue-500 focus:outline-none"
+              />
+              <span className="text-xs text-gray-500">-</span>
+              <input
+                type="number"
+                min="0"
+                max="99"
+                value={s2}
+                onChange={(e) => setS2(Number(e.target.value))}
+                className="w-10 h-7 rounded bg-white/10 border border-white/20 text-center text-xs text-white focus:border-blue-500 focus:outline-none"
+              />
+              <button
+                onClick={() => { onSave(match.id, s1, s2); setEditing(false); }}
+                disabled={saving}
+                className="px-2 py-1 text-[11px] font-medium rounded bg-green-600 hover:bg-green-500 text-white disabled:opacity-50"
+              >
+                {saving ? "..." : "Save"}
+              </button>
+              <button
+                onClick={() => setEditing(false)}
+                className="px-2 py-1 text-[11px] font-medium rounded bg-white/10 hover:bg-white/20 text-gray-300"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
