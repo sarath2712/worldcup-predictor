@@ -134,6 +134,47 @@ export default function PlaystationWorldcupPage() {
     setSaving(null);
   }
 
+  // Build a lookup: match_id -> { p1, p2 } from fixtures
+  const matchPlayers: Record<string, { p1: string; p2: string }> = {};
+  fixtures.forEach((r) => r.matches.forEach((m) => { matchPlayers[m.id] = { p1: m.p1, p2: m.p2 }; }));
+
+  // Resolve winner for a match based on scores
+  function getWinner(matchId: string): string | null {
+    const sc = scores[matchId];
+    if (!sc) return null;
+    const mp = matchPlayers[matchId];
+    if (!mp) return null;
+    const p1Resolved = resolveName(mp.p1);
+    const p2Resolved = resolveName(mp.p2);
+    if (sc.score_p1 > sc.score_p2) return p1Resolved;
+    if (sc.score_p2 > sc.score_p1) return p2Resolved;
+    return null; // draw - needs penalties, admin should update
+  }
+
+  // Resolve "Winner MX" / "Loser SFX" references to actual names
+  function resolveName(name: string): string {
+    const winnerMatch = name.match(/^Winner (.+)$/);
+    if (winnerMatch) {
+      const resolved = getWinner(winnerMatch[1]);
+      return resolved || name;
+    }
+    const loserMatch = name.match(/^Loser (.+)$/);
+    if (loserMatch) {
+      const sc = scores[loserMatch[1]];
+      if (!sc) return name;
+      const mp = matchPlayers[loserMatch[1]];
+      if (!mp) return name;
+      const p1Resolved = resolveName(mp.p1);
+      const p2Resolved = resolveName(mp.p2);
+      if (sc.score_p1 < sc.score_p2) return p1Resolved;
+      if (sc.score_p2 < sc.score_p1) return p2Resolved;
+      return name;
+    }
+    return name;
+  }
+
+  const champion = getWinner("F");
+
   return (
     <div className="max-w-3xl mx-auto py-8 px-4">
       <Link href="/" className="text-sm text-gray-400 hover:text-white transition mb-6 inline-block">
@@ -228,7 +269,7 @@ export default function PlaystationWorldcupPage() {
                 {round.matches.map((m) => (
                   <MatchRow
                     key={m.id}
-                    match={m}
+                    match={{ ...m, p1: resolveName(m.p1), p2: resolveName(m.p2) }}
                     score={scores[m.id]}
                     isAdmin={isAdmin}
                     saving={saving === m.id}
@@ -245,10 +286,16 @@ export default function PlaystationWorldcupPage() {
       <div className="mt-10 mb-4 flex flex-col items-center">
         <img src="/trophy.png" alt="Champion Trophy" className="w-32 h-32 object-contain drop-shadow-[0_0_24px_rgba(255,215,0,0.5)]" />
         <h2 className="text-2xl font-black mt-4 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 bg-clip-text text-transparent tracking-wider">CHAMPION</h2>
-        <p className="text-sm text-gray-400 mt-1">Winner</p>
-        <div className="mt-3 w-48 h-10 rounded-lg border-2 border-dashed border-yellow-500/30 flex items-center justify-center">
-          <span className="text-xs text-yellow-500/50 italic">To be decided</span>
-        </div>
+        {champion ? (
+          <p className="text-lg font-bold text-white mt-2">{champion}</p>
+        ) : (
+          <>
+            <p className="text-sm text-gray-400 mt-1">Winner</p>
+            <div className="mt-3 w-48 h-10 rounded-lg border-2 border-dashed border-yellow-500/30 flex items-center justify-center">
+              <span className="text-xs text-yellow-500/50 italic">To be decided</span>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
