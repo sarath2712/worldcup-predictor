@@ -49,6 +49,13 @@ const results = [
 // Today's Schedule
 const schedule = [
   {
+    time: "3:30 PM",
+    title: "Kids 3rd Place Match",
+    subtitle: "Team 1 vs Team 3 (7-a-side)",
+    category: "kids",
+    duration: "16 min (7+2+7)",
+  },
+  {
     time: "4:00 PM",
     title: "Men\u2019s Semi-Final 1",
     subtitle: "Team 1 vs Team 2",
