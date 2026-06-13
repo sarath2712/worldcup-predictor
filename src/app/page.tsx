@@ -505,33 +505,6 @@ export default function Home() {
             </Link>
           ))}
 
-          {/* Juggling ball animation - visible on mobile in the gap */}
-          {tiles.length % 2 === 1 && (
-            <div className="sm:hidden flex items-center justify-center">
-              <div className="animate-bounce-slow">
-                <svg className="w-14 h-14 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" viewBox="0 0 100 100" fill="none">
-                  {/* Ball base */}
-                  <circle cx="50" cy="50" r="45" fill="url(#ballGrad)" stroke="#333" strokeWidth="1.5"/>
-                  {/* Panel lines */}
-                  <path d="M50 5 C50 5 30 30 30 50 C30 70 50 95 50 95" stroke="#222" strokeWidth="1.2" fill="none"/>
-                  <path d="M50 5 C50 5 70 30 70 50 C70 70 50 95 50 95" stroke="#222" strokeWidth="1.2" fill="none"/>
-                  <path d="M5 50 C5 50 30 35 50 35 C70 35 95 50 95 50" stroke="#222" strokeWidth="1.2" fill="none"/>
-                  <path d="M5 50 C5 50 30 65 50 65 C70 65 95 50 95 50" stroke="#222" strokeWidth="1.2" fill="none"/>
-                  {/* Pentagon center */}
-                  <polygon points="50,30 62,40 58,55 42,55 38,40" fill="#1a1a2e" stroke="#222" strokeWidth="0.8"/>
-                  {/* Highlight */}
-                  <ellipse cx="38" cy="35" rx="8" ry="6" fill="white" opacity="0.25"/>
-                  <defs>
-                    <radialGradient id="ballGrad" cx="40%" cy="35%" r="60%">
-                      <stop offset="0%" stopColor="#ffffff"/>
-                      <stop offset="100%" stopColor="#d4d4d8"/>
-                    </radialGradient>
-                  </defs>
-                </svg>
-              </div>
-            </div>
-          )}
-
           {/* Cash Prize Banner - spans full width */}
           <div className="col-span-2 sm:col-span-4 rounded-lg sm:rounded-xl bg-gradient-to-r from-yellow-500/20 via-amber-500/30 to-yellow-500/20 border border-yellow-400/30 backdrop-blur-md px-3 py-2 flex items-center justify-center gap-2 overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/10 to-transparent animate-shimmer" />
