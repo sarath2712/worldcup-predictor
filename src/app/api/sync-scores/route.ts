@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     // Parse optional params
     const body = await request.json().catch(() => ({}));
     const dateParam = body.date; // format: YYYYMMDD
-    const force = body.force === true || isCronCall; // skip time check for cron too
+    const force = body.force === true; // only manual force skips time check (cron respects it)
 
     // 2. Connect to Supabase with service role or anon key
     const supabase = createClient(
