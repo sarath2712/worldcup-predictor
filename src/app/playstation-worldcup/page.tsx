@@ -165,10 +165,7 @@ export default function PlaystationWorldcupPage() {
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
           Venue: 2:00 - 5:00 PM
         </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 text-xs font-bold text-blue-300">
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          Report by 1:45 PM
-        </span>
+
       </div>
 
       {/* Game Rules Capsule */}
@@ -193,7 +190,7 @@ export default function PlaystationWorldcupPage() {
           </li>
           <li className="flex items-start gap-2">
             <svg className="w-4 h-4 shrink-0 text-amber-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18.36 6.64A9 9 0 015.64 18.36 9 9 0 0118.36 6.64z"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-            <span>A maximum wait time of <strong className="text-white">5 minutes</strong> will be given. After that, a walkover will be awarded to the opponent.</span>
+            <span>If a player does not arrive within the <strong className="text-white">scheduled start time</strong>, it will be a walkover for the opponent.</span>
           </li>
           <li className="flex items-start gap-2">
             <svg className="w-4 h-4 shrink-0 text-amber-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
@@ -263,7 +260,6 @@ function MatchRow({ match, score, isAdmin, saving, onSave }: {
   saving: boolean;
   onSave: (matchId: string, s1: number, s2: number) => void;
 }) {
-  const [editing, setEditing] = useState(false);
   const [s1, setS1] = useState(score?.score_p1 ?? 0);
   const [s2, setS2] = useState(score?.score_p2 ?? 0);
 
@@ -280,62 +276,44 @@ function MatchRow({ match, score, isAdmin, saving, onSave }: {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 text-sm">
             <span className={`font-medium ${hasScore && score!.score_p1 > score!.score_p2 ? "text-green-400" : "text-white"}`}>{match.p1}</span>
-            {hasScore ? (
+            {hasScore && !isAdmin ? (
               <span className="font-bold text-white bg-white/10 rounded px-2 py-0.5 text-xs">{score!.score_p1} - {score!.score_p2}</span>
-            ) : (
+            ) : !isAdmin ? (
               <span className="text-gray-500 text-xs">vs</span>
-            )}
+            ) : null}
             <span className={`font-medium ${hasScore && score!.score_p2 > score!.score_p1 ? "text-green-400" : "text-white"}`}>{match.p2}</span>
           </div>
         </div>
         <span className="text-[11px] text-gray-400 shrink-0">{match.time}</span>
       </div>
 
-      {/* Admin score input */}
+      {/* Admin: inline score boxes always visible */}
       {isAdmin && (
-        <div className="mt-2 ml-11">
-          {!editing ? (
-            <button
-              onClick={() => setEditing(true)}
-              className="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1"
-            >
-              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              {hasScore ? "Edit Score" : "Add Score"}
-            </button>
-          ) : (
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                min="0"
-                max="99"
-                value={s1}
-                onChange={(e) => setS1(Number(e.target.value))}
-                className="w-10 h-7 rounded bg-white/10 border border-white/20 text-center text-xs text-white focus:border-blue-500 focus:outline-none"
-              />
-              <span className="text-xs text-gray-500">-</span>
-              <input
-                type="number"
-                min="0"
-                max="99"
-                value={s2}
-                onChange={(e) => setS2(Number(e.target.value))}
-                className="w-10 h-7 rounded bg-white/10 border border-white/20 text-center text-xs text-white focus:border-blue-500 focus:outline-none"
-              />
-              <button
-                onClick={() => { onSave(match.id, s1, s2); setEditing(false); }}
-                disabled={saving}
-                className="px-2 py-1 text-[11px] font-medium rounded bg-green-600 hover:bg-green-500 text-white disabled:opacity-50"
-              >
-                {saving ? "..." : "Save"}
-              </button>
-              <button
-                onClick={() => setEditing(false)}
-                className="px-2 py-1 text-[11px] font-medium rounded bg-white/10 hover:bg-white/20 text-gray-300"
-              >
-                Cancel
-              </button>
-            </div>
-          )}
+        <div className="mt-2 ml-11 flex items-center gap-2">
+          <input
+            type="number"
+            min="0"
+            max="99"
+            value={s1}
+            onChange={(e) => setS1(Number(e.target.value))}
+            className="w-10 h-7 rounded bg-white/10 border border-white/20 text-center text-xs text-white focus:border-blue-500 focus:outline-none"
+          />
+          <span className="text-xs text-gray-500">-</span>
+          <input
+            type="number"
+            min="0"
+            max="99"
+            value={s2}
+            onChange={(e) => setS2(Number(e.target.value))}
+            className="w-10 h-7 rounded bg-white/10 border border-white/20 text-center text-xs text-white focus:border-blue-500 focus:outline-none"
+          />
+          <button
+            onClick={() => onSave(match.id, s1, s2)}
+            disabled={saving}
+            className="px-2 py-1 text-[11px] font-medium rounded bg-green-600 hover:bg-green-500 text-white disabled:opacity-50"
+          >
+            {saving ? "..." : "Save"}
+          </button>
         </div>
       )}
     </div>
