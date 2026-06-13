@@ -1,78 +1,90 @@
 import Link from "next/link";
 
-const schedule = [
+// Yesterday's Semi-Final Results
+const results = [
   {
-    time: "6:00 PM",
-    title: "Fans Celebration",
-    subtitle: "Sinkari Melam & Opening Ceremony",
-    category: "event",
-    duration: "90 min",
-  },
-  {
-    time: "7:30 PM",
     title: "Kids Semi-Final 1",
     subtitle: "Team 1 vs Team 4",
+    result: "Team 4 wins 1-0",
+    winner: "Team 4",
     category: "kids",
-    duration: "16 min (7+2+7)",
   },
   {
-    time: "7:49 PM",
-    title: "Women\u2019s Shootout Semi-Final 1",
-    subtitle: "Team 2 vs Team 3",
+    title: "Kids Semi-Final 2",
+    subtitle: "Team 3 vs Team 2",
+    result: "Team 2 wins (1-1, Shootout 3-2)",
+    winner: "Team 2",
+    category: "kids",
+  },
+  {
+    title: "Women\u2019s Semi-Final 1",
+    subtitle: "Team 1 vs Team 4",
+    result: "Team 1 wins 2-0",
+    winner: "Team 1",
     category: "womens",
-    duration: "15 min",
   },
   {
-    time: "8:07 PM",
+    title: "Women\u2019s Semi-Final 2",
+    subtitle: "Team 2 vs Team 3",
+    result: "Team 2 wins 1-0",
+    winner: "Team 2",
+    category: "womens",
+  },
+  {
+    title: "Men\u2019s Semi-Final 1",
+    subtitle: "Team 1 vs Team 2",
+    result: "TBD",
+    winner: "",
+    category: "mens",
+  },
+  {
+    title: "Men\u2019s Semi-Final 2",
+    subtitle: "Team 3 vs Team 4",
+    result: "TBD",
+    winner: "",
+    category: "mens",
+  },
+];
+
+// Today's Schedule
+const schedule = [
+  {
+    time: "4:00 PM",
     title: "Men\u2019s Semi-Final 1",
     subtitle: "Team 1 vs Team 2",
     category: "mens",
     duration: "22 min (10+2+10)",
   },
   {
-    time: "8:32 PM",
-    title: "Kids Semi-Final 2",
-    subtitle: "Team 2 vs Team 3",
-    category: "kids",
-    duration: "16 min (7+2+7)",
-  },
-  {
-    time: "8:51 PM",
-    title: "Women\u2019s Shootout Semi-Final 2",
-    subtitle: "Team 1 vs Team 4",
-    category: "womens",
-    duration: "15 min",
-  },
-  {
-    time: "9:09 PM",
+    time: "4:25 PM",
     title: "Men\u2019s Semi-Final 2",
     subtitle: "Team 3 vs Team 4",
     category: "mens",
     duration: "22 min (10+2+10)",
   },
   {
-    time: "9:34 PM",
-    title: "Women\u2019s Final",
-    subtitle: "Winner SF1 vs Winner SF2",
-    category: "womens",
-    duration: "15 min",
-  },
-  {
-    time: "9:52 PM",
+    time: "5:00 PM",
     title: "Kids Final",
-    subtitle: "Winner SF1 vs Winner SF2",
+    subtitle: "Team 4 vs Team 2",
     category: "kids",
     duration: "16 min (7+2+7)",
   },
   {
-    time: "10:11 PM",
+    time: "5:20 PM",
+    title: "Women\u2019s Final",
+    subtitle: "Team 1 vs Team 2",
+    category: "womens",
+    duration: "15 min",
+  },
+  {
+    time: "5:40 PM",
     title: "Men\u2019s Final",
     subtitle: "Winner SF1 vs Winner SF2",
     category: "mens",
     duration: "22 min (10+2+10)",
   },
   {
-    time: "10:36 PM",
+    time: "6:05 PM",
     title: "Presentation & Prize Distribution",
     subtitle: "Awards for all categories",
     category: "event",
@@ -94,6 +106,50 @@ export default function TodaySchedulePage() {
         &larr; Back to Home
       </Link>
 
+      {/* Results Section */}
+      <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
+        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 9H4a2 2 0 01-2-2V5a2 2 0 012-2h2"/><path d="M18 9h2a2 2 0 002-2V5a2 2 0 00-2-2h-2"/><path d="M6 3h12v6a6 6 0 01-12 0V3z"/><path d="M12 15v3"/><path d="M8 21h8"/>
+        </svg>
+        SEMI-FINAL RESULTS
+      </h1>
+      <p className="text-gray-400 mb-6">June 12, 2026 &middot; Sobha Lake Gardens</p>
+
+      <div className="space-y-3 mb-12">
+        {results.map((item, i) => {
+          const style = categoryStyles[item.category];
+          return (
+            <div
+              key={i}
+              className={`rounded-xl border ${style.border} ${style.bg} p-4 flex items-start gap-4`}
+            >
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${style.badge} ${style.badgeText} tracking-wider`}>
+                    {style.label}
+                  </span>
+                </div>
+                <p className="font-semibold text-white text-sm mt-1">{item.title}</p>
+                <p className="text-xs text-gray-400">{item.subtitle}</p>
+              </div>
+              <div className="text-right shrink-0">
+                {item.winner ? (
+                  <>
+                    <span className="text-xs font-bold text-green-400 bg-green-500/20 px-2 py-1 rounded-full">
+                      {item.winner} ✓
+                    </span>
+                    <p className="text-[10px] text-gray-400 mt-1">{item.result}</p>
+                  </>
+                ) : (
+                  <span className="text-xs text-gray-500 italic">Today</span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Today's Schedule */}
       <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
         <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -101,7 +157,7 @@ export default function TodaySchedulePage() {
         </svg>
         TODAY&apos;S SCHEDULE
       </h1>
-      <p className="text-gray-400 mb-2">June 12, 2026 &middot; Sobha Lake Gardens</p>
+      <p className="text-gray-400 mb-2">June 13, 2026 &middot; Finals Day &middot; Sobha Lake Gardens</p>
       <p className="text-xs text-gray-500 mb-8">3 min changeover between matches</p>
 
       <div className="space-y-3">
