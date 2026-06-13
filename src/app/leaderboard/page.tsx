@@ -53,28 +53,24 @@ export default function LeaderboardPage() {
 
   function buildWhatsAppMessage(): string {
     const top10 = entries.slice(0, 10);
-    const medals = ["🥇", "🥈", "🥉"];
 
-    let msg = "⚽ *FIFA WC 2026 — PREDICTION LEADERBOARD*\n";
-    msg += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+    let msg = "*FIFA WC 2026 — PREDICTION LEADERBOARD*\n";
+    msg += "---------------------------------------\n";
 
     if (recentMatch) {
-      msg += `After: ${getFlag(recentMatch.home_team)} ${recentMatch.home_team} ${recentMatch.home_score}-${recentMatch.away_score} ${recentMatch.away_team} ${getFlag(recentMatch.away_team)}\n`;
+      msg += `After: ${recentMatch.home_team} ${recentMatch.home_score}-${recentMatch.away_score} ${recentMatch.away_team}\n`;
     }
 
-    msg += "\n🏆 *TOP 10*\n\n";
+    msg += "\n*TOP 10*\n\n";
 
     for (const entry of top10) {
-      const medal = entry.rank <= 3 ? medals[entry.rank - 1] : "  ";
       const rank = String(entry.rank).padStart(2, " ");
-      const stars = entry.exact_scores > 0 ? " 🎯×" + entry.exact_scores : "";
-      msg += `${rank}. ${medal} ${entry.username} — *${entry.total_points} pts*${stars}\n`;
+      const exact = entry.exact_scores > 0 ? ` (${entry.exact_scores} exact)` : "";
+      msg += `${rank}. ${entry.username} — *${entry.total_points} pts*${exact}\n`;
     }
 
-    msg += "\n🎯 = Exact Score Prediction\n";
-
     if (upcomingMatches.length > 0) {
-      msg += "\n📅 *UPCOMING MATCHES*\n";
+      msg += "\n*UPCOMING MATCHES*\n";
       for (const m of upcomingMatches) {
         const kickoff = new Date(m.kickoff_utc);
         const ist = kickoff.toLocaleString("en-IN", {
@@ -85,13 +81,13 @@ export default function LeaderboardPage() {
           minute: "2-digit",
           hour12: true,
         });
-        msg += `${getFlag(m.home_team)} ${m.home_team} vs ${m.away_team} ${getFlag(m.away_team)} — ${ist} IST\n`;
+        msg += `${m.home_team} vs ${m.away_team} — ${ist} IST\n`;
       }
-      msg += "\n⏰ Predict before kickoff!\n";
+      msg += "\nPredict before kickoff!\n";
     }
 
-    msg += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-    msg += "🔗 https://www.slgevents.in/matches";
+    msg += "---------------------------------------\n";
+    msg += "https://www.slgevents.in/matches";
 
     return msg;
   }
