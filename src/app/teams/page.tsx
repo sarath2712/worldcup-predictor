@@ -85,7 +85,7 @@ const mensTeams: Team[] = [
       { name: "Rohan", flat: "5154", phone: "6363478396", email: "rohanreddy4640@gmail.com", isCaptain: false },
       { name: "Franklin Francis", flat: "8124", phone: "9986885362", email: "franklinfrancis995@gmail.com", isCaptain: false },
       { name: "Kishor", flat: "1067", phone: "8722814666", email: "kishor.rcr.08@gmail.com", isCaptain: false },
-      { name: "Rithwik Sasikumar", flat: "2173", phone: "9447755778", email: "rithwik7sasikumar@gmail.com", isCaptain: false },
+      { name: "Arjun", flat: "5182", phone: "9902641107", email: "-", isCaptain: false },
       { name: "Tushar", flat: "7111", phone: "9833588079", email: "tusharpawar3004@gmail.com", isCaptain: false },
     ],
   },
@@ -99,6 +99,7 @@ const mensTeams: Team[] = [
       { name: "Jay Patel", flat: "2132", phone: "8867822498", email: "jay08ec70@gmail.com", isCaptain: false },
       { name: "Chethan", flat: "8002", phone: "7899363535", email: "-", isCaptain: false },
       { name: "Satyaki Das", flat: "1076", phone: "9147768578", email: "satyakidas.work@gmail.com", isCaptain: false },
+      { name: "Sahil", flat: "6002", phone: "8123100325", email: "-", isCaptain: false },
     ],
   },
   {
@@ -110,7 +111,7 @@ const mensTeams: Team[] = [
       { name: "Pavan Itagi", flat: "8043", phone: "8971497765", email: "itagi75@gmail.com", isCaptain: false },
       { name: "Sachin Shiragola", flat: "6174", phone: "9591811199", email: "sachin.shiragola@gmail.com", isCaptain: false },
       { name: "Mitesh Rao V", flat: "7012", phone: "7829914246", email: "mallika.melingi@gmail.com", isCaptain: false },
-      { name: "Arjun", flat: "5182", phone: "9902641107", email: "-", isCaptain: false },
+      { name: "Rithwik Sasikumar", flat: "2173", phone: "9447755778", email: "rithwik7sasikumar@gmail.com", isCaptain: false },
     ],
   },
   {
@@ -172,7 +173,7 @@ const womensTeams: Team[] = [
 
 const sections = [
   { key: "kids", label: "Kids", color: "from-green-500 to-green-700", teams: kidsTeams, subtitle: "4 Teams · 35 Players · Ages 7–14" },
-  { key: "mens", label: "Men's", color: "from-blue-500 to-blue-700", teams: mensTeams, subtitle: "4 Teams · 29 Players" },
+  { key: "mens", label: "Men's", color: "from-blue-500 to-blue-700", teams: mensTeams, subtitle: "4 Teams · 30 Players" },
   { key: "womens", label: "Women's", color: "from-pink-500 to-purple-600", teams: womensTeams, subtitle: "4 Teams · 20 Players" },
 ] as const;
 
