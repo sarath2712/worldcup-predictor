@@ -448,6 +448,7 @@ export default function Home() {
               onClick={(e) => handleTileClick(tile, e)}
               className={`rounded-lg sm:rounded-xl bg-gradient-to-br ${tile.color} backdrop-blur-md border border-white/20
                 flex flex-col items-start justify-end p-2.5 sm:p-3.5 h-[88px] sm:h-[120px]
+                ${idx === tiles.length - 1 ? "col-span-2 sm:col-span-1 max-w-[50%] sm:max-w-none mx-auto sm:mx-0" : ""}
                 hover:scale-105 hover:border-white/40 hover:shadow-2xl transition-all duration-300
                 group cursor-pointer relative overflow-hidden`}
             >
