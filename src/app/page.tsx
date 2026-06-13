@@ -529,7 +529,7 @@ export default function Home() {
         href="https://chat.whatsapp.com/EtXz6B7GgI15C9OtBSQYlJ"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-4 right-4 z-50 flex items-center gap-1.5 bg-[#25D366] hover:bg-[#1ebe57] text-white pl-3 pr-4 py-2 rounded-full shadow-lg shadow-green-900/30 transition-all hover:scale-105 animate-bounce-slow group"
+        className="fixed bottom-4 right-4 z-50 flex items-center gap-1.5 bg-[#25D366]/50 hover:bg-[#1ebe57]/70 text-white pl-3 pr-4 py-2 rounded-full shadow-lg shadow-green-900/30 transition-all hover:scale-105 animate-bounce-slow group"
         title="Join our WhatsApp Group"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -541,7 +541,7 @@ export default function Home() {
       {/* Floating Contact for Help Button */}
       <Link
         href="/help"
-        className="fixed bottom-4 left-4 z-50 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white pl-3 pr-4 py-2 rounded-full shadow-lg shadow-blue-900/30 transition-all hover:scale-105"
+        className="fixed bottom-4 left-4 z-50 flex items-center gap-1.5 bg-blue-600/50 hover:bg-blue-700/70 text-white pl-3 pr-4 py-2 rounded-full shadow-lg shadow-blue-900/30 transition-all hover:scale-105"
         title="Contact for Help"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
