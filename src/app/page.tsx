@@ -453,11 +453,11 @@ export default function Home() {
                 group cursor-pointer relative overflow-hidden`}
             >
               {/* Layered transparent icon container */}
-              <div className="absolute top-1.5 left-1.5 sm:top-3 sm:left-3">
+              <div className="absolute top-1 left-1.5 sm:top-3 sm:left-3">
                 <div className="relative">
-                  <div className="absolute -top-0.5 -left-0.5 w-7 h-7 sm:w-10 sm:h-10 rounded-md sm:rounded-lg bg-white/10 backdrop-blur-sm" />
-                  <div className="relative w-6 h-6 sm:w-9 sm:h-9 rounded-md sm:rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
-                    <tile.Icon className="w-3 h-3 sm:w-5 sm:h-5 text-white drop-shadow-md" />
+                  <div className="absolute -top-0.5 -left-0.5 w-6 h-6 sm:w-10 sm:h-10 rounded-md sm:rounded-lg bg-white/10 backdrop-blur-sm" />
+                  <div className="relative w-5 h-5 sm:w-9 sm:h-9 rounded-md sm:rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+                    <tile.Icon className="w-2.5 h-2.5 sm:w-5 sm:h-5 text-white drop-shadow-md" />
                   </div>
                 </div>
               </div>
