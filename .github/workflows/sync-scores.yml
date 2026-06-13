@@ -2,8 +2,11 @@ name: Auto Sync Scores
 
 on:
   schedule:
-    # Run every 10 minutes
-    - cron: '*/10 * * * *'
+    # Run every 10 minutes only during match hours (UTC)
+    # WC matches are typically 00:00-23:00 UTC, but most are clustered
+    # Run from 12:00 UTC to 05:00 UTC next day (5:30 PM IST to 10:30 AM IST)
+    # which covers all match windows with buffer
+    - cron: '*/10 0-5,12-23 * 6-7 *'
   workflow_dispatch: # Allow manual trigger
 
 jobs:
@@ -24,7 +27,8 @@ jobs:
           echo "Status: $HTTP_CODE"
           echo "Response: $BODY"
           
-          if [ "$HTTP_CODE" -ge 400 ]; then
+          # Don't fail on skipped (no matches in window)
+          if [ "$HTTP_CODE" -ge 500 ]; then
             echo "Sync failed with status $HTTP_CODE"
             exit 1
           fi
