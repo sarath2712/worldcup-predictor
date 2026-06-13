@@ -67,11 +67,11 @@ export default function LeaderboardPage() {
     for (const entry of top10) {
       const medal = entry.rank <= 3 ? medals[entry.rank - 1] : "  ";
       const rank = String(entry.rank).padStart(2, " ");
-      const stars = "⭐".repeat(entry.exact_scores);
-      msg += `${rank}. ${medal} ${entry.username} — *${entry.total_points} pts* ${stars}\n`;
+      const stars = entry.exact_scores > 0 ? " 🎯×" + entry.exact_scores : "";
+      msg += `${rank}. ${medal} ${entry.username} — *${entry.total_points} pts*${stars}\n`;
     }
 
-    msg += "\n⭐ = Exact Score Prediction\n";
+    msg += "\n🎯 = Exact Score Prediction\n";
 
     if (upcomingMatches.length > 0) {
       msg += "\n📅 *UPCOMING MATCHES*\n";
