@@ -326,9 +326,9 @@ function MatchRow({ match, score, isAdmin, saving, onSave }: {
             <span className={`font-medium ${hasScore && score!.score_p1 > score!.score_p2 ? "text-green-400" : "text-white"}`}>{match.p1}</span>
             {hasScore && !isAdmin ? (
               <span className="font-bold text-white bg-white/10 rounded px-2 py-0.5 text-xs">{score!.score_p1} - {score!.score_p2}</span>
-            ) : !isAdmin ? (
+            ) : (
               <span className="text-gray-500 text-xs">vs</span>
-            ) : null}
+            )}
             <span className={`font-medium ${hasScore && score!.score_p2 > score!.score_p1 ? "text-green-400" : "text-white"}`}>{match.p2}</span>
           </div>
         </div>
