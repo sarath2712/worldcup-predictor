@@ -235,11 +235,19 @@ function MatchCard({
               🔒 Locked
             </span>
           )}
-          {prediction?.points !== null && prediction?.points !== undefined && (
-            <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
-              +{prediction.points} pts
-            </span>
-          )}
+          {(() => {
+            const predPts = prediction?.points ?? 0;
+            const extraPts = matchExtras?.points ?? 0;
+            const totalPts = predPts + extraPts;
+            if (totalPts > 0 || (prediction?.points !== null && prediction?.points !== undefined)) {
+              return (
+                <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
+                  +{totalPts} pts
+                </span>
+              );
+            }
+            return null;
+          })()}
         </div>
       </div>
 
