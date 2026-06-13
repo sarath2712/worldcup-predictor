@@ -35,10 +35,15 @@ type SyncResult = {
 
 export async function POST(request: Request) {
   try {
+    // Check for cron secret (optional — allows automated calls)
+    const authHeader = request.headers.get("x-cron-secret");
+    const cronSecret = process.env.CRON_SECRET;
+    const isCronCall = cronSecret && authHeader === cronSecret;
+
     // Parse optional params
     const body = await request.json().catch(() => ({}));
     const dateParam = body.date; // format: YYYYMMDD
-    const force = body.force === true; // skip time check
+    const force = body.force === true || isCronCall; // skip time check for cron too
 
     // 2. Connect to Supabase with service role or anon key
     const supabase = createClient(
