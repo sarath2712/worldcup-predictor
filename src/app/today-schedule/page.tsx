@@ -12,8 +12,8 @@ const results = [
   {
     title: "Kids Semi-Final 2",
     subtitle: "Team 3 vs Team 2",
-    result: "Team 2 wins (1-1, Shootout 3-2)",
-    winner: "Team 2",
+    result: "Team 3 wins (1-1, Shootout 3-2)",
+    winner: "Team 3",
     category: "kids",
   },
   {
@@ -51,7 +51,7 @@ const schedule = [
   {
     time: "3:30 PM",
     title: "Kids 3rd Place Match",
-    subtitle: "Team 1 vs Team 3 (7-a-side)",
+    subtitle: "Team 1 vs Team 2 (7-a-side)",
     category: "kids",
     duration: "16 min (7+2+7)",
   },
@@ -72,7 +72,7 @@ const schedule = [
   {
     time: "5:00 PM",
     title: "Kids Final",
-    subtitle: "Team 4 vs Team 2",
+    subtitle: "Team 3 vs Team 4",
     category: "kids",
     duration: "16 min (7+2+7)",
   },
