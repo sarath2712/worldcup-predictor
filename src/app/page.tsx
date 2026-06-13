@@ -155,7 +155,7 @@ const tiles: { title: string; subtitle: string; href: string; Icon: typeof Jerse
   {
     title: "Winners",
     subtitle: "CHAMPIONS",
-    href: "/teams",
+    href: "/winners",
     Icon: TrophyIcon,
     color: "from-yellow-500 to-amber-600",
     countKey: null,
@@ -364,55 +364,6 @@ export default function Home() {
       <p className="text-xs sm:text-sm text-gray-400 tracking-[0.3em] uppercase mb-4">
         Sobha Lake Gardens
       </p>
-
-      {/* Winners Section */}
-      <div className="mb-4 sm:mb-8 w-full max-w-[680px] px-4">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-center gap-2">
-            <svg className="w-4 h-4 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.82 20 12 16.54 7.18 20l1.64-6.91L4 9l5.91-.74L12 2z"/></svg>
-            <span className="text-[10px] sm:text-xs font-bold text-yellow-400 uppercase tracking-wider">Tournament Winners</span>
-            <svg className="w-4 h-4 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.82 20 12 16.54 7.18 20l1.64-6.91L4 9l5.91-.74L12 2z"/></svg>
-          </div>
-
-          {/* Kids Winners */}
-          <div className="bg-gradient-to-r from-green-500/10 to-green-500/5 border border-green-500/20 rounded-xl p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-bold text-green-400">⚽ Kids</span>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-2">
-                <span className="text-sm">🏆</span>
-                <span className="text-[10px] sm:text-xs font-bold text-yellow-300">CHAMPIONS — Team 3</span>
-              </div>
-              <p className="text-[9px] sm:text-[10px] text-gray-300 pl-6">Aaradhya Rawat (C), Antonio Rishon, Priyanshu, Hreyansh, Aaron Bennett, Uddeshya, Magizhan Ganeshan, Surya Raj, Krishna</p>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-sm">🥈</span>
-                <span className="text-[10px] sm:text-xs font-bold text-gray-300">RUNNERS-UP — Team 4</span>
-              </div>
-              <p className="text-[9px] sm:text-[10px] text-gray-400 pl-6">Kunal (C), Utkarsh, Aaryan Abhilash, Ritvik Chaturvedi, Suyukth, Naval Geete, Gianna Takhelmayum, Mayank Chauhan, Satyam Pandey</p>
-            </div>
-          </div>
-
-          {/* Women Winners */}
-          <div className="bg-gradient-to-r from-pink-500/10 to-purple-500/5 border border-pink-500/20 rounded-xl p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-bold text-pink-400">⚽ Women</span>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-2">
-                <span className="text-sm">🏆</span>
-                <span className="text-[10px] sm:text-xs font-bold text-yellow-300">CHAMPIONS — Team 1</span>
-              </div>
-              <p className="text-[9px] sm:text-[10px] text-gray-300 pl-6">Preemy (C), Srilakshmi, Tanya, Reshma, Aiswarya</p>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-sm">🥈</span>
-                <span className="text-[10px] sm:text-xs font-bold text-gray-300">RUNNERS-UP — Team 2</span>
-              </div>
-              <p className="text-[9px] sm:text-[10px] text-gray-400 pl-6">Sushravya (C), Ahana, Aswathi, Fathima, Archana</p>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Main content area with players and tiles */}
       <div className="relative w-full max-w-6xl px-4 flex items-center justify-center sm:mt-4">
