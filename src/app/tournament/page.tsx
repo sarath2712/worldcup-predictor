@@ -104,7 +104,7 @@ export default function TournamentPage() {
         )}
         {!isLocked && (
           <p className="text-sm text-accent mt-2">
-            ⏰ Lock deadline: June 11, 2026 at kickoff
+            ⏰ Lock deadline: June 14, 2026 at 11:59 PM IST
           </p>
         )}
       </div>
