@@ -452,38 +452,38 @@ export default function Home() {
                 hover:scale-105 hover:border-white/40 hover:shadow-2xl transition-all duration-300
                 group cursor-pointer relative overflow-hidden`}
             >
-              {/* Layered transparent icon container */}
-              <div className="absolute top-1 left-1.5 sm:top-3 sm:left-3">
+              {/* Layered transparent icon container - top right on desktop */}
+              <div className="absolute top-1 left-1.5 sm:top-2 sm:right-2.5 sm:left-auto">
                 <div className="relative">
-                  <div className="absolute -top-0.5 -left-0.5 w-6 h-6 sm:w-10 sm:h-10 rounded-md sm:rounded-lg bg-white/10 backdrop-blur-sm" />
-                  <div className="relative w-5 h-5 sm:w-9 sm:h-9 rounded-md sm:rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
-                    <tile.Icon className="w-2.5 h-2.5 sm:w-5 sm:h-5 text-white drop-shadow-md" />
+                  <div className="absolute -top-0.5 -left-0.5 w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-white/10 backdrop-blur-sm" />
+                  <div className="relative w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+                    <tile.Icon className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-white drop-shadow-md" />
                   </div>
                 </div>
               </div>
 
-              {/* Arrow icon - top right */}
-              <div className="absolute top-1.5 right-1.5 sm:top-3 sm:right-3">
-                <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 group-hover:bg-white/20 transition">
-                  <ArrowIcon className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 text-white/70" />
+              {/* Arrow icon - top right on mobile, hidden on desktop (icon takes its place) */}
+              <div className="absolute top-1.5 right-1.5 sm:hidden">
+                <div className="w-5 h-5 rounded-md bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 group-hover:bg-white/20 transition">
+                  <ArrowIcon className="w-2.5 h-2.5 text-white/70" />
                 </div>
               </div>
 
               {/* Prediction tile tags */}
               {tile.href === "/matches" && !user && (
-                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[60px] px-1.5 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
+                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-2 sm:left-2.5 sm:translate-x-0 px-1.5 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
                   Signup to Predict
                 </span>
               )}
               {tile.href === "/matches" && user && (
-                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[60px] px-2 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
+                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-2 sm:left-2.5 sm:translate-x-0 px-2 py-0.5 rounded-full bg-yellow-400/80 border border-yellow-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide animate-pulse shadow-lg shadow-yellow-400/30">
                   Predict Now
                 </span>
               )}
 
               {/* Starts date tag on PlayStation tile */}
               {tile.href === "/playstation-worldcup" && (
-                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-auto sm:bottom-[60px] px-2 py-0.5 rounded-full bg-cyan-400/80 border border-cyan-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide shadow-lg shadow-cyan-400/30">
+                <span className="absolute top-2 left-1/2 -translate-x-1/2 sm:top-2 sm:left-2.5 sm:translate-x-0 px-2 py-0.5 rounded-full bg-cyan-400/80 border border-cyan-300 text-[8px] sm:text-[9px] font-bold text-black tracking-wide shadow-lg shadow-cyan-400/30">
                   Starts 20 Jun
                 </span>
               )}
