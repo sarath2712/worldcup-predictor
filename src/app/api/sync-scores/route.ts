@@ -195,11 +195,41 @@ export async function POST(request: Request) {
       const homeScore = swapped ? espnAwayScore : espnHomeScore;
       const awayScore = swapped ? espnHomeScore : espnAwayScore;
 
-      // Skip if scores already match
-      if (
-        dbMatch.home_score === homeScore &&
-        dbMatch.away_score === awayScore
-      ) {
+      // Extract first goal team from match details (do this BEFORE skip check)
+      let firstGoalTeam: string | null = null;
+      const details = comp.details || [];
+      const goals = details.filter(
+        (d: { scoringPlay: boolean }) => d.scoringPlay
+      );
+      if (goals.length > 0) {
+        goals.sort(
+          (a: { clock: { value: number } }, b: { clock: { value: number } }) =>
+            (a.clock?.value || 0) - (b.clock?.value || 0)
+        );
+        const firstGoal = goals[0];
+        const scoringTeamId = firstGoal.team?.id;
+        if (scoringTeamId) {
+          const scoringComp = competitors.find(
+            (c: { team: { id: string } }) => c.team.id === scoringTeamId
+          );
+          if (scoringComp) {
+            firstGoalTeam = normalizeTeamName(scoringComp.team.name);
+            // If teams were swapped, map the first goal team to DB perspective
+            if (swapped) {
+              if (firstGoalTeam === espnHome) firstGoalTeam = dbMatch.away_team;
+              else if (firstGoalTeam === espnAway) firstGoalTeam = dbMatch.home_team;
+            }
+          }
+        }
+      } else if (homeScore === 0 && awayScore === 0) {
+        firstGoalTeam = "None";
+      }
+
+      // Check if we need to update first goal team even if scores match
+      const scoresMatch = dbMatch.home_score === homeScore && dbMatch.away_score === awayScore;
+
+      // Skip only if scores match AND we don't have new first-goal info to add
+      if (scoresMatch && !firstGoalTeam) {
         result.skipped++;
         result.details.push({
           match: matchLabel,
@@ -208,31 +238,33 @@ export async function POST(request: Request) {
         continue;
       }
 
-      // 4. Extract first goal team from match details
-      let firstGoalTeam: string | null = null;
-      const details = comp.details || [];
-      const goals = details.filter(
-        (d: { scoringPlay: boolean }) => d.scoringPlay
-      );
-      if (goals.length > 0) {
-        // Sort by clock value to get the earliest goal
-        goals.sort(
-          (a: { clock: { value: number } }, b: { clock: { value: number } }) =>
-            (a.clock?.value || 0) - (b.clock?.value || 0)
-        );
-        const firstGoal = goals[0];
-        const scoringTeamId = firstGoal.team?.id;
-        // Map ESPN team ID to team name
-        if (scoringTeamId) {
-          const scoringComp = competitors.find(
-            (c: { team: { id: string } }) => c.team.id === scoringTeamId
-          );
-          if (scoringComp) {
-            firstGoalTeam = normalizeTeamName(scoringComp.team.name);
-          }
+      if (scoresMatch && firstGoalTeam) {
+        // Scores exist but first goal team might be missing — update it
+        const { error: fgError } = await supabase
+          .from("matches")
+          .update({ actual_scorers: firstGoalTeam })
+          .eq("id", dbMatch.id);
+
+        if (fgError) {
+          result.errors.push(`First goal update failed for ${matchLabel}: ${fgError.message}`);
+        } else {
+          result.details.push({
+            match: matchLabel,
+            action: `Scores existed, added first goal: ${firstGoalTeam}`,
+          });
         }
-      } else if (homeScore === 0 && awayScore === 0) {
-        firstGoalTeam = "None";
+
+        // Always recalculate points to pick up first goal bonus
+        const { error: calcError } = await supabase.rpc("calculate_points", {
+          p_match_id: dbMatch.id,
+        });
+        if (calcError) {
+          result.errors.push(`calculate_points failed for ${matchLabel}: ${calcError.message}`);
+        } else {
+          result.updated++;
+          result.details.push({ match: matchLabel, action: "Points recalculated ✓" });
+        }
+        continue;
       }
 
       // 5. Update match in DB
