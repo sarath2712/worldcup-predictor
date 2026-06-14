@@ -132,8 +132,11 @@ export async function POST(request: Request) {
       const espnAway = normalizeTeamName(awayComp.team.name);
       const matchLabel = `${espnHome} vs ${espnAway}`;
 
-      // 3. Find matching match in DB by team names
-      const { data: dbMatches, error: dbError } = await supabase
+      // 3. Find matching match in DB by team names (try both home/away orders)
+      let dbMatches: { id: number; home_team: string; away_team: string; home_score: number | null; away_score: number | null; stage: string }[] | null = null;
+      let swapped = false;
+
+      const { data: exactMatches, error: dbError } = await supabase
         .from("matches")
         .select("id, home_team, away_team, home_score, away_score, stage")
         .eq("home_team", espnHome)
@@ -144,6 +147,24 @@ export async function POST(request: Request) {
       if (dbError) {
         result.errors.push(`DB error for ${matchLabel}: ${dbError.message}`);
         continue;
+      }
+
+      dbMatches = exactMatches;
+
+      // If no exact match, try reversed home/away
+      if (!dbMatches || dbMatches.length === 0) {
+        const { data: reversedMatches } = await supabase
+          .from("matches")
+          .select("id, home_team, away_team, home_score, away_score, stage")
+          .eq("home_team", espnAway)
+          .eq("away_team", espnHome)
+          .order("kickoff_utc", { ascending: true })
+          .limit(1);
+
+        if (reversedMatches && reversedMatches.length > 0) {
+          dbMatches = reversedMatches;
+          swapped = true;
+        }
       }
 
       if (!dbMatches || dbMatches.length === 0) {
@@ -167,8 +188,12 @@ export async function POST(request: Request) {
         continue;
       }
 
-      const homeScore = parseInt(homeComp.score, 10);
-      const awayScore = parseInt(awayComp.score, 10);
+      const espnHomeScore = parseInt(homeComp.score, 10);
+      const espnAwayScore = parseInt(awayComp.score, 10);
+
+      // Map ESPN scores to DB home/away (swap if teams were found reversed)
+      const homeScore = swapped ? espnAwayScore : espnHomeScore;
+      const awayScore = swapped ? espnHomeScore : espnAwayScore;
 
       // Skip if scores already match
       if (
