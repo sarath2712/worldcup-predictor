@@ -24,24 +24,19 @@ export default function MatchesPage() {
       }
       setUser(user);
 
-      // Auto-sync scores from ESPN before loading matches
+      // Auto-sync scores from ESPN (fire-and-forget, don't block page load)
       const today = new Date().toISOString().split("T")[0].replace(/-/g, "");
       const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split("T")[0].replace(/-/g, "");
-      try {
-        await fetch("/api/sync-scores", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ date: today, force: true }),
-        });
-        // Also sync yesterday in case late-night matches weren't captured
-        await fetch("/api/sync-scores", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ date: yesterday, force: true }),
-        });
-      } catch {
-        // Silent fail — sync is best-effort
-      }
+      fetch("/api/sync-scores", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: today, force: true }),
+      }).catch(() => {});
+      fetch("/api/sync-scores", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: yesterday, force: true }),
+      }).catch(() => {});
 
       const { data: matchData } = await supabase
         .from("matches")

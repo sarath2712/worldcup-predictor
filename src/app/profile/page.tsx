@@ -55,7 +55,24 @@ export default function ProfilePage() {
 
       const preds = (data || []) as PredictionWithMatch[];
       setPredictions(preds);
-      setTotalPoints(preds.reduce((sum, p) => sum + (p.points || 0), 0));
+
+      // Calculate total points matching leaderboard (predictions + match_extras + tournament)
+      const predPoints = preds.reduce((sum, p) => sum + (p.points || 0), 0);
+
+      const { data: extrasData } = await supabase
+        .from("match_extras")
+        .select("points")
+        .eq("user_id", user.id);
+      const extraPoints = (extrasData || []).reduce((sum, e) => sum + (e.points || 0), 0);
+
+      const { data: tournamentData } = await supabase
+        .from("tournament_predictions")
+        .select("points")
+        .eq("user_id", user.id)
+        .single();
+      const tournamentPoints = tournamentData?.points || 0;
+
+      setTotalPoints(predPoints + extraPoints + tournamentPoints);
       setLoading(false);
     }
     load();
