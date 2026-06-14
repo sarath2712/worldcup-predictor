@@ -19,9 +19,9 @@ export default function TournamentPage() {
   const [bestPlayer, setBestPlayer] = useState("");
   const [bestGk, setBestGk] = useState("");
 
-  // Extended deadline: June 14, 2026 11:59 PM IST (18:29 UTC)
-  const tournamentStart = new Date("2026-06-14T18:29:00Z");
-  const isLocked = new Date() >= tournamentStart;
+  // Tournament predictions closed
+  const tournamentStart = new Date("2026-06-14T00:00:00Z");
+  const isLocked = true;
 
   useEffect(() => {
     async function load() {
