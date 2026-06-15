@@ -145,19 +145,11 @@ type TileCategory = "mens" | "womens" | "kids" | "playstation" | "prediction" | 
 
 const tiles: { title: string; subtitle: string; href: string; Icon: typeof JerseyIcon; color: string; countKey: TileCategory }[] = [
   {
-    title: "All Teams",
+    title: "Competition",
     subtitle: "KIDS · MENS · WOMENS",
     href: "/teams",
-    Icon: TeamIcon,
-    color: "from-cyan-500 to-blue-600",
-    countKey: null,
-  },
-  {
-    title: "Winners",
-    subtitle: "CHAMPIONS",
-    href: "/winners",
     Icon: TrophyIcon,
-    color: "from-yellow-500 to-amber-600",
+    color: "from-cyan-500 to-blue-600",
     countKey: null,
   },
   {
@@ -440,7 +432,7 @@ export default function Home() {
         </div>
 
         {/* Tiles Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2.5 max-w-[680px] w-full relative z-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2.5 max-w-[680px] w-full relative z-10">
           {tiles.map((tile, idx) => (
             <Link
               key={tile.title}
@@ -448,7 +440,7 @@ export default function Home() {
               onClick={(e) => handleTileClick(tile, e)}
               className={`rounded-lg sm:rounded-xl bg-gradient-to-br ${tile.color} backdrop-blur-md border border-white/20
                 flex flex-col items-start justify-end p-2.5 sm:p-3.5 h-[88px] sm:h-[120px]
-                ${idx === tiles.length - 1 ? "col-span-2 sm:col-span-1 max-w-[50%] sm:max-w-none mx-auto sm:mx-0" : ""}
+                ${""}
                 hover:scale-105 hover:border-white/40 hover:shadow-2xl transition-all duration-300
                 group cursor-pointer relative overflow-hidden`}
             >
@@ -506,7 +498,7 @@ export default function Home() {
           ))}
 
           {/* Cash Prize Banner - spans full width */}
-          <div className="col-span-2 sm:col-span-4 rounded-lg sm:rounded-xl bg-gradient-to-r from-yellow-500/20 via-amber-500/30 to-yellow-500/20 border border-yellow-400/30 backdrop-blur-md px-3 py-2 flex items-center justify-center gap-2 overflow-hidden relative">
+          <div className="col-span-2 sm:col-span-3 rounded-lg sm:rounded-xl bg-gradient-to-r from-yellow-500/20 via-amber-500/30 to-yellow-500/20 border border-yellow-400/30 backdrop-blur-md px-3 py-2 flex items-center justify-center gap-2 overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/10 to-transparent animate-shimmer" />
             <svg className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 shrink-0 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l2.09 6.26L20.18 9l-5 4.09L16.82 20 12 16.54 7.18 20l1.64-6.91L4 9l5.91-.74L12 2z"/></svg>
             <div className="text-center">
