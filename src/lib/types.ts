@@ -1,3 +1,9 @@
+export type BonusQuestion = {
+  type: string;
+  question: string;
+  options: string[];
+};
+
 export type Match = {
   id: number;
   stage: string;
@@ -9,6 +15,8 @@ export type Match = {
   venue: string | null;
   actual_potm: string | null;
   actual_scorers: string | null;
+  bonus_questions: BonusQuestion[] | null;
+  bonus_actuals: Record<string, string> | null;
 };
 
 export type Prediction = {
@@ -46,6 +54,7 @@ export type MatchExtras = {
   match_id: number;
   predicted_potm: string | null;
   predicted_scorers: string | null;
+  bonus_answers: Record<string, string> | null;
   points: number | null;
   created_at: string;
   updated_at: string;

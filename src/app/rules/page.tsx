@@ -41,6 +41,14 @@ export default function RulesPage() {
             </div>
             <span className="text-2xl font-bold text-accent">15</span>
           </div>
+          <div className="px-6 py-4 flex items-center justify-between bg-amber-500/5">
+            <div>
+              <p className="font-medium text-amber-400">⚡ Match Extras</p>
+              <p className="text-sm text-gray-400">Big-team group matches only — 1 or 2 per match</p>
+              <p className="text-xs text-gray-500 mt-1">Star player scoring, red cards, halftime leader, penalties</p>
+            </div>
+            <span className="text-2xl font-bold text-amber-400">20</span>
+          </div>
         </div>
       </div>
 
@@ -110,9 +118,9 @@ export default function RulesPage() {
       {/* Summary */}
       <div className="rounded-xl border border-accent/30 bg-accent/5 p-6 text-center">
         <p className="text-lg font-semibold text-accent">Maximum Points Per Match</p>
-        <p className="text-3xl font-black text-white mt-2">30 + 20 + 15 = 65</p>
+        <p className="text-3xl font-black text-white mt-2">30 + 20 + 15 + 40 = 105</p>
         <p className="text-sm text-gray-400 mt-2">
-          Exact Score (includes winner) + POTM + First Goal
+          Exact Score + POTM (knockout) + First Goal + Match Extras (big-team groups, up to 2 × 20)
         </p>
       </div>
     </div>

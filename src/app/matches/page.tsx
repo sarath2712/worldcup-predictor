@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Match, Prediction, MatchExtras } from "@/lib/types";
+import type { Match, Prediction, MatchExtras, BonusQuestion } from "@/lib/types";
 import type { User } from "@supabase/supabase-js";
 import { format, isPast, addHours } from "date-fns";
 import { getFlag } from "@/lib/flags";
@@ -117,6 +117,9 @@ function MatchCard({
   const [away, setAway] = useState(prediction?.predicted_away?.toString() || "");
   const [potm, setPotm] = useState(matchExtras?.predicted_potm || "");
   const [firstGoal, setFirstGoal] = useState(matchExtras?.predicted_scorers || "");
+  const [bonusAnswers, setBonusAnswers] = useState<Record<string, string>>(
+    matchExtras?.bonus_answers || {}
+  );
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const [timeLeft, setTimeLeft] = useState("");
@@ -125,6 +128,7 @@ function MatchCard({
   const deadline = addHours(kickoff, -1);
   const isLocked = isPast(deadline);
   const hasResult = match.home_score !== null;
+  const bonusQuestions = (match.bonus_questions || []) as BonusQuestion[];
 
   useEffect(() => {
     if (isLocked || hasResult) return;
@@ -174,13 +178,15 @@ function MatchCard({
       .select()
       .single();
 
-    // Save match extras (POTM & first goal)
-    if (potm || firstGoal) {
+    // Save match extras (POTM, first goal, bonus answers)
+    const hasBonusAnswers = Object.keys(bonusAnswers).length > 0;
+    if (potm || firstGoal || hasBonusAnswers) {
       const extrasPayload = {
         user_id: user.id,
         match_id: match.id,
         predicted_potm: potm || null,
         predicted_scorers: firstGoal || null,
+        bonus_answers: hasBonusAnswers ? bonusAnswers : null,
         updated_at: new Date().toISOString(),
       };
       const { data: extData } = await supabase
@@ -300,6 +306,28 @@ function MatchCard({
               <option value="None">None (0-0)</option>
             </select>
           </div>
+          {bonusQuestions.length > 0 && (
+            <div className="space-y-1.5">
+              <p className="text-[10px] uppercase tracking-wider text-amber-400 font-semibold">⚡ Match Extras (20 pts each)</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {bonusQuestions.map((q) => (
+                  <select
+                    key={q.type}
+                    value={bonusAnswers[q.type] || ""}
+                    onChange={(e) =>
+                      setBonusAnswers((prev) => ({ ...prev, [q.type]: e.target.value }))
+                    }
+                    className="text-xs px-3 py-1.5 border border-amber-500/30 rounded-lg bg-amber-500/5 text-white"
+                  >
+                    <option value="">{q.question}</option>
+                    {q.options.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <button
               onClick={handleSave}

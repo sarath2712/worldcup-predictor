@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import type { Match } from "@/lib/types";
+import type { Match, BonusQuestion } from "@/lib/types";
 import { format } from "date-fns";
 
 type Registration = {
@@ -190,7 +190,8 @@ export default function AdminRegistrationsPage() {
     homeScore: string,
     awayScore: string,
     actualPotm: string,
-    actualScorers: string
+    actualScorers: string,
+    bonusActuals: Record<string, string> | null
   ) => {
     setSaving(matchId);
 
@@ -201,6 +202,7 @@ export default function AdminRegistrationsPage() {
         away_score: parseInt(awayScore),
         actual_potm: actualPotm || null,
         actual_scorers: actualScorers || null,
+        bonus_actuals: bonusActuals && Object.keys(bonusActuals).length > 0 ? bonusActuals : null,
       })
       .eq("id", matchId);
 
@@ -441,7 +443,7 @@ export default function AdminRegistrationsPage() {
           {/* Scoring Guide */}
           <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
             <h3 className="text-sm font-bold text-accent mb-2">Scoring Reference</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-300">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs text-gray-300">
               <div className="bg-white/5 rounded-lg p-2 text-center">
                 <p className="text-lg font-bold text-white">30</p>
                 <p>Exact Score</p>
@@ -458,8 +460,12 @@ export default function AdminRegistrationsPage() {
                 <p className="text-lg font-bold text-white">15</p>
                 <p>First Goal</p>
               </div>
+              <div className="bg-amber-500/10 rounded-lg p-2 text-center border border-amber-500/20">
+                <p className="text-lg font-bold text-amber-400">20</p>
+                <p className="text-amber-400/80">Match Extra</p>
+              </div>
             </div>
-            <p className="text-[11px] text-gray-500 mt-2">Fill in: Home Score, Away Score, Player of the Match, Team Scored First. Points are auto-calculated on save.</p>
+            <p className="text-[11px] text-gray-500 mt-2">Fill in: Home Score, Away Score, Player of the Match, Team Scored First, and Match Extras (if applicable). Points are auto-calculated on save.</p>
           </div>
 
           {/* Match Filter Tabs */}
@@ -817,15 +823,19 @@ function AdminMatchRow({
 }: {
   match: Match;
   saving: boolean;
-  onSave: (id: number, home: string, away: string, potm: string, scorers: string) => void;
+  onSave: (id: number, home: string, away: string, potm: string, scorers: string, bonusActuals: Record<string, string> | null) => void;
 }) {
   const [home, setHome] = useState(match.home_score?.toString() || "");
   const [away, setAway] = useState(match.away_score?.toString() || "");
   const [potm, setPotm] = useState(match.actual_potm || "");
   const [firstGoal, setFirstGoal] = useState(match.actual_scorers || "");
+  const [bonusActuals, setBonusActuals] = useState<Record<string, string>>(
+    (match.bonus_actuals as Record<string, string>) || {}
+  );
   const isCompleted = match.home_score !== null;
   const kickoff = new Date(match.kickoff_utc);
   const isPast = kickoff < new Date();
+  const bonusQuestions = (match.bonus_questions || []) as BonusQuestion[];
 
   return (
     <div className={`p-4 rounded-xl border backdrop-blur-sm space-y-3 ${isCompleted ? "bg-green-500/5 border-green-500/20" : isPast ? "bg-yellow-500/5 border-yellow-500/20" : "bg-white/5 border-white/10"}`}>
@@ -870,7 +880,7 @@ function AdminMatchRow({
           />
         </div>
         <button
-          onClick={() => onSave(match.id, home, away, potm, firstGoal)}
+          onClick={() => onSave(match.id, home, away, potm, firstGoal, bonusQuestions.length > 0 ? bonusActuals : null)}
           disabled={saving || !home || !away}
           className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg disabled:opacity-50 hover:bg-green-700 transition font-semibold"
         >
@@ -906,6 +916,30 @@ function AdminMatchRow({
           </select>
         </div>
       </div>
+      {bonusQuestions.length > 0 && (
+        <div className="pt-2 border-t border-amber-500/20">
+          <p className="text-[10px] text-amber-400 uppercase tracking-wider font-semibold mb-2">⚡ Match Extras (20 pts each)</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {bonusQuestions.map((q) => (
+              <div key={q.type}>
+                <label className="text-[10px] text-gray-500 uppercase tracking-wider">{q.question}</label>
+                <select
+                  value={bonusActuals[q.type] || ""}
+                  onChange={(e) =>
+                    setBonusActuals((prev) => ({ ...prev, [q.type]: e.target.value }))
+                  }
+                  className="w-full border border-amber-500/30 rounded-lg px-3 py-2 bg-amber-500/5 text-white text-sm"
+                >
+                  <option value="">Select actual...</option>
+                  {q.options.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
