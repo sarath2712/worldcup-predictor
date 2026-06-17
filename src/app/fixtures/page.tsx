@@ -8,7 +8,7 @@ import { getFlag } from "@/lib/flags";
 import { groups, knockoutRounds } from "./data";
 
 type Tab = "fixtures" | "tables";
-type MatchRow = { id: number; stage: string; home_team: string; away_team: string; kickoff_utc: string; venue: string | null };
+type MatchRow = { id: number; stage: string; home_team: string; away_team: string; kickoff_utc: string; venue: string | null; home_score: number | null; away_score: number | null };
 
 export default function FixturesPage() {
   const [tab, setTab] = useState<Tab>("fixtures");
@@ -20,7 +20,7 @@ export default function FixturesPage() {
     async function loadMatches() {
       const { data } = await supabase
         .from("matches")
-        .select("id, stage, home_team, away_team, kickoff_utc, venue")
+        .select("id, stage, home_team, away_team, kickoff_utc, venue, home_score, away_score")
         .order("kickoff_utc", { ascending: true });
       setMatches(data || []);
       setLoading(false);
@@ -96,7 +96,13 @@ export default function FixturesPage() {
                         <span className="text-sm font-medium text-right">{match.home_team}</span>
                         <span className="text-xl shrink-0">{getFlag(match.home_team)}</span>
                       </div>
-                      <span className="text-accent font-bold text-sm px-2">vs</span>
+                      {match.home_score !== null ? (
+                        <span className="font-bold text-white text-base px-3 py-0.5 bg-white/10 rounded-lg min-w-[60px] text-center">
+                          {match.home_score} - {match.away_score}
+                        </span>
+                      ) : (
+                        <span className="text-accent font-bold text-sm px-2">vs</span>
+                      )}
                       <div className="flex-1 flex items-center gap-2 min-w-0">
                         <span className="text-xl shrink-0">{getFlag(match.away_team)}</span>
                         <span className="text-sm font-medium">{match.away_team}</span>
@@ -129,7 +135,36 @@ export default function FixturesPage() {
         )
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {groups.map((group) => (
+          {groups.map((group) => {
+            // Calculate standings from match results
+            const standings: Record<string, { p: number; w: number; d: number; l: number; gf: number; ga: number; pts: number }> = {};
+            group.teams.forEach((t) => { standings[t] = { p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 }; });
+
+            matches.forEach((m) => {
+              if (m.stage !== group.name || m.home_score === null) return;
+              // Check if both teams are in this group
+              if (!standings[m.home_team] || !standings[m.away_team]) return;
+              const hs = m.home_score!;
+              const as = m.away_score!;
+              standings[m.home_team].p++;
+              standings[m.away_team].p++;
+              standings[m.home_team].gf += hs;
+              standings[m.home_team].ga += as;
+              standings[m.away_team].gf += as;
+              standings[m.away_team].ga += hs;
+              if (hs > as) { standings[m.home_team].w++; standings[m.home_team].pts += 3; standings[m.away_team].l++; }
+              else if (hs < as) { standings[m.away_team].w++; standings[m.away_team].pts += 3; standings[m.home_team].l++; }
+              else { standings[m.home_team].d++; standings[m.away_team].d++; standings[m.home_team].pts += 1; standings[m.away_team].pts += 1; }
+            });
+
+            const sorted = [...group.teams].sort((a, b) => {
+              const sa = standings[a], sb = standings[b];
+              if (sb.pts !== sa.pts) return sb.pts - sa.pts;
+              if ((sb.gf - sb.ga) !== (sa.gf - sa.ga)) return (sb.gf - sb.ga) - (sa.gf - sa.ga);
+              return sb.gf - sa.gf;
+            });
+
+            return (
             <div key={group.name} className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
               <div className="px-5 py-3 bg-primary/20 border-b border-white/10">
                 <h2 className="text-base font-bold">{group.name}</h2>
@@ -147,26 +182,30 @@ export default function FixturesPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {group.teams.map((team, idx) => (
+                  {sorted.map((team, idx) => {
+                    const s = standings[team];
+                    return (
                     <tr
                       key={team}
                       className={`border-b border-white/5 ${
                         idx < 2 ? "text-white" : "text-gray-500"
                       }`}
                     >
-                      <td className="px-5 py-2.5 font-medium">{team}</td>
-                      <td className="px-2 py-2.5 text-center">0</td>
-                      <td className="px-2 py-2.5 text-center">0</td>
-                      <td className="px-2 py-2.5 text-center">0</td>
-                      <td className="px-2 py-2.5 text-center">0</td>
-                      <td className="px-2 py-2.5 text-center">0</td>
-                      <td className="px-2 py-2.5 text-center font-bold">0</td>
+                      <td className="px-5 py-2.5 font-medium">{getFlag(team)} {team}</td>
+                      <td className="px-2 py-2.5 text-center">{s.p}</td>
+                      <td className="px-2 py-2.5 text-center">{s.w}</td>
+                      <td className="px-2 py-2.5 text-center">{s.d}</td>
+                      <td className="px-2 py-2.5 text-center">{s.l}</td>
+                      <td className="px-2 py-2.5 text-center">{s.gf - s.ga}</td>
+                      <td className="px-2 py-2.5 text-center font-bold">{s.pts}</td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -217,23 +217,29 @@ export default function ProfilePage() {
                         Score: +{pred.points}
                       </span>
                     )}
-                    {extra?.predicted_scorers && (
-                      <span className={`px-2 py-0.5 rounded-full ${
-                        extra.points && extra.points > 0 ? "bg-green-500/10 text-green-400" : "bg-gray-500/10 text-gray-400"
-                      }`}>
-                        First Goal: {extra.predicted_scorers}
-                      </span>
-                    )}
-                    {extra?.bonus_answers && Object.entries(extra.bonus_answers).map(([key, val]) => (
-                      <span key={key} className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400">
-                        {key.replace(/_/g, " ")}: {val}
-                      </span>
-                    ))}
-                    {extra?.points !== null && extra?.points !== undefined && (
-                      <span className="px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400">
-                        Bonus: +{extra.points}
-                      </span>
-                    )}
+                    {extra?.predicted_scorers && (() => {
+                      const correct = match.actual_scorers && match.actual_scorers === extra.predicted_scorers;
+                      return (
+                        <span className={`px-2 py-0.5 rounded-full ${
+                          correct ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"
+                        }`}>
+                          First Goal: {extra.predicted_scorers} {correct ? "+15" : "+0"}
+                        </span>
+                      );
+                    })()}
+                    {extra?.bonus_answers && (() => {
+                      const actuals = match.bonus_actuals;
+                      return Object.entries(extra.bonus_answers).map(([key, val]) => {
+                        const correct = actuals && actuals[key] === val;
+                        return (
+                          <span key={key} className={`px-2 py-0.5 rounded-full ${
+                            correct ? "bg-purple-500/10 text-purple-400" : "bg-red-500/10 text-red-400"
+                          }`}>
+                            {key.replace(/_/g, " ")}: {val} {correct ? "+20" : "+0"}
+                          </span>
+                        );
+                      });
+                    })()}
                   </div>
                 )}
               </div>

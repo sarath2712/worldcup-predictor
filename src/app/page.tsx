@@ -145,14 +145,6 @@ type TileCategory = "mens" | "womens" | "kids" | "playstation" | "prediction" | 
 
 const tiles: { title: string; subtitle: string; href: string; Icon: typeof JerseyIcon; color: string; countKey: TileCategory }[] = [
   {
-    title: "Competition",
-    subtitle: "KIDS · MENS · WOMENS",
-    href: "/teams",
-    Icon: TrophyIcon,
-    color: "from-cyan-500 to-blue-600",
-    countKey: null,
-  },
-  {
     title: "World Cup Prediction",
     subtitle: "PICK THE WINNER",
     href: "/matches",
@@ -191,6 +183,14 @@ const tiles: { title: string; subtitle: string; href: string; Icon: typeof Jerse
     Icon: PenIcon,
     color: "from-rose-500 to-orange-600",
     countKey: "story" as TileCategory,
+  },
+  {
+    title: "Competition",
+    subtitle: "KIDS · MENS · WOMENS",
+    href: "/teams",
+    Icon: TrophyIcon,
+    color: "from-cyan-500 to-blue-600",
+    countKey: null,
   },
 ];
 
