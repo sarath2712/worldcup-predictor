@@ -7,10 +7,12 @@ import { format } from "date-fns";
 import Link from "next/link";
 
 type PredictionWithMatch = Prediction & { matches: Match };
+type MatchExtra = { match_id: number; predicted_scorers: string | null; predicted_potm: string | null; bonus_answers: Record<string, string> | null; points: number | null };
 type Registration = { id: number; category: string; favourite_team: string; created_at: string };
 
 export default function ProfilePage() {
   const [predictions, setPredictions] = useState<PredictionWithMatch[]>([]);
+  const [extras, setExtras] = useState<Record<number, MatchExtra>>({});
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [userInfo, setUserInfo] = useState<{ username: string; email: string; mobile: string; flatNumber: string }>({ username: "", email: "", mobile: "", flatNumber: "" });
   const [totalPoints, setTotalPoints] = useState(0);
@@ -56,14 +58,18 @@ export default function ProfilePage() {
       const preds = (data || []) as PredictionWithMatch[];
       setPredictions(preds);
 
-      // Calculate total points matching leaderboard (predictions + match_extras + tournament)
-      const predPoints = preds.reduce((sum, p) => sum + (p.points || 0), 0);
-
+      // Load match extras (first scorer, bonus questions) for this user
       const { data: extrasData } = await supabase
         .from("match_extras")
-        .select("points")
+        .select("match_id, predicted_scorers, predicted_potm, bonus_answers, points")
         .eq("user_id", user.id);
-      const extraPoints = (extrasData || []).reduce((sum, e) => sum + (e.points || 0), 0);
+      const extrasMap: Record<number, MatchExtra> = {};
+      (extrasData || []).forEach((e: MatchExtra) => { extrasMap[e.match_id] = e; });
+      setExtras(extrasMap);
+
+      // Calculate total points matching leaderboard (predictions + match_extras + tournament)
+      const predPoints = preds.reduce((sum, p) => sum + (p.points || 0), 0);
+      const extraPoints = (extrasData || []).reduce((sum: number, e: MatchExtra) => sum + (e.points || 0), 0);
 
       const { data: tournamentData } = await supabase
         .from("tournament_predictions")
@@ -153,51 +159,83 @@ export default function ProfilePage() {
         <div className="space-y-3">
           {predictions.map((pred) => {
             const match = pred.matches;
+            const extra = extras[match.id];
+            const matchTotal = (pred.points || 0) + (extra?.points || 0);
             return (
               <div
                 key={pred.id}
-                className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm flex items-center justify-between"
+                className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm"
               >
-                <div>
-                  <p className="font-medium">
-                    {match.home_team} vs {match.away_team}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {match.stage} · {format(new Date(match.kickoff_utc), "MMM d, h:mm a")}
-                  </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">
+                      {match.home_team} vs {match.away_team}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {match.stage} · {format(new Date(match.kickoff_utc), "MMM d, h:mm a")}
+                    </p>
+                  </div>
+
+                  <div className="text-center">
+                    <p className="font-bold">
+                      {pred.predicted_home} - {pred.predicted_away}
+                    </p>
+                    <p className="text-xs text-gray-500">Your prediction</p>
+                  </div>
+
+                  <div className="text-center min-w-[60px]">
+                    {match.home_score !== null ? (
+                      <>
+                        <p className="font-bold text-sm">
+                          {match.home_score} - {match.away_score}
+                        </p>
+                        <p className={`text-xs font-medium ${
+                          pred.points === 30 ? "text-green-600" :
+                          pred.points === 10 ? "text-yellow-600" : "text-red-600"
+                        }`}>
+                          {pred.points === 30 ? "Exact!" :
+                           pred.points === 10 ? "✓ Correct" : "✗ Wrong"}
+                        </p>
+                      </>
+                    ) : (
+                      <span className="text-xs text-gray-400">Pending</span>
+                    )}
+                  </div>
+
+                  <div className="text-right min-w-[50px]">
+                    {match.home_score !== null && (
+                      <span className="font-bold text-accent">+{matchTotal}</span>
+                    )}
+                  </div>
                 </div>
 
-                <div className="text-center">
-                  <p className="font-bold">
-                    {pred.predicted_home} - {pred.predicted_away}
-                  </p>
-                  <p className="text-xs text-gray-500">Your prediction</p>
-                </div>
-
-                <div className="text-center min-w-[60px]">
-                  {match.home_score !== null ? (
-                    <>
-                      <p className="font-bold text-sm">
-                        {match.home_score} - {match.away_score}
-                      </p>
-                      <p className={`text-xs font-medium ${
-                        pred.points === 30 ? "text-green-600" :
-                        pred.points === 10 ? "text-yellow-600" : "text-red-600"
+                {/* Points Breakdown */}
+                {match.home_score !== null && (extra || pred.points !== null) && (
+                  <div className="mt-2 pt-2 border-t border-white/5 flex flex-wrap gap-2 text-xs">
+                    {pred.points !== null && (
+                      <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400">
+                        Score: +{pred.points}
+                      </span>
+                    )}
+                    {extra?.predicted_scorers && (
+                      <span className={`px-2 py-0.5 rounded-full ${
+                        extra.points && extra.points > 0 ? "bg-green-500/10 text-green-400" : "bg-gray-500/10 text-gray-400"
                       }`}>
-                        {pred.points === 30 ? "Exact!" :
-                         pred.points === 10 ? "✓ Correct" : "✗ Wrong"}
-                      </p>
-                    </>
-                  ) : (
-                    <span className="text-xs text-gray-400">Pending</span>
-                  )}
-                </div>
-
-                <div className="text-right min-w-[50px]">
-                  {pred.points !== null && (
-                    <span className="font-bold text-accent">+{pred.points}</span>
-                  )}
-                </div>
+                        First Goal: {extra.predicted_scorers}
+                      </span>
+                    )}
+                    {extra?.bonus_answers && Object.entries(extra.bonus_answers).map(([key, val]) => (
+                      <span key={key} className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400">
+                        {key.replace(/_/g, " ")}: {val}
+                      </span>
+                    ))}
+                    {extra?.points !== null && extra?.points !== undefined && (
+                      <span className="px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400">
+                        Bonus: +{extra.points}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
