@@ -157,6 +157,14 @@ export default function LoginPage() {
           {isSignUp ? "Login" : "Sign Up"}
         </button>
       </p>
+
+      {!isSignUp && (
+        <p className="text-center mt-2 text-xs text-gray-500">
+          <Link href="/change-password" className="text-gray-400 hover:text-white transition">
+            Forgot password? Login first, then change it from your profile.
+          </Link>
+        </p>
+      )}
     </div>
   );
 }

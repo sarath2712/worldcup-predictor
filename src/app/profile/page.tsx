@@ -112,6 +112,11 @@ export default function ProfilePage() {
             <p className="font-medium">{userInfo.flatNumber || "—"}</p>
           </div>
         </div>
+        <div className="mt-4 pt-4 border-t border-white/10">
+          <Link href="/change-password" className="text-sm text-primary hover:text-primary/80 transition">
+            🔒 Change Password
+          </Link>
+        </div>
       </div>
 
       {/* Event Registrations */}
