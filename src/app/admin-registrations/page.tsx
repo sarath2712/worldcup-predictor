@@ -94,6 +94,7 @@ export default function AdminRegistrationsPage() {
   const [responseText, setResponseText] = useState("");
   const [copied, setCopied] = useState(false);
   const [groupPredCount, setGroupPredCount] = useState(0);
+  const [groupPredUserIds, setGroupPredUserIds] = useState<Set<string>>(new Set());
   const supabase = createClient();
 
   useEffect(() => {
@@ -178,6 +179,7 @@ export default function AdminRegistrationsPage() {
         if (gpUsers) {
           const uniqueUsers = new Set(gpUsers.map((r: { user_id: string }) => r.user_id));
           setGroupPredCount(uniqueUsers.size);
+          setGroupPredUserIds(uniqueUsers);
         }
       } catch {
         // table may not exist yet
@@ -667,6 +669,7 @@ export default function AdminRegistrationsPage() {
                     <th className="text-left px-4 py-3 font-medium">User</th>
                     <th className="text-center px-4 py-3 font-medium">Match Predictions</th>
                     <th className="text-center px-4 py-3 font-medium">Tournament</th>
+                    <th className="text-center px-4 py-3 font-medium">Group</th>
                     <th className="text-center px-4 py-3 font-medium">Total Points</th>
                   </tr>
                 </thead>
@@ -689,7 +692,7 @@ export default function AdminRegistrationsPage() {
                     });
                     const users = Array.from(userMap.entries()).sort((a, b) => b[1].matchCount - a[1].matchCount);
                     if (users.length === 0) return (
-                      <tr><td colSpan={5} className="text-center py-8 text-gray-500">No predictions yet</td></tr>
+                      <tr><td colSpan={6} className="text-center py-8 text-gray-500">No predictions yet</td></tr>
                     );
                     return users.map(([uid, u], idx) => (
                       <tr key={uid} className="border-b border-white/5 hover:bg-white/5">
@@ -697,6 +700,7 @@ export default function AdminRegistrationsPage() {
                         <td className="px-4 py-2.5 font-medium">{u.username}</td>
                         <td className="px-4 py-2.5 text-center">{u.matchCount}</td>
                         <td className="px-4 py-2.5 text-center">{u.hasTournament ? <span className="text-green-400">✓</span> : <span className="text-gray-600">—</span>}</td>
+                        <td className="px-4 py-2.5 text-center">{groupPredUserIds.has(uid) ? <span className="text-green-400">✓</span> : <span className="text-gray-600">—</span>}</td>
                         <td className="px-4 py-2.5 text-center font-semibold text-accent">{u.points}</td>
                       </tr>
                     ));
