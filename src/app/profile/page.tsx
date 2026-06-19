@@ -168,7 +168,105 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* Predictions */}
+      {/* Group Stage Predictions */}
+      <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold">Group Stage Predictions</h2>
+          <p className="text-xs text-gray-500 bg-white/5 px-3 py-1 rounded-full">Points calculated after group stage</p>
+        </div>
+        {groupPreds.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {groupPreds.map((g) => (
+                <div key={g.group_name} className="p-3 bg-white/5 rounded-xl border border-white/10">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="font-medium text-accent text-sm">{g.group_name}</p>
+                    {g.points !== null ? (
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                        g.points >= 75 ? "bg-green-500/20 text-green-400" :
+                        g.points >= 50 ? "bg-yellow-500/20 text-yellow-400" :
+                        "bg-gray-500/20 text-gray-400"
+                      }`}>
+                        +{g.points}
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-gray-600">Pending</span>
+                    )}
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-[10px] font-bold">1</span>
+                      <span>{g.predicted_first}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full bg-gray-300/20 text-gray-300 flex items-center justify-center text-[10px] font-bold">2</span>
+                      <span>{g.predicted_second}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full bg-amber-700/20 text-amber-600 flex items-center justify-center text-[10px] font-bold">3</span>
+                      <span>{g.predicted_third}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {groupTopscorer && (
+              <div className="mt-3 p-3 bg-white/5 rounded-xl border border-white/10 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium">Group Stage Top Scorer</p>
+                  <p className="text-xs text-gray-400">{groupTopscorer.predicted_topscorer}</p>
+                </div>
+                {groupTopscorer.points !== null ? (
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                    groupTopscorer.points > 0 ? "bg-green-500/20 text-green-400" : "bg-gray-500/20 text-gray-400"
+                  }`}>
+                    +{groupTopscorer.points}
+                  </span>
+                ) : (
+                  <span className="text-[10px] text-gray-600">Pending</span>
+                )}
+              </div>
+            )}
+          </>
+        ) : (
+          <p className="text-gray-500 text-sm">
+            No group predictions yet. <a href="/group-predictions" className="text-accent hover:underline">Make your picks →</a>
+          </p>
+        )}
+      </div>
+
+      {/* Tournament Predictions */}
+      <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold">Tournament Predictions</h2>
+          <p className="text-xs text-gray-500 bg-white/5 px-3 py-1 rounded-full">Points calculated after Final</p>
+        </div>
+        {tournamentPred ? (
+          <div className="space-y-2">
+            {[
+              { label: "Winner", value: tournamentPred.predicted_winner, pts: 200 },
+              { label: "Finalist", value: tournamentPred.predicted_finalist, pts: 180 },
+              { label: "Top Scorer", value: tournamentPred.predicted_top_scorer, pts: 150 },
+              { label: "Best Player", value: tournamentPred.predicted_best_player, pts: 150 },
+              { label: "Best Goalkeeper", value: tournamentPred.predicted_best_goalkeeper, pts: 150 },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                <div>
+                  <p className="text-sm font-medium">{item.label}</p>
+                  <p className="text-xs text-gray-400">{item.value || "—"}</p>
+                </div>
+                <span className="text-xs text-gray-500">Worth {item.pts} pts</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-sm">
+            No tournament predictions submitted. Predictions are now locked.
+          </p>
+        )}
+      </div>
+
+      {/* Match-to-Match Predictions */}
       <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold">My Predictions</h2>
@@ -272,104 +370,6 @@ export default function ProfilePage() {
           })}
         </div>
       )}
-      </div>
-
-      {/* Group Stage Predictions */}
-      <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold">Group Stage Predictions</h2>
-          <p className="text-xs text-gray-500 bg-white/5 px-3 py-1 rounded-full">Points calculated after group stage</p>
-        </div>
-        {groupPreds.length > 0 ? (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {groupPreds.map((g) => (
-                <div key={g.group_name} className="p-3 bg-white/5 rounded-xl border border-white/10">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="font-medium text-accent text-sm">{g.group_name}</p>
-                    {g.points !== null ? (
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                        g.points >= 75 ? "bg-green-500/20 text-green-400" :
-                        g.points >= 50 ? "bg-yellow-500/20 text-yellow-400" :
-                        "bg-gray-500/20 text-gray-400"
-                      }`}>
-                        +{g.points}
-                      </span>
-                    ) : (
-                      <span className="text-[10px] text-gray-600">Pending</span>
-                    )}
-                  </div>
-                  <div className="space-y-1 text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="w-4 h-4 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-[10px] font-bold">1</span>
-                      <span>{g.predicted_first}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-4 h-4 rounded-full bg-gray-300/20 text-gray-300 flex items-center justify-center text-[10px] font-bold">2</span>
-                      <span>{g.predicted_second}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-4 h-4 rounded-full bg-amber-700/20 text-amber-600 flex items-center justify-center text-[10px] font-bold">3</span>
-                      <span>{g.predicted_third}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {groupTopscorer && (
-              <div className="mt-3 p-3 bg-white/5 rounded-xl border border-white/10 flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium">Group Stage Top Scorer</p>
-                  <p className="text-xs text-gray-400">{groupTopscorer.predicted_topscorer}</p>
-                </div>
-                {groupTopscorer.points !== null ? (
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                    groupTopscorer.points > 0 ? "bg-green-500/20 text-green-400" : "bg-gray-500/20 text-gray-400"
-                  }`}>
-                    +{groupTopscorer.points}
-                  </span>
-                ) : (
-                  <span className="text-[10px] text-gray-600">Pending</span>
-                )}
-              </div>
-            )}
-          </>
-        ) : (
-          <p className="text-gray-500 text-sm">
-            No group predictions yet. <a href="/group-predictions" className="text-accent hover:underline">Make your picks →</a>
-          </p>
-        )}
-      </div>
-
-      {/* Tournament Predictions */}
-      <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold">Tournament Predictions</h2>
-          <p className="text-xs text-gray-500 bg-white/5 px-3 py-1 rounded-full">Points calculated after Final</p>
-        </div>
-        {tournamentPred ? (
-          <div className="space-y-2">
-            {[
-              { label: "Winner", value: tournamentPred.predicted_winner, pts: 200 },
-              { label: "Finalist", value: tournamentPred.predicted_finalist, pts: 180 },
-              { label: "Top Scorer", value: tournamentPred.predicted_top_scorer, pts: 150 },
-              { label: "Best Player", value: tournamentPred.predicted_best_player, pts: 150 },
-              { label: "Best Goalkeeper", value: tournamentPred.predicted_best_goalkeeper, pts: 150 },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
-                <div>
-                  <p className="text-sm font-medium">{item.label}</p>
-                  <p className="text-xs text-gray-400">{item.value || "—"}</p>
-                </div>
-                <span className="text-xs text-gray-500">Worth {item.pts} pts</span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500 text-sm">
-            No tournament predictions submitted. Predictions are now locked.
-          </p>
-        )}
       </div>
     </div>
   );
