@@ -97,6 +97,37 @@ export default function RulesPage() {
         </div>
       </div>
 
+      {/* Group Stage Predictions */}
+      <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/10 bg-white/5">
+          <h3 className="text-xl font-bold text-accent flex items-center gap-2"><svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/></svg> Group Stage Predictions</h3>
+          <p className="text-sm text-gray-400 mt-1">Predict final standings for each group (12 groups)</p>
+        </div>
+        <div className="divide-y divide-white/5">
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium text-white">1st &amp; 2nd Place Correct</p>
+              <p className="text-sm text-gray-400">Predict the top 2 teams in the right order</p>
+            </div>
+            <span className="text-2xl font-bold text-accent">50</span>
+          </div>
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium text-white">1st, 2nd &amp; 3rd Place Correct</p>
+              <p className="text-sm text-gray-400">Predict the top 3 teams in the right order</p>
+            </div>
+            <span className="text-2xl font-bold text-accent">75</span>
+          </div>
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium text-white">Group Stage Top Scorer</p>
+              <p className="text-sm text-gray-400">Player with most goals in Matchday 1–3</p>
+            </div>
+            <span className="text-2xl font-bold text-accent">75</span>
+          </div>
+        </div>
+      </div>
+
       {/* Deadlines */}
       <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-white/10 bg-white/5">

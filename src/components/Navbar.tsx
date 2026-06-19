@@ -111,6 +111,9 @@ export function Navbar() {
           <Link href="/tournament" className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-gray-200 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full border border-white/10 transition">
             Tournament
           </Link>
+          <Link href="/group-predictions" className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-gray-200 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full border border-white/10 transition">
+            Groups
+          </Link>
           <Link href="/leaderboard" className="px-3 py-1.5 sm:px-4 sm:py-1.5 text-sm sm:text-sm font-medium text-gray-200 bg-white/5 hover:bg-accent/20 hover:text-accent rounded-full border border-white/10 transition">
             Board
           </Link>
