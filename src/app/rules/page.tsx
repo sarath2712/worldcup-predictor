@@ -106,6 +106,13 @@ export default function RulesPage() {
         <div className="divide-y divide-white/5">
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
+              <p className="font-medium text-white">Only 1st Place Correct</p>
+              <p className="text-sm text-gray-400">No points if only the group winner is right</p>
+            </div>
+            <span className="text-2xl font-bold text-gray-500">0</span>
+          </div>
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div>
               <p className="font-medium text-white">1st &amp; 2nd Place Correct</p>
               <p className="text-sm text-gray-400">Predict the top 2 teams in the right order</p>
             </div>
@@ -142,6 +149,10 @@ export default function RulesPage() {
           <div className="px-6 py-4 flex items-start gap-3">
             <svg className="w-5 h-5 mt-0.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
             <p className="text-gray-300 text-sm">Tournament Prediction will close on <strong className="text-white">June 11, 12:01 AM</strong>.</p>
+          </div>
+          <div className="px-6 py-4 flex items-start gap-3">
+            <svg className="w-5 h-5 mt-0.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <p className="text-gray-300 text-sm">Group Stage Predictions will close on <strong className="text-white">June 19, 11:59 PM IST</strong>.</p>
           </div>
         </div>
       </div>

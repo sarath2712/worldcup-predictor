@@ -31,9 +31,9 @@ export default function GroupPredictionsPage() {
     Record<string, { first: string; second: string; third: string }>
   >({});
 
-  // Lock: predictions close when last group match day 3 starts (approx Jun 25)
-  // For now, keep open — admin can lock later
-  const isLocked = false;
+  // Lock: predictions close June 19 at 11:59 PM IST
+  const lockDeadline = new Date("2026-06-19T18:29:00Z"); // 11:59 PM IST
+  const isLocked = Date.now() > lockDeadline.getTime();
 
   useEffect(() => {
     async function load() {
@@ -212,9 +212,13 @@ export default function GroupPredictionsPage() {
         <p className="text-gray-400 mt-2">
           Predict the final standings for each group!
         </p>
-        {isLocked && (
+        {isLocked ? (
           <p className="text-sm text-red-400 mt-2">
             🔒 Group stage predictions are locked.
+          </p>
+        ) : (
+          <p className="text-sm text-accent mt-2">
+            ⏰ Lock deadline: June 19, 2026 at 11:59 PM IST
           </p>
         )}
       </div>
@@ -222,6 +226,10 @@ export default function GroupPredictionsPage() {
       {/* Scoring Info */}
       <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
         <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
+          <div className="text-center">
+            <span className="text-2xl font-bold text-gray-500">0</span>
+            <p className="text-gray-400">Only 1st correct</p>
+          </div>
           <div className="text-center">
             <span className="text-2xl font-bold text-accent">50</span>
             <p className="text-gray-400">1st &amp; 2nd correct</p>
