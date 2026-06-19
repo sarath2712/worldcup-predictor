@@ -32,9 +32,8 @@ export default function GroupPredictionsPage() {
     Record<string, { first: string; second: string; third: string }>
   >({});
 
-  // Lock: predictions close June 19 at 11:59 PM IST
-  const lockDeadline = new Date("2026-06-19T18:29:00Z"); // 11:59 PM IST
-  const isLocked = Date.now() > lockDeadline.getTime();
+  // Lock: Group stage predictions are now permanently closed
+  const isLocked = true;
 
   useEffect(() => {
     async function load() {

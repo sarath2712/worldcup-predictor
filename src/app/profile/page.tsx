@@ -237,7 +237,7 @@ export default function ProfilePage() {
           </>
         ) : (
           <p className="text-gray-500 text-sm">
-            No group predictions yet. <a href="/group-predictions" className="text-accent hover:underline">Make your picks →</a>
+            No group predictions submitted. 🔒 Group stage predictions are now closed.
           </p>
         )}
       </div>
