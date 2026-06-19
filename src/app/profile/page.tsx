@@ -9,11 +9,17 @@ import Link from "next/link";
 type PredictionWithMatch = Prediction & { matches: Match };
 type MatchExtra = { match_id: number; predicted_scorers: string | null; predicted_potm: string | null; bonus_answers: Record<string, string> | null; points: number | null };
 type Registration = { id: number; category: string; favourite_team: string; created_at: string };
+type GroupPred = { group_name: string; predicted_first: string; predicted_second: string; predicted_third: string; points: number | null };
+type TournamentPred = { predicted_winner: string | null; predicted_finalist: string | null; predicted_top_scorer: string | null; predicted_best_player: string | null; predicted_best_goalkeeper: string | null; points: number | null };
+type GroupTopscorerPred = { predicted_topscorer: string; points: number | null };
 
 export default function ProfilePage() {
   const [predictions, setPredictions] = useState<PredictionWithMatch[]>([]);
   const [extras, setExtras] = useState<Record<number, MatchExtra>>({});
   const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const [groupPreds, setGroupPreds] = useState<GroupPred[]>([]);
+  const [tournamentPred, setTournamentPred] = useState<TournamentPred | null>(null);
+  const [groupTopscorer, setGroupTopscorer] = useState<GroupTopscorerPred | null>(null);
   const [userInfo, setUserInfo] = useState<{ username: string; email: string; mobile: string; flatNumber: string }>({ username: "", email: "", mobile: "", flatNumber: "" });
   const [totalPoints, setTotalPoints] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -73,12 +79,31 @@ export default function ProfilePage() {
 
       const { data: tournamentData } = await supabase
         .from("tournament_predictions")
-        .select("points")
+        .select("predicted_winner, predicted_finalist, predicted_top_scorer, predicted_best_player, predicted_best_goalkeeper, points")
         .eq("user_id", user.id)
         .single();
       const tournamentPoints = tournamentData?.points || 0;
+      if (tournamentData) setTournamentPred(tournamentData);
 
-      setTotalPoints(predPoints + extraPoints + tournamentPoints);
+      // Load group predictions
+      const { data: gpData } = await supabase
+        .from("group_predictions")
+        .select("group_name, predicted_first, predicted_second, predicted_third, points")
+        .eq("user_id", user.id)
+        .order("group_name");
+      setGroupPreds(gpData || []);
+      const groupPoints = (gpData || []).reduce((sum: number, g: GroupPred) => sum + (g.points || 0), 0);
+
+      // Load group topscorer prediction
+      const { data: gtsData } = await supabase
+        .from("group_topscorer_predictions")
+        .select("predicted_topscorer, points")
+        .eq("user_id", user.id)
+        .single();
+      if (gtsData) setGroupTopscorer(gtsData);
+      const gtsPoints = gtsData?.points || 0;
+
+      setTotalPoints(predPoints + extraPoints + tournamentPoints + groupPoints + gtsPoints);
       setLoading(false);
     }
     load();
@@ -248,6 +273,94 @@ export default function ProfilePage() {
         </div>
       )}
       </div>
+
+      {/* Group Stage Predictions */}
+      {groupPreds.length > 0 && (
+        <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">Group Stage Predictions</h2>
+            <p className="text-lg font-bold text-accent">
+              {groupPreds.reduce((s, g) => s + (g.points || 0), 0) + (groupTopscorer?.points || 0)} pts
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {groupPreds.map((g) => (
+              <div key={g.group_name} className="p-3 bg-white/5 rounded-xl border border-white/10">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="font-medium text-accent text-sm">{g.group_name}</p>
+                  {g.points !== null && (
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                      g.points >= 75 ? "bg-green-500/20 text-green-400" :
+                      g.points >= 50 ? "bg-yellow-500/20 text-yellow-400" :
+                      "bg-gray-500/20 text-gray-400"
+                    }`}>
+                      +{g.points}
+                    </span>
+                  )}
+                </div>
+                <div className="space-y-1 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-[10px] font-bold">1</span>
+                    <span>{g.predicted_first}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-gray-300/20 text-gray-300 flex items-center justify-center text-[10px] font-bold">2</span>
+                    <span>{g.predicted_second}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-amber-700/20 text-amber-600 flex items-center justify-center text-[10px] font-bold">3</span>
+                    <span>{g.predicted_third}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          {groupTopscorer && (
+            <div className="mt-3 p-3 bg-white/5 rounded-xl border border-white/10 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">Group Stage Top Scorer</p>
+                <p className="text-xs text-gray-400">{groupTopscorer.predicted_topscorer}</p>
+              </div>
+              {groupTopscorer.points !== null && (
+                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                  groupTopscorer.points > 0 ? "bg-green-500/20 text-green-400" : "bg-gray-500/20 text-gray-400"
+                }`}>
+                  +{groupTopscorer.points}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Tournament Predictions */}
+      {tournamentPred && (
+        <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">Tournament Predictions</h2>
+            {tournamentPred.points !== null && (
+              <p className="text-lg font-bold text-accent">{tournamentPred.points} pts</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            {[
+              { label: "Winner", value: tournamentPred.predicted_winner, pts: 200 },
+              { label: "Finalist", value: tournamentPred.predicted_finalist, pts: 180 },
+              { label: "Top Scorer", value: tournamentPred.predicted_top_scorer, pts: 150 },
+              { label: "Best Player", value: tournamentPred.predicted_best_player, pts: 150 },
+              { label: "Best Goalkeeper", value: tournamentPred.predicted_best_goalkeeper, pts: 150 },
+            ].filter(item => item.value).map((item) => (
+              <div key={item.label} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                <div>
+                  <p className="text-sm font-medium">{item.label}</p>
+                  <p className="text-xs text-gray-400">{item.value}</p>
+                </div>
+                <span className="text-xs text-gray-500">Worth {item.pts} pts</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
