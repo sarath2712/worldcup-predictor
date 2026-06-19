@@ -228,15 +228,15 @@ export default function GroupPredictionsPage() {
         <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
           <div className="text-center">
             <span className="text-2xl font-bold text-gray-500">0</span>
-            <p className="text-gray-400">Only 1st correct</p>
+            <p className="text-gray-400">Only 1st correct (per group)</p>
           </div>
           <div className="text-center">
             <span className="text-2xl font-bold text-accent">50</span>
-            <p className="text-gray-400">1st &amp; 2nd correct</p>
+            <p className="text-gray-400">1st &amp; 2nd correct (per group)</p>
           </div>
           <div className="text-center">
             <span className="text-2xl font-bold text-accent">75</span>
-            <p className="text-gray-400">1st, 2nd &amp; 3rd correct</p>
+            <p className="text-gray-400">1st, 2nd &amp; 3rd correct (per group)</p>
           </div>
           <div className="text-center">
             <span className="text-2xl font-bold text-accent">75</span>
