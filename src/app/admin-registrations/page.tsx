@@ -93,6 +93,7 @@ export default function AdminRegistrationsPage() {
   const [respondingTo, setRespondingTo] = useState<string | null>(null);
   const [responseText, setResponseText] = useState("");
   const [copied, setCopied] = useState(false);
+  const [groupPredCount, setGroupPredCount] = useState(0);
   const supabase = createClient();
 
   useEffect(() => {
@@ -167,6 +168,19 @@ export default function AdminRegistrationsPage() {
           actual_best_player: tr.actual_best_player || "",
           actual_best_goalkeeper: tr.actual_best_goalkeeper || "",
         });
+      }
+
+      // Load group predictions count (distinct users who submitted)
+      try {
+        const { data: gpUsers } = await supabase
+          .from("group_predictions")
+          .select("user_id");
+        if (gpUsers) {
+          const uniqueUsers = new Set(gpUsers.map((r: { user_id: string }) => r.user_id));
+          setGroupPredCount(uniqueUsers.size);
+        }
+      } catch {
+        // table may not exist yet
       }
 
       // Load support queries
@@ -372,7 +386,7 @@ export default function AdminRegistrationsPage() {
       <p className="text-gray-400 mb-6">Manage match results, registrations, and predictions</p>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8">
         <div className="rounded-xl bg-gradient-to-br from-blue-600/20 to-blue-800/20 border border-white/10 p-4">
           <p className="text-2xl font-bold">{registrations.length}</p>
           <p className="text-xs text-gray-400">Total Registrations</p>
@@ -388,6 +402,10 @@ export default function AdminRegistrationsPage() {
         <div className="rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-800/20 border border-white/10 p-4">
           <p className="text-2xl font-bold">{matchPredictions.length + predictions.length}</p>
           <p className="text-xs text-gray-400">Total Predictions</p>
+        </div>
+        <div className="rounded-xl bg-gradient-to-br from-yellow-600/20 to-yellow-800/20 border border-white/10 p-4">
+          <p className="text-2xl font-bold">{groupPredCount}</p>
+          <p className="text-xs text-gray-400">Group Predictions</p>
         </div>
       </div>
 
