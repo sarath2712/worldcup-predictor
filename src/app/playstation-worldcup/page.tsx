@@ -27,7 +27,7 @@ const fixtures: Round[] = [
     matches: [
       { id: "M1", p1: "Sachin Shiragola", p2: "Pavan Itagi", time: "2:25-2:40 PM" },
       { id: "M2", p1: "Kshiraj Nair", p2: "Sriram", time: "2:40-2:55 PM" },
-      { id: "M3", p1: "Mrinal Das", p2: "Abhinav Rastogi", time: "2:55-3:10 PM" },
+      { id: "M3", p1: "Mrinal Das", p2: "Vihaan", time: "2:55-3:10 PM" },
       { id: "M4", p1: "Krishang Sinha", p2: "Winner P0", time: "3:10-3:25 PM" },
       { id: "M5", p1: "Shriragini Kowtarapu", p2: "Alvin Jibi", time: "3:25-3:40 PM" },
       { id: "M6", p1: "Rithwik K Sasikumar", p2: "Aryush", time: "3:40-3:55 PM" },
@@ -43,7 +43,7 @@ const fixtures: Round[] = [
       { id: "M10", p1: "Pikanshu Kumar", p2: "Mahesh Tirupati", time: "2:25-2:40 PM" },
       { id: "M11", p1: "Sushant Kumar", p2: "Tanya", time: "2:40-2:55 PM" },
       { id: "M12", p1: "Kunal", p2: "Avyaan Biswas", time: "2:55-3:10 PM" },
-      { id: "M13", p1: "Vihaan", p2: "Sriram S", time: "3:10-3:25 PM" },
+      { id: "M13", p1: "Abhinav Rastogi", p2: "Sriram S", time: "3:10-3:25 PM" },
       { id: "M14", p1: "Tanmay Das", p2: "Jay Patel", time: "3:25-3:40 PM" },
       { id: "M15", p1: "Suvin", p2: "Rakshit Jain", time: "3:40-3:55 PM" },
       { id: "M16", p1: "Swarnadeep Dutta", p2: "Satyam Pandey", time: "3:55-4:10 PM" },
