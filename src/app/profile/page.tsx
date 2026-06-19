@@ -168,6 +168,13 @@ export default function ProfilePage() {
         </div>
       )}
 
+      {/* Total Points */}
+      <div className="p-5 bg-gradient-to-r from-accent/20 to-primary/20 rounded-2xl border border-accent/30 backdrop-blur-sm text-center">
+        <p className="text-sm text-gray-400 mb-1">Total Points</p>
+        <p className="text-4xl font-extrabold text-accent">{totalPoints}</p>
+        <p className="text-xs text-gray-500 mt-1">Match + Group + Tournament</p>
+      </div>
+
       {/* Group Stage Predictions */}
       <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-4">
@@ -266,11 +273,10 @@ export default function ProfilePage() {
         )}
       </div>
 
-      {/* Match-to-Match Predictions */}
+      {/* Match Predictions */}
       <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold">My Predictions</h2>
-          <p className="text-2xl font-bold text-accent">{totalPoints} pts</p>
+        <div className="mb-4">
+          <h2 className="text-xl font-bold">Match Predictions</h2>
         </div>
 
       {predictions.length === 0 ? (
