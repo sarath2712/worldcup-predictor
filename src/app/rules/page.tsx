@@ -45,7 +45,7 @@ export default function RulesPage() {
             <div>
               <p className="font-medium text-amber-400">⚡ Match Extras</p>
               <p className="text-sm text-gray-400">Big-team group matches only — 1 or 2 per match</p>
-              <p className="text-xs text-gray-500 mt-1">Star player scoring, red cards, halftime leader, penalties</p>
+              <p className="text-xs text-gray-500 mt-1">Star player scoring, halftime leader, penalties</p>
             </div>
             <span className="text-2xl font-bold text-amber-400">20</span>
           </div>
