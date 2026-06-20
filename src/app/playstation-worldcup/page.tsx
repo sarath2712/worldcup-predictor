@@ -18,7 +18,7 @@ const fixtures: Round[] = [
     title: "Preliminary / Play-in",
     date: "Sat 20 Jun",
     matches: [
-      { id: "P0", p1: "Chirag Tyagi", p2: "Mausami Tanna", time: "2:10-2:25 PM" },
+      { id: "P0", p1: "Chirag Tyagi", p2: "Dhruv", time: "2:10-2:25 PM" },
     ],
   },
   {
@@ -44,7 +44,7 @@ const fixtures: Round[] = [
       { id: "M11", p1: "Sushant Kumar", p2: "Tanya", time: "2:40-2:55 PM" },
       { id: "M12", p1: "Kunal", p2: "Avyaan Biswas", time: "2:55-3:10 PM" },
       { id: "M13", p1: "Abhinav Rastogi", p2: "Sriram S", time: "3:10-3:25 PM" },
-      { id: "M14", p1: "Tanmay Das", p2: "Jay Patel", time: "3:25-3:40 PM" },
+      { id: "M14", p1: "Pavan Itagi", p2: "Jay Patel", time: "3:25-3:40 PM" },
       { id: "M15", p1: "Suvin", p2: "Rakshit Jain", time: "3:40-3:55 PM" },
       { id: "M16", p1: "Swarnadeep Dutta", p2: "Satyam Pandey", time: "3:55-4:10 PM" },
     ],
