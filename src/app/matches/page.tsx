@@ -313,7 +313,7 @@ function MatchCard({
           </div>
           {bonusQuestions.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-[10px] uppercase tracking-wider text-amber-400 font-semibold">⚡ Match Extras (20 pts each)</p>
+              <p className="text-[10px] uppercase tracking-wider text-amber-400 font-semibold">⚡ Match Extras ({hasOdds ? 30 : 20} pts each)</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {bonusQuestions.map((q) => (
                   <select

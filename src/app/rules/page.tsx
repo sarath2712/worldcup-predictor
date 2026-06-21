@@ -17,6 +17,7 @@ export default function RulesPage() {
             <div>
               <p className="font-medium text-white">Exact Score Prediction</p>
               <p className="text-sm text-gray-400">Predict the correct scoreline (includes winner bonus)</p>
+              <p className="text-xs text-emerald-400 mt-1">🎯 Round 3+ with odds: <strong>80 pts</strong></p>
             </div>
             <span className="text-2xl font-bold text-accent">30</span>
           </div>
@@ -24,6 +25,7 @@ export default function RulesPage() {
             <div>
               <p className="font-medium text-white">Correct Winner / Draw Only</p>
               <p className="text-sm text-gray-400">Right outcome but wrong scoreline</p>
+              <p className="text-xs text-emerald-400 mt-1">🎯 Round 3+ with odds: <strong>Odds × 20</strong> pts (e.g. 2.60 → 52 pts)</p>
             </div>
             <span className="text-2xl font-bold text-accent">10</span>
           </div>
@@ -46,6 +48,7 @@ export default function RulesPage() {
               <p className="font-medium text-amber-400">⚡ Match Extras</p>
               <p className="text-sm text-gray-400">Big-team group matches only — 1 or 2 per match</p>
               <p className="text-xs text-gray-500 mt-1">Star player scoring, halftime leader, penalties</p>
+              <p className="text-xs text-emerald-400 mt-1">🎯 Round 3+ with odds: <strong>30 pts each</strong></p>
             </div>
             <span className="text-2xl font-bold text-amber-400">20</span>
           </div>
@@ -164,6 +167,13 @@ export default function RulesPage() {
         <p className="text-sm text-gray-400 mt-2">
           Exact Score + POTM (knockout) + First Goal + Match Extras (big-team groups, up to 2 × 20)
         </p>
+        <div className="mt-3 pt-3 border-t border-white/10">
+          <p className="text-sm font-semibold text-emerald-400">🎯 Round 3+ with Odds</p>
+          <p className="text-xl font-black text-white mt-1">80 + 20 + 15 + 60 = 175</p>
+          <p className="text-xs text-gray-400 mt-1">
+            Exact (80) + POTM (knockout) + First Goal + Match Extras (up to 2 × 30)
+          </p>
+        </div>
       </div>
     </div>
   );
