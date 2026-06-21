@@ -17,6 +17,9 @@ export type Match = {
   actual_scorers: string | null;
   bonus_questions: BonusQuestion[] | null;
   bonus_actuals: Record<string, string> | null;
+  home_win_odds: number | null;
+  draw_odds: number | null;
+  away_win_odds: number | null;
 };
 
 export type Prediction = {

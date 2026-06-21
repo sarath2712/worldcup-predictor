@@ -129,6 +129,11 @@ function MatchCard({
   const isLocked = isPast(deadline);
   const hasResult = match.home_score !== null;
   const bonusQuestions = (match.bonus_questions || []) as BonusQuestion[];
+  const hasOdds = match.home_win_odds && match.draw_odds && match.away_win_odds;
+
+  function oddsToPoints(odds: number): number {
+    return Math.min(Math.max(Math.round(odds) * 10, 10), 80);
+  }
 
   useEffect(() => {
     if (isLocked || hasResult) return;
@@ -328,6 +333,25 @@ function MatchCard({
               </div>
             </div>
           )}
+          {hasOdds && home !== "" && away !== "" && (
+            <div className="flex items-center gap-2 text-[10px] text-emerald-400 bg-emerald-500/5 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+              <span className="font-semibold">💰 Your potential:</span>
+              {(() => {
+                const h = parseInt(home), a = parseInt(away);
+                if (isNaN(h) || isNaN(a)) return null;
+                const outcome = h > a ? "home" : h < a ? "away" : "draw";
+                const odds = outcome === "home" ? match.home_win_odds! : outcome === "away" ? match.away_win_odds! : match.draw_odds!;
+                const outcomePts = oddsToPoints(odds);
+                return (
+                  <>
+                    <span>Outcome: <b>{outcomePts}</b> pts</span>
+                    <span className="text-gray-600">|</span>
+                    <span>Exact: <b>{outcomePts * 3}</b> pts</span>
+                  </>
+                );
+              })()}
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <button
               onClick={handleSave}
@@ -343,6 +367,24 @@ function MatchCard({
 
       {match.venue && (
         <p className="text-xs text-gray-400 mt-2">📍 {match.venue}</p>
+      )}
+
+      {hasOdds && (
+        <div className="mt-2 flex items-center justify-center gap-1 text-[10px]">
+          <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-medium">
+            {match.home_team.split(" ").pop()} {match.home_win_odds!.toFixed(2)}
+          </span>
+          <span className="px-2 py-0.5 rounded bg-gray-500/10 text-gray-400 font-medium">
+            Draw {match.draw_odds!.toFixed(2)}
+          </span>
+          <span className="px-2 py-0.5 rounded bg-red-500/10 text-red-400 font-medium">
+            {match.away_team.split(" ").pop()} {match.away_win_odds!.toFixed(2)}
+          </span>
+          <span className="ml-1 text-gray-600">|</span>
+          <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-semibold" title="Points: Outcome / Exact Score">
+            🎯 {oddsToPoints(match.home_win_odds!)} / {oddsToPoints(match.draw_odds!)} / {oddsToPoints(match.away_win_odds!)} pts
+          </span>
+        </div>
       )}
     </div>
   );
