@@ -250,6 +250,23 @@ function MatchCard({
         </div>
       </div>
 
+      {hasOdds && (
+        <div className="mb-3 flex flex-wrap items-center justify-center gap-2 text-xs">
+          <span className="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-400 font-semibold">
+            {match.home_team.split(" ").pop()} {match.home_win_odds!.toFixed(2)} → <b>{oddsToPoints(match.home_win_odds!)} pts</b>
+          </span>
+          <span className="px-3 py-1 rounded-lg bg-gray-500/10 text-gray-400 font-semibold">
+            Draw {match.draw_odds!.toFixed(2)} → <b>{oddsToPoints(match.draw_odds!)} pts</b>
+          </span>
+          <span className="px-3 py-1 rounded-lg bg-red-500/10 text-red-400 font-semibold">
+            {match.away_team.split(" ").pop()} {match.away_win_odds!.toFixed(2)} → <b>{oddsToPoints(match.away_win_odds!)} pts</b>
+          </span>
+          <span className="px-3 py-1 rounded-lg bg-purple-500/10 text-purple-400 font-semibold">
+            Exact Score: <b>80 pts</b>
+          </span>
+        </div>
+      )}
+
       <div className="flex items-center gap-4">
         <div className="flex-1 text-right font-medium">
           {match.home_team} <span className="text-xl ml-1">{getFlag(match.home_team)}</span>
@@ -369,26 +386,7 @@ function MatchCard({
         <p className="text-xs text-gray-400 mt-2">📍 {match.venue}</p>
       )}
 
-      {hasOdds && (
-        <div className="mt-2 flex items-center justify-center gap-1 text-[10px]">
-          <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-medium">
-            {match.home_team.split(" ").pop()} {match.home_win_odds!.toFixed(2)}
-          </span>
-          <span className="px-2 py-0.5 rounded bg-gray-500/10 text-gray-400 font-medium">
-            Draw {match.draw_odds!.toFixed(2)}
-          </span>
-          <span className="px-2 py-0.5 rounded bg-red-500/10 text-red-400 font-medium">
-            {match.away_team.split(" ").pop()} {match.away_win_odds!.toFixed(2)}
-          </span>
-          <span className="ml-1 text-gray-600">|</span>
-          <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-semibold" title="Points for correct outcome prediction">
-            🎯 {oddsToPoints(match.home_win_odds!)} / {oddsToPoints(match.draw_odds!)} / {oddsToPoints(match.away_win_odds!)} pts
-          </span>
-          <span className="px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 font-semibold text-[9px]" title="Exact score = 80 pts">
-            Exact: 80
-          </span>
-        </div>
-      )}
+
     </div>
   );
 }
