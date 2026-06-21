@@ -251,19 +251,26 @@ function MatchCard({
       </div>
 
       {hasOdds && (
-        <div className="mb-3 flex flex-wrap items-center justify-center gap-2 text-xs">
-          <span className="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-400 font-semibold">
-            {match.home_team.split(" ").pop()} {match.home_win_odds!.toFixed(2)} → <b>{oddsToPoints(match.home_win_odds!)} pts</b>
-          </span>
-          <span className="px-3 py-1 rounded-lg bg-gray-500/10 text-gray-400 font-semibold">
-            Draw {match.draw_odds!.toFixed(2)} → <b>{oddsToPoints(match.draw_odds!)} pts</b>
-          </span>
-          <span className="px-3 py-1 rounded-lg bg-red-500/10 text-red-400 font-semibold">
-            {match.away_team.split(" ").pop()} {match.away_win_odds!.toFixed(2)} → <b>{oddsToPoints(match.away_win_odds!)} pts</b>
-          </span>
-          <span className="px-3 py-1 rounded-lg bg-purple-500/10 text-purple-400 font-semibold">
-            Exact Score: <b>80 pts</b>
-          </span>
+        <div className="mb-3 grid grid-cols-4 gap-1.5 text-xs">
+          <div className="rounded-lg bg-blue-500/10 border border-blue-500/15 px-2 py-2 text-center">
+            <p className="font-semibold text-blue-400">{match.home_team.split(" ").pop()} Win</p>
+            <p className="text-gray-500 mt-0.5">Odds: {match.home_win_odds!.toFixed(2)}</p>
+            <p className="text-blue-300 font-bold mt-0.5">{match.home_win_odds!.toFixed(2)} × 20 = <span className="text-blue-400">{oddsToPoints(match.home_win_odds!)}</span></p>
+          </div>
+          <div className="rounded-lg bg-gray-500/10 border border-gray-500/15 px-2 py-2 text-center">
+            <p className="font-semibold text-gray-400">Draw</p>
+            <p className="text-gray-500 mt-0.5">Odds: {match.draw_odds!.toFixed(2)}</p>
+            <p className="text-gray-300 font-bold mt-0.5">{match.draw_odds!.toFixed(2)} × 20 = <span className="text-gray-300">{oddsToPoints(match.draw_odds!)}</span></p>
+          </div>
+          <div className="rounded-lg bg-red-500/10 border border-red-500/15 px-2 py-2 text-center">
+            <p className="font-semibold text-red-400">{match.away_team.split(" ").pop()} Win</p>
+            <p className="text-gray-500 mt-0.5">Odds: {match.away_win_odds!.toFixed(2)}</p>
+            <p className="text-red-300 font-bold mt-0.5">{match.away_win_odds!.toFixed(2)} × 20 = <span className="text-red-400">{oddsToPoints(match.away_win_odds!)}</span></p>
+          </div>
+          <div className="rounded-lg bg-purple-500/10 border border-purple-500/15 px-2 py-2 text-center flex flex-col justify-center">
+            <p className="font-semibold text-purple-400">Exact Score</p>
+            <p className="text-purple-300 font-black text-lg mt-0.5">80</p>
+          </div>
         </div>
       )}
 
