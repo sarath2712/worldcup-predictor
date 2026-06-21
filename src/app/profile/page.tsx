@@ -251,11 +251,11 @@ export default function ProfilePage() {
         {tournamentPred ? (
           <div className="space-y-2">
             {[
-              { label: "Winner", value: tournamentPred.predicted_winner, pts: 200 },
-              { label: "Finalist", value: tournamentPred.predicted_finalist, pts: 180 },
-              { label: "Top Scorer", value: tournamentPred.predicted_top_scorer, pts: 150 },
-              { label: "Best Player", value: tournamentPred.predicted_best_player, pts: 150 },
-              { label: "Best Goalkeeper", value: tournamentPred.predicted_best_goalkeeper, pts: 150 },
+              { label: "Winner", value: tournamentPred.predicted_winner, pts: 400 },
+              { label: "Finalist", value: tournamentPred.predicted_finalist, pts: 360 },
+              { label: "Top Scorer", value: tournamentPred.predicted_top_scorer, pts: 300 },
+              { label: "Best Player", value: tournamentPred.predicted_best_player, pts: 300 },
+              { label: "Best Goalkeeper", value: tournamentPred.predicted_best_goalkeeper, pts: 300 },
             ].map((item) => (
               <div key={item.label} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
                 <div>
@@ -314,18 +314,26 @@ export default function ProfilePage() {
 
                   <div className="text-center min-w-[60px]">
                     {match.home_score !== null ? (
-                      <>
-                        <p className="font-bold text-sm">
-                          {match.home_score} - {match.away_score}
-                        </p>
-                        <p className={`text-xs font-medium ${
-                          pred.points === 30 ? "text-green-600" :
-                          pred.points === 10 ? "text-yellow-600" : "text-red-600"
-                        }`}>
-                          {pred.points === 30 ? "Exact!" :
-                           pred.points === 10 ? "✓ Correct" : "✗ Wrong"}
-                        </p>
-                      </>
+                      (() => {
+                        const hasOdds = match.home_win_odds && match.draw_odds && match.away_win_odds;
+                        const exactThreshold = hasOdds ? 80 : 30;
+                        const isExact = pred.points === exactThreshold;
+                        const isCorrect = (pred.points ?? 0) > 0 && !isExact;
+                        return (
+                          <>
+                            <p className="font-bold text-sm">
+                              {match.home_score} - {match.away_score}
+                            </p>
+                            <p className={`text-xs font-medium ${
+                              isExact ? "text-green-600" :
+                              isCorrect ? "text-yellow-600" : "text-red-600"
+                            }`}>
+                              {isExact ? "Exact!" :
+                               isCorrect ? `✓ +${pred.points}` : "✗ Wrong"}
+                            </p>
+                          </>
+                        );
+                      })()
                     ) : (
                       <span className="text-xs text-gray-400">Pending</span>
                     )}
@@ -348,23 +356,27 @@ export default function ProfilePage() {
                     )}
                     {extra?.predicted_scorers && (() => {
                       const correct = match.actual_scorers && match.actual_scorers === extra.predicted_scorers;
+                      const hasOddsMatch = match.home_win_odds && match.draw_odds && match.away_win_odds;
+                      const fgPts = hasOddsMatch ? 30 : 15;
                       return (
                         <span className={`px-2 py-0.5 rounded-full ${
                           correct ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"
                         }`}>
-                          First Goal: {extra.predicted_scorers} {correct ? "+15" : "+0"}
+                          First Goal: {extra.predicted_scorers} {correct ? `+${fgPts}` : "+0"}
                         </span>
                       );
                     })()}
                     {extra?.bonus_answers && (() => {
                       const actuals = match.bonus_actuals;
+                      const hasOdds = match.home_win_odds && match.draw_odds && match.away_win_odds;
+                      const bonusPts = hasOdds ? 30 : 20;
                       return Object.entries(extra.bonus_answers).map(([key, val]) => {
                         const correct = actuals && actuals[key] === val;
                         return (
                           <span key={key} className={`px-2 py-0.5 rounded-full ${
                             correct ? "bg-purple-500/10 text-purple-400" : "bg-red-500/10 text-red-400"
                           }`}>
-                            {key.replace(/_/g, " ")}: {val} {correct ? "+20" : "+0"}
+                            {key.replace(/_/g, " ")}: {val} {correct ? `+${bonusPts}` : "+0"}
                           </span>
                         );
                       });

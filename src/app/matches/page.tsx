@@ -129,6 +129,11 @@ function MatchCard({
   const isLocked = isPast(deadline);
   const hasResult = match.home_score !== null;
   const bonusQuestions = (match.bonus_questions || []) as BonusQuestion[];
+  const hasOdds = match.home_win_odds && match.draw_odds && match.away_win_odds;
+
+  function oddsToPoints(odds: number): number {
+    return Math.floor(odds * 20);
+  }
 
   useEffect(() => {
     if (isLocked || hasResult) return;
@@ -245,6 +250,30 @@ function MatchCard({
         </div>
       </div>
 
+      {hasOdds && (
+        <div className="mb-3 grid grid-cols-4 gap-1.5 text-xs">
+          <div className="rounded-lg bg-blue-500/10 border border-blue-500/15 px-2 py-2 text-center">
+            <p className="font-semibold text-blue-400">{match.home_team.split(" ").pop()} Win</p>
+            <p className="text-gray-500 mt-0.5">Odds: {match.home_win_odds!.toFixed(2)}</p>
+            <p className="text-blue-300 font-bold mt-0.5">{match.home_win_odds!.toFixed(2)} × 20 = <span className="text-blue-400">{oddsToPoints(match.home_win_odds!)}</span></p>
+          </div>
+          <div className="rounded-lg bg-gray-500/10 border border-gray-500/15 px-2 py-2 text-center">
+            <p className="font-semibold text-gray-400">Draw</p>
+            <p className="text-gray-500 mt-0.5">Odds: {match.draw_odds!.toFixed(2)}</p>
+            <p className="text-gray-300 font-bold mt-0.5">{match.draw_odds!.toFixed(2)} × 20 = <span className="text-gray-300">{oddsToPoints(match.draw_odds!)}</span></p>
+          </div>
+          <div className="rounded-lg bg-red-500/10 border border-red-500/15 px-2 py-2 text-center">
+            <p className="font-semibold text-red-400">{match.away_team.split(" ").pop()} Win</p>
+            <p className="text-gray-500 mt-0.5">Odds: {match.away_win_odds!.toFixed(2)}</p>
+            <p className="text-red-300 font-bold mt-0.5">{match.away_win_odds!.toFixed(2)} × 20 = <span className="text-red-400">{oddsToPoints(match.away_win_odds!)}</span></p>
+          </div>
+          <div className="rounded-lg bg-purple-500/10 border border-purple-500/15 px-2 py-2 text-center flex flex-col justify-center">
+            <p className="font-semibold text-purple-400">Exact Score</p>
+            <p className="text-purple-300 font-black text-lg mt-0.5">80</p>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center gap-4">
         <div className="flex-1 text-right font-medium">
           {match.home_team} <span className="text-xl ml-1">{getFlag(match.home_team)}</span>
@@ -286,15 +315,6 @@ function MatchCard({
       {user && !isLocked && !hasResult && (
         <div className="mt-3 space-y-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {!match.stage.startsWith("Group") && (
-              <input
-                type="text"
-                value={potm}
-                onChange={(e) => setPotm(e.target.value)}
-                placeholder="Player of the Match"
-                className="text-xs px-3 py-1.5 border border-white/20 rounded-lg bg-white/10 text-white placeholder-gray-500"
-              />
-            )}
             <select
               value={firstGoal}
               onChange={(e) => setFirstGoal(e.target.value)}
@@ -308,7 +328,7 @@ function MatchCard({
           </div>
           {bonusQuestions.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-[10px] uppercase tracking-wider text-amber-400 font-semibold">⚡ Match Extras (20 pts each)</p>
+              <p className="text-[10px] uppercase tracking-wider text-amber-400 font-semibold">⚡ Match Extras ({hasOdds ? 30 : 20} pts each)</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {bonusQuestions.map((q) => (
                   <select
@@ -328,6 +348,25 @@ function MatchCard({
               </div>
             </div>
           )}
+          {hasOdds && home !== "" && away !== "" && (
+            <div className="flex items-center gap-2 text-[10px] text-emerald-400 bg-emerald-500/5 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+              <span className="font-semibold">💰 Your potential:</span>
+              {(() => {
+                const h = parseInt(home), a = parseInt(away);
+                if (isNaN(h) || isNaN(a)) return null;
+                const outcome = h > a ? "home" : h < a ? "away" : "draw";
+                const odds = outcome === "home" ? match.home_win_odds! : outcome === "away" ? match.away_win_odds! : match.draw_odds!;
+                const outcomePts = oddsToPoints(odds);
+                return (
+                  <>
+                    <span>Outcome: <b>{outcomePts}</b> pts</span>
+                    <span className="text-gray-600">|</span>
+                    <span>Exact: <b>80</b> pts</span>
+                  </>
+                );
+              })()}
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <button
               onClick={handleSave}
@@ -344,6 +383,8 @@ function MatchCard({
       {match.venue && (
         <p className="text-xs text-gray-400 mt-2">📍 {match.venue}</p>
       )}
+
+
     </div>
   );
 }
