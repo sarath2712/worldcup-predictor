@@ -44,7 +44,7 @@ const fixtures: Round[] = [
       { id: "M11", p1: "Sushant Kumar", p2: "Tejas", time: "2:40-2:55 PM" },
       { id: "M12", p1: "Kunal", p2: "Avyaan Biswas", time: "2:55-3:10 PM" },
       { id: "M13", p1: "Abhinav Rastogi", p2: "Sriram S", time: "3:10-3:25 PM" },
-      { id: "M14", p1: "Tanmay", p2: "Vihaan", time: "3:25-3:40 PM" },
+      { id: "M14", p1: "Mrinal Das", p2: "Nivin", time: "3:25-3:40 PM" },
       { id: "M15", p1: "Suvin", p2: "Ritvik", time: "3:40-3:55 PM" },
       { id: "M16", p1: "Swarnadeep Dutta", p2: "Satyam Pandey", time: "3:55-4:10 PM" },
     ],
