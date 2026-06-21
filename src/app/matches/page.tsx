@@ -132,7 +132,7 @@ function MatchCard({
   const hasOdds = match.home_win_odds && match.draw_odds && match.away_win_odds;
 
   function oddsToPoints(odds: number): number {
-    return Math.min(Math.max(Math.round(odds) * 10, 10), 80);
+    return Math.floor(odds * 20);
   }
 
   useEffect(() => {
@@ -346,7 +346,7 @@ function MatchCard({
                   <>
                     <span>Outcome: <b>{outcomePts}</b> pts</span>
                     <span className="text-gray-600">|</span>
-                    <span>Exact: <b>{outcomePts * 3}</b> pts</span>
+                    <span>Exact: <b>80</b> pts</span>
                   </>
                 );
               })()}
@@ -381,8 +381,11 @@ function MatchCard({
             {match.away_team.split(" ").pop()} {match.away_win_odds!.toFixed(2)}
           </span>
           <span className="ml-1 text-gray-600">|</span>
-          <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-semibold" title="Points: Outcome / Exact Score">
+          <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-semibold" title="Points for correct outcome prediction">
             🎯 {oddsToPoints(match.home_win_odds!)} / {oddsToPoints(match.draw_odds!)} / {oddsToPoints(match.away_win_odds!)} pts
+          </span>
+          <span className="px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 font-semibold text-[9px]" title="Exact score = 80 pts">
+            Exact: 80
           </span>
         </div>
       )}

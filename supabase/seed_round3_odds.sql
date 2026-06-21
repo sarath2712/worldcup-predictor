@@ -13,7 +13,8 @@ CREATE OR REPLACE FUNCTION public.odds_to_points(odds decimal)
 RETURNS integer AS $$
 BEGIN
   IF odds IS NULL THEN RETURN NULL; END IF;
-  RETURN LEAST(GREATEST(ROUND(odds) * 10, 10), 80)::integer;
+  -- odds × 20, no rounding, keep exact value
+  RETURN (odds * 20)::integer;
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
@@ -119,12 +120,7 @@ BEGIN
   UPDATE public.predictions
   SET points = CASE
     WHEN predicted_home = v_home_score AND predicted_away = v_away_score THEN
-      CASE WHEN v_has_odds THEN
-        CASE
-          WHEN v_home_score > v_away_score THEN odds_to_points(v_home_win_odds) * 3
-          WHEN v_home_score < v_away_score THEN odds_to_points(v_away_win_odds) * 3
-          ELSE odds_to_points(v_draw_odds) * 3
-        END
+      CASE WHEN v_has_odds THEN 80
       ELSE 30 END
     WHEN sign(predicted_home - predicted_away) = sign(v_home_score - v_away_score) THEN
       CASE WHEN v_has_odds THEN
@@ -154,7 +150,7 @@ BEGIN
           AND v_bonus_actuals IS NOT NULL
           AND me.bonus_answers IS NOT NULL
     THEN COALESCE((
-      SELECT SUM(20)
+      SELECT SUM(CASE WHEN v_has_odds THEN 30 ELSE 20 END)
       FROM jsonb_array_elements(v_bonus_questions) elem
       WHERE v_bonus_actuals->>(elem->>'type') IS NOT NULL
         AND me.bonus_answers->>(elem->>'type') IS NOT NULL
@@ -169,9 +165,9 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- 5. VERIFY
 SELECT id, home_team, away_team, home_win_odds, draw_odds, away_win_odds,
-       odds_to_points(home_win_odds) as home_pts,
+       odds_to_points(home_win_odds) as home_win_pts,
        odds_to_points(draw_odds) as draw_pts,
-       odds_to_points(away_win_odds) as away_pts
+       odds_to_points(away_win_odds) as away_win_pts
 FROM public.matches
 WHERE home_win_odds IS NOT NULL
 ORDER BY kickoff_utc;

@@ -2,13 +2,14 @@
 -- Points scale with betting odds — underdogs earn more points
 -- Points are always in multiples of 10
 --
--- Formula: outcome_points = GREATEST(ROUND(odds) * 10, 10)  (capped at 80)
---          exact_score_points = outcome_points * 3
+-- Formula: outcome_points = ROUND(odds × 20, nearest 10) — min 20, max 200
+--          exact_score_points = 80 (flat)
+--          bonus_questions = 30 pts each
 --
 -- Example: Brazil (1.5) vs Morocco (6.0), Draw (3.5)
---   Predict Brazil win correct:  outcome=20, exact=60
---   Predict Draw correct:        outcome=40, exact=120
---   Predict Morocco win correct:  outcome=60, exact=180
+--   Predict Brazil win correct:  outcome=30, exact=80
+--   Predict Draw correct:        outcome=70, exact=80
+--   Predict Morocco win correct:  outcome=120, exact=80
 
 -- ============================================================
 -- 1. ADD ODDS COLUMNS TO MATCHES TABLE
@@ -26,7 +27,8 @@ CREATE OR REPLACE FUNCTION public.odds_to_points(odds decimal)
 RETURNS integer AS $$
 BEGIN
   IF odds IS NULL THEN RETURN NULL; END IF;
-  RETURN LEAST(GREATEST(ROUND(odds) * 10, 10), 80)::integer;
+  -- odds × 20, no rounding, keep exact value
+  RETURN (odds * 20)::integer;
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
@@ -65,13 +67,7 @@ BEGIN
   SET points = CASE
     -- Exact score match
     WHEN predicted_home = v_home_score AND predicted_away = v_away_score THEN
-      CASE WHEN v_has_odds THEN
-        -- Exact score: 3x the outcome odds points
-        CASE
-          WHEN v_home_score > v_away_score THEN odds_to_points(v_home_win_odds) * 3
-          WHEN v_home_score < v_away_score THEN odds_to_points(v_away_win_odds) * 3
-          ELSE odds_to_points(v_draw_odds) * 3
-        END
+      CASE WHEN v_has_odds THEN 80
       ELSE 30 END
     -- Correct outcome (home win, draw, away win)
     WHEN sign(predicted_home - predicted_away) = sign(v_home_score - v_away_score) THEN
@@ -102,12 +98,12 @@ BEGIN
           AND lower(trim(me.predicted_scorers)) = lower(trim(v_actual_first_goal))
      THEN 15 ELSE 0 END)
     +
-    -- Bonus question points (20 each correct answer)
+    -- Bonus question points (30 each correct answer for odds matches, 20 otherwise)
     CASE WHEN v_bonus_questions IS NOT NULL
           AND v_bonus_actuals IS NOT NULL
           AND me.bonus_answers IS NOT NULL
     THEN COALESCE((
-      SELECT SUM(20)
+      SELECT SUM(CASE WHEN v_has_odds THEN 30 ELSE 20 END)
       FROM jsonb_array_elements(v_bonus_questions) elem
       WHERE v_bonus_actuals->>(elem->>'type') IS NOT NULL
         AND me.bonus_answers->>(elem->>'type') IS NOT NULL
@@ -152,10 +148,8 @@ LEFT JOIN (
   SELECT user_id,
     SUM(points) AS pred_points,
     COUNT(*) FILTER (WHERE points IS NOT NULL) AS matches_scored,
-    -- Exact scores: for odds matches points > 10 (outcome max is 80),
-    -- exact is always > outcome. For flat matches, exact = 30.
-    COUNT(*) FILTER (WHERE points >= 30
-      AND predicted_home = (SELECT home_score FROM matches WHERE id = predictions.match_id)
+    COUNT(*) FILTER (WHERE
+      predicted_home = (SELECT home_score FROM matches WHERE id = predictions.match_id)
       AND predicted_away = (SELECT away_score FROM matches WHERE id = predictions.match_id)
     ) AS exact_scores,
     COUNT(*) FILTER (WHERE points >= 10) AS correct_outcomes

@@ -85,14 +85,14 @@ export async function GET() {
     home_win_points: oddsToPoints(m.home_win_odds),
     draw_points: oddsToPoints(m.draw_odds),
     away_win_points: oddsToPoints(m.away_win_odds),
-    home_win_exact_points: oddsToPoints(m.home_win_odds) * 3,
-    draw_exact_points: oddsToPoints(m.draw_odds) * 3,
-    away_win_exact_points: oddsToPoints(m.away_win_odds) * 3,
+    home_win_exact_points: 80,
+    draw_exact_points: 80,
+    away_win_exact_points: 80,
   }));
 
   return NextResponse.json({ matches: enriched });
 }
 
 function oddsToPoints(odds: number): number {
-  return Math.min(Math.max(Math.round(odds) * 10, 10), 80);
+  return Math.floor(odds * 20);
 }
