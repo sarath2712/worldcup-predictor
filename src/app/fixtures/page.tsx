@@ -152,7 +152,7 @@ export default function FixturesPage() {
           </div>
         </div>
         )
-      ) : (
+      ) : tab === "tables" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {groups.map((group) => {
             // Calculate standings from match results
@@ -268,7 +268,7 @@ export default function FixturesPage() {
           </div>
           <p className="text-xs text-gray-500 text-center">Updated daily at 11:00 AM IST</p>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
