@@ -144,7 +144,7 @@ BEGIN
     (CASE WHEN v_actual_first_goal IS NOT NULL
           AND me.predicted_scorers IS NOT NULL
           AND lower(trim(me.predicted_scorers)) = lower(trim(v_actual_first_goal))
-     THEN 15 ELSE 0 END)
+     THEN CASE WHEN v_has_odds THEN 30 ELSE 15 END ELSE 0 END)
     +
     CASE WHEN v_bonus_questions IS NOT NULL
           AND v_bonus_actuals IS NOT NULL

@@ -96,7 +96,7 @@ BEGIN
     (CASE WHEN v_actual_first_goal IS NOT NULL
           AND me.predicted_scorers IS NOT NULL
           AND lower(trim(me.predicted_scorers)) = lower(trim(v_actual_first_goal))
-     THEN 15 ELSE 0 END)
+     THEN CASE WHEN v_has_odds THEN 30 ELSE 15 END ELSE 0 END)
     +
     -- Bonus question points (30 each correct answer for odds matches, 20 otherwise)
     CASE WHEN v_bonus_questions IS NOT NULL

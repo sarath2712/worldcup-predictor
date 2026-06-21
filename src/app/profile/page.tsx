@@ -356,11 +356,13 @@ export default function ProfilePage() {
                     )}
                     {extra?.predicted_scorers && (() => {
                       const correct = match.actual_scorers && match.actual_scorers === extra.predicted_scorers;
+                      const hasOddsMatch = match.home_win_odds && match.draw_odds && match.away_win_odds;
+                      const fgPts = hasOddsMatch ? 30 : 15;
                       return (
                         <span className={`px-2 py-0.5 rounded-full ${
                           correct ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"
                         }`}>
-                          First Goal: {extra.predicted_scorers} {correct ? "+15" : "+0"}
+                          First Goal: {extra.predicted_scorers} {correct ? `+${fgPts}` : "+0"}
                         </span>
                       );
                     })()}

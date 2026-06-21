@@ -6,35 +6,83 @@ export default function RulesPage() {
         <span className="text-white">Rules</span>
       </h2>
 
-      {/* Match Predictions */}
-      <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/10 bg-white/5">
-          <h3 className="text-xl font-bold text-accent flex items-center gap-2"><svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg> Match Predictions</h3>
-          <p className="text-sm text-gray-400 mt-1">Points awarded per match</p>
+      {/* NEW: Round 3+ Odds-Based Scoring — TOP */}
+      <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 backdrop-blur-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-emerald-500/20 bg-emerald-500/10">
+          <h3 className="text-xl font-bold text-emerald-400 flex items-center gap-2">
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+            🎯 Round 3 &amp; Knockout — Odds-Based Scoring
+          </h3>
+          <p className="text-sm text-emerald-300/70 mt-1">From Matchday 3 onwards, points scale with betting odds — predict an underdog win for more points!</p>
         </div>
-        <div className="divide-y divide-white/5">
+        <div className="divide-y divide-emerald-500/10">
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <p className="font-medium text-white">Exact Score Prediction</p>
-              <p className="text-sm text-gray-400">Predict the correct scoreline (includes winner bonus)</p>
-              <p className="text-xs text-emerald-400 mt-1">🎯 Round 3+ with odds: <strong>80 pts</strong></p>
+              <p className="text-sm text-gray-400">Predict the correct scoreline</p>
             </div>
-            <span className="text-2xl font-bold text-accent">30</span>
+            <span className="text-2xl font-bold text-emerald-400">80</span>
           </div>
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
-              <p className="font-medium text-white">Correct Winner / Draw Only</p>
-              <p className="text-sm text-gray-400">Right outcome but wrong scoreline</p>
-              <p className="text-xs text-emerald-400 mt-1">🎯 Round 3+ with odds: <strong>Odds × 20</strong> pts (e.g. 2.60 → 52 pts)</p>
+              <p className="font-medium text-white">Correct Winner / Draw</p>
+              <p className="text-sm text-gray-400">Right outcome, wrong scoreline — points = <strong className="text-emerald-400">Odds × 20</strong></p>
+              <p className="text-xs text-gray-500 mt-1">e.g. Tunisia (23.00) beats Netherlands → <strong className="text-emerald-400">460 pts!</strong></p>
             </div>
-            <span className="text-2xl font-bold text-accent">10</span>
+            <span className="text-lg font-bold text-emerald-400">Odds×20</span>
           </div>
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <p className="font-medium text-white">Player of the Match (POTM)</p>
               <p className="text-sm text-gray-400">Knockout stages only</p>
             </div>
-            <span className="text-2xl font-bold text-accent">20</span>
+            <span className="text-2xl font-bold text-emerald-400">20</span>
+          </div>
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium text-white">Team Scored First</p>
+              <p className="text-sm text-gray-400">Predict which team scores the first goal</p>
+            </div>
+            <span className="text-2xl font-bold text-emerald-400">30</span>
+          </div>
+          <div className="px-6 py-4 flex items-center justify-between bg-amber-500/5">
+            <div>
+              <p className="font-medium text-amber-400">⚡ Match Extras (Bonus Questions)</p>
+              <p className="text-sm text-gray-400">Star player scoring, halftime leader, penalties — 1 or 2 per match</p>
+            </div>
+            <span className="text-2xl font-bold text-amber-400">30 <span className="text-sm font-normal text-gray-400">each</span></span>
+          </div>
+        </div>
+        <div className="px-6 py-4 bg-emerald-500/10 text-center border-t border-emerald-500/20">
+          <p className="text-sm font-semibold text-emerald-400">Maximum Points Per Match (Round 3+)</p>
+          <p className="text-2xl font-black text-white mt-1">80 + 20 + 30 + 60 = 190</p>
+          <p className="text-xs text-gray-400 mt-1">Exact (80) + POTM (knockout) + First Goal (30) + Bonus (up to 2 × 30)</p>
+        </div>
+      </div>
+
+      {/* OLD: Round 1 & 2 Group Stage Scoring */}
+      <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/10 bg-white/5">
+          <h3 className="text-xl font-bold text-gray-400 flex items-center gap-2">
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+            Round 1 &amp; 2 — Standard Scoring
+          </h3>
+          <p className="text-sm text-gray-500 mt-1">Matchday 1 &amp; 2 (Group Stage) — flat points, no odds</p>
+        </div>
+        <div className="divide-y divide-white/5">
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium text-white">Exact Score Prediction</p>
+              <p className="text-sm text-gray-400">Predict the correct scoreline</p>
+            </div>
+            <span className="text-2xl font-bold text-accent">30</span>
+          </div>
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium text-white">Correct Winner / Draw</p>
+              <p className="text-sm text-gray-400">Right outcome, wrong scoreline</p>
+            </div>
+            <span className="text-2xl font-bold text-accent">10</span>
           </div>
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
@@ -45,13 +93,14 @@ export default function RulesPage() {
           </div>
           <div className="px-6 py-4 flex items-center justify-between bg-amber-500/5">
             <div>
-              <p className="font-medium text-amber-400">⚡ Match Extras</p>
-              <p className="text-sm text-gray-400">Big-team group matches only — 1 or 2 per match</p>
-              <p className="text-xs text-gray-500 mt-1">Star player scoring, halftime leader, penalties</p>
-              <p className="text-xs text-emerald-400 mt-1">🎯 Round 3+ with odds: <strong>30 pts each</strong></p>
+              <p className="font-medium text-amber-400">⚡ Match Extras (Bonus Questions)</p>
+              <p className="text-sm text-gray-400">1 or 2 per match</p>
             </div>
-            <span className="text-2xl font-bold text-amber-400">20</span>
+            <span className="text-2xl font-bold text-amber-400">20 <span className="text-sm font-normal text-gray-400">each</span></span>
           </div>
+        </div>
+        <div className="px-6 py-3 bg-white/5 text-center border-t border-white/10">
+          <p className="text-xs text-gray-500">Max per match: 30 + 15 + 40 = <strong className="text-gray-400">85</strong> (no POTM in group stage)</p>
         </div>
       </div>
 
@@ -160,21 +209,6 @@ export default function RulesPage() {
         </div>
       </div>
 
-      {/* Summary */}
-      <div className="rounded-xl border border-accent/30 bg-accent/5 p-6 text-center">
-        <p className="text-lg font-semibold text-accent">Maximum Points Per Match</p>
-        <p className="text-3xl font-black text-white mt-2">30 + 20 + 15 + 40 = 105</p>
-        <p className="text-sm text-gray-400 mt-2">
-          Exact Score + POTM (knockout) + First Goal + Match Extras (big-team groups, up to 2 × 20)
-        </p>
-        <div className="mt-3 pt-3 border-t border-white/10">
-          <p className="text-sm font-semibold text-emerald-400">🎯 Round 3+ with Odds</p>
-          <p className="text-xl font-black text-white mt-1">80 + 20 + 15 + 60 = 175</p>
-          <p className="text-xs text-gray-400 mt-1">
-            Exact (80) + POTM (knockout) + First Goal + Match Extras (up to 2 × 30)
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
