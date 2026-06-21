@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Match, Prediction, MatchExtras, BonusQuestion } from "@/lib/types";
 import type { User } from "@supabase/supabase-js";
 import { format, isPast, addHours } from "date-fns";
-import { getFlag } from "@/lib/flags";
+import { getFlag, getCode } from "@/lib/flags";
 
 export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
@@ -253,7 +253,7 @@ function MatchCard({
       {hasOdds && (
         <div className="mb-3 grid grid-cols-4 gap-1.5 text-xs">
           <div className="rounded-lg bg-blue-500/10 border border-blue-500/15 px-2 py-2 text-center">
-            <p className="font-semibold text-blue-400 truncate">{match.home_team} Win</p>
+            <p className="font-semibold text-blue-400">{getFlag(match.home_team)} {getCode(match.home_team)} Win</p>
             <p className="text-gray-500 mt-0.5">Odds: {match.home_win_odds!.toFixed(2)}</p>
             <p className="text-blue-300 font-bold mt-0.5">{match.home_win_odds!.toFixed(2)} × 20 = <span className="text-blue-400">{oddsToPoints(match.home_win_odds!)}</span></p>
           </div>
@@ -263,7 +263,7 @@ function MatchCard({
             <p className="text-gray-300 font-bold mt-0.5">{match.draw_odds!.toFixed(2)} × 20 = <span className="text-gray-300">{oddsToPoints(match.draw_odds!)}</span></p>
           </div>
           <div className="rounded-lg bg-red-500/10 border border-red-500/15 px-2 py-2 text-center">
-            <p className="font-semibold text-red-400 truncate">{match.away_team} Win</p>
+            <p className="font-semibold text-red-400">{getFlag(match.away_team)} {getCode(match.away_team)} Win</p>
             <p className="text-gray-500 mt-0.5">Odds: {match.away_win_odds!.toFixed(2)}</p>
             <p className="text-red-300 font-bold mt-0.5">{match.away_win_odds!.toFixed(2)} × 20 = <span className="text-red-400">{oddsToPoints(match.away_win_odds!)}</span></p>
           </div>
