@@ -7,12 +7,14 @@ import { format } from "date-fns";
 import { getFlag } from "@/lib/flags";
 import { groups, knockoutRounds } from "./data";
 
-type Tab = "fixtures" | "tables";
+type Tab = "fixtures" | "tables" | "scorers";
 type MatchRow = { id: number; stage: string; home_team: string; away_team: string; kickoff_utc: string; venue: string | null; home_score: number | null; away_score: number | null };
+type TopScorer = { id: number; rank: number; player_name: string; team: string; goals: number; assists: number; updated_at: string };
 
 export default function FixturesPage() {
   const [tab, setTab] = useState<Tab>("fixtures");
   const [matches, setMatches] = useState<MatchRow[]>([]);
+  const [topScorers, setTopScorers] = useState<TopScorer[]>([]);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
@@ -23,6 +25,13 @@ export default function FixturesPage() {
         .select("id, stage, home_team, away_team, kickoff_utc, venue, home_score, away_score")
         .order("kickoff_utc", { ascending: true });
       setMatches(data || []);
+
+      const { data: scorers } = await supabase
+        .from("top_scorers")
+        .select("*")
+        .order("rank", { ascending: true });
+      setTopScorers(scorers || []);
+
       setLoading(false);
     }
     loadMatches();
@@ -66,6 +75,16 @@ export default function FixturesPage() {
           }`}
         >
           Group Tables
+        </button>
+        <button
+          onClick={() => setTab("scorers")}
+          className={`px-5 py-2 rounded-full text-sm font-semibold transition ${
+            tab === "scorers"
+              ? "bg-primary text-white"
+              : "bg-white/5 text-gray-400 hover:bg-white/10"
+          }`}
+        >
+          ⚽ Top Scorers
         </button>
       </div>
 
@@ -206,6 +225,48 @@ export default function FixturesPage() {
             </div>
             );
           })}
+        </div>
+      ) : tab === "scorers" ? (
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
+            <div className="px-6 py-4 bg-accent/10 border-b border-white/10 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-accent flex items-center gap-2">⚽ Top Scorers</h2>
+              {topScorers.length > 0 && topScorers[0].updated_at && (
+                <span className="text-xs text-gray-500">
+                  Updated: {format(new Date(topScorers[0].updated_at), "MMM d, h:mm a")}
+                </span>
+              )}
+            </div>
+            {topScorers.length === 0 ? (
+              <div className="px-6 py-8 text-center text-gray-500">
+                Top scorers will be updated daily at 11:00 AM IST.
+              </div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-gray-500 text-xs border-b border-white/5">
+                    <th className="text-left px-5 py-2.5 font-medium w-10">#</th>
+                    <th className="text-left px-3 py-2.5 font-medium">Player</th>
+                    <th className="text-left px-3 py-2.5 font-medium">Team</th>
+                    <th className="px-3 py-2.5 font-medium text-center w-16">Goals</th>
+                    <th className="px-3 py-2.5 font-medium text-center w-16">Assists</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {topScorers.map((scorer) => (
+                    <tr key={scorer.id} className="border-b border-white/5 hover:bg-white/5 transition">
+                      <td className="px-5 py-3 font-bold text-accent">{scorer.rank}</td>
+                      <td className="px-3 py-3 font-medium text-white">{scorer.player_name}</td>
+                      <td className="px-3 py-3 text-gray-400">{getFlag(scorer.team)} {scorer.team}</td>
+                      <td className="px-3 py-3 text-center font-bold text-white">{scorer.goals}</td>
+                      <td className="px-3 py-3 text-center text-gray-400">{scorer.assists}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+          <p className="text-xs text-gray-500 text-center">Updated daily at 11:00 AM IST</p>
         </div>
       )}
     </div>

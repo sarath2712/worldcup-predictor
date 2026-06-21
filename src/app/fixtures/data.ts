@@ -12,7 +12,7 @@ export const fixturesByDay: Record<string, Match[]> = {
     { time: "02:00", team1: "South Korea", team2: "Czech Republic", group: "A", venue: "Guadalajara" },
   ],
   "Jun 12 (Thu)": [
-    { time: "15:00", team1: "Canada", team2: "Bosnia & Herzegovina", group: "B", venue: "Toronto" },
+    { time: "15:00", team1: "Canada", team2: "Bosnia and Herzegovina", group: "B", venue: "Toronto" },
     { time: "01:00", team1: "United States", team2: "Paraguay", group: "D", venue: "Los Angeles" },
   ],
   "Jun 13 (Fri)": [
@@ -48,7 +48,7 @@ export const fixturesByDay: Record<string, Match[]> = {
   "Jun 18 (Wed)": [
     { time: "12:00", team1: "Czech Republic", team2: "South Africa", group: "A", venue: "Atlanta" },
     { time: "19:00", team1: "Mexico", team2: "South Korea", group: "A", venue: "Guadalajara" },
-    { time: "12:00", team1: "Switzerland", team2: "Bosnia & Herzegovina", group: "B", venue: "Los Angeles" },
+    { time: "12:00", team1: "Switzerland", team2: "Bosnia and Herzegovina", group: "B", venue: "Los Angeles" },
     { time: "15:00", team1: "Canada", team2: "Qatar", group: "B", venue: "Vancouver" },
   ],
   "Jun 19 (Thu)": [
@@ -85,7 +85,7 @@ export const fixturesByDay: Record<string, Match[]> = {
     { time: "19:00", team1: "Czech Republic", team2: "Mexico", group: "A", venue: "Mexico City" },
     { time: "19:00", team1: "South Africa", team2: "South Korea", group: "A", venue: "Monterrey" },
     { time: "12:00", team1: "Switzerland", team2: "Canada", group: "B", venue: "Vancouver" },
-    { time: "12:00", team1: "Bosnia & Herzegovina", team2: "Qatar", group: "B", venue: "Seattle" },
+    { time: "12:00", team1: "Bosnia and Herzegovina", team2: "Qatar", group: "B", venue: "Seattle" },
     { time: "18:00", team1: "Scotland", team2: "Brazil", group: "C", venue: "Miami" },
     { time: "18:00", team1: "Morocco", team2: "Haiti", group: "C", venue: "Atlanta" },
   ],
@@ -117,7 +117,7 @@ export const fixturesByDay: Record<string, Match[]> = {
 
 export const groups = [
   { name: "Group A", teams: ["Mexico", "South Africa", "South Korea", "Czech Republic"] },
-  { name: "Group B", teams: ["Canada", "Bosnia & Herzegovina", "Qatar", "Switzerland"] },
+  { name: "Group B", teams: ["Canada", "Bosnia and Herzegovina", "Qatar", "Switzerland"] },
   { name: "Group C", teams: ["Brazil", "Morocco", "Haiti", "Scotland"] },
   { name: "Group D", teams: ["United States", "Paraguay", "Australia", "Turkey"] },
   { name: "Group E", teams: ["Germany", "Curaçao", "Ivory Coast", "Ecuador"] },
