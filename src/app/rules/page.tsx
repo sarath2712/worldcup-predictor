@@ -46,6 +46,36 @@ export default function RulesPage() {
             <span className="text-2xl font-bold text-amber-400">30 <span className="text-sm font-normal text-gray-400">each</span></span>
           </div>
         </div>
+
+        {/* Example: Portugal vs Uzbekistan */}
+        <div className="px-6 py-5 border-t border-emerald-500/20 bg-emerald-900/20">
+          <p className="text-sm font-bold text-emerald-400 mb-3 uppercase tracking-wider">📊 Example — How Odds Scoring Works</p>
+          <div className="text-center mb-3">
+            <p className="text-lg font-bold text-white">🇵🇹 Portugal <span className="text-gray-500 mx-2">vs</span> 🇺🇿 Uzbekistan</p>
+          </div>
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3">
+              <p className="text-xs text-gray-400 mb-1">🇵🇹 Portugal Win</p>
+              <p className="text-xs text-gray-500">Odds: 1.40</p>
+              <p className="text-xl font-black text-emerald-400 mt-1">28 <span className="text-xs font-normal text-gray-400">pts</span></p>
+              <p className="text-[10px] text-gray-500 mt-1">1.40 × 20</p>
+            </div>
+            <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3">
+              <p className="text-xs text-gray-400 mb-1">🤝 Draw</p>
+              <p className="text-xs text-gray-500">Odds: 4.50</p>
+              <p className="text-xl font-black text-amber-400 mt-1">90 <span className="text-xs font-normal text-gray-400">pts</span></p>
+              <p className="text-[10px] text-gray-500 mt-1">4.50 × 20</p>
+            </div>
+            <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3">
+              <p className="text-xs text-gray-400 mb-1">🇺🇿 Uzbekistan Win</p>
+              <p className="text-xs text-gray-500">Odds: 8.00</p>
+              <p className="text-xl font-black text-red-400 mt-1">160 <span className="text-xs font-normal text-gray-400">pts</span></p>
+              <p className="text-[10px] text-gray-500 mt-1">8.00 × 20</p>
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 text-center mt-3">⚡ Predict the underdog and get rewarded! Exact score always gives <strong className="text-emerald-400">80 pts</strong> regardless of odds.</p>
+        </div>
+
         <div className="px-6 py-4 bg-emerald-500/10 text-center border-t border-emerald-500/20">
           <p className="text-sm font-semibold text-emerald-400">Maximum Points Per Match (Round 3+)</p>
           <p className="text-2xl font-black text-white mt-1">80 + 30 + 60 = 170</p>
