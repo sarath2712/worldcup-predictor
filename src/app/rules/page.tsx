@@ -139,35 +139,35 @@ export default function RulesPage() {
               <p className="font-medium text-white">Tournament Winner</p>
               <p className="text-sm text-gray-400">Predict the World Cup champion</p>
             </div>
-            <span className="text-2xl font-bold text-accent">200</span>
+            <span className="text-2xl font-bold text-accent">400</span>
           </div>
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <p className="font-medium text-white">Finalist</p>
               <p className="text-sm text-gray-400">Predict the runner-up team</p>
             </div>
-            <span className="text-2xl font-bold text-accent">180</span>
+            <span className="text-2xl font-bold text-accent">360</span>
           </div>
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <p className="font-medium text-white">Player of the Tournament</p>
               <p className="text-sm text-gray-400">Best overall player</p>
             </div>
-            <span className="text-2xl font-bold text-accent">150</span>
+            <span className="text-2xl font-bold text-accent">300</span>
           </div>
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <p className="font-medium text-white">Golden Glove</p>
               <p className="text-sm text-gray-400">Best goalkeeper of the tournament</p>
             </div>
-            <span className="text-2xl font-bold text-accent">150</span>
+            <span className="text-2xl font-bold text-accent">300</span>
           </div>
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <p className="font-medium text-white">Golden Boot</p>
               <p className="text-sm text-gray-400">Top scorer of the tournament</p>
             </div>
-            <span className="text-2xl font-bold text-accent">150</span>
+            <span className="text-2xl font-bold text-accent">300</span>
           </div>
         </div>
       </div>

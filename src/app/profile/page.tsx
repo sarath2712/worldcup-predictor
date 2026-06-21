@@ -251,11 +251,11 @@ export default function ProfilePage() {
         {tournamentPred ? (
           <div className="space-y-2">
             {[
-              { label: "Winner", value: tournamentPred.predicted_winner, pts: 200 },
-              { label: "Finalist", value: tournamentPred.predicted_finalist, pts: 180 },
-              { label: "Top Scorer", value: tournamentPred.predicted_top_scorer, pts: 150 },
-              { label: "Best Player", value: tournamentPred.predicted_best_player, pts: 150 },
-              { label: "Best Goalkeeper", value: tournamentPred.predicted_best_goalkeeper, pts: 150 },
+              { label: "Winner", value: tournamentPred.predicted_winner, pts: 400 },
+              { label: "Finalist", value: tournamentPred.predicted_finalist, pts: 360 },
+              { label: "Top Scorer", value: tournamentPred.predicted_top_scorer, pts: 300 },
+              { label: "Best Player", value: tournamentPred.predicted_best_player, pts: 300 },
+              { label: "Best Goalkeeper", value: tournamentPred.predicted_best_goalkeeper, pts: 300 },
             ].map((item) => (
               <div key={item.label} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
                 <div>

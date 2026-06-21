@@ -98,11 +98,11 @@ begin
 
   update public.tournament_predictions tp
   set points = (
-    (case when r.actual_winner is not null and lower(trim(tp.predicted_winner)) = lower(trim(r.actual_winner)) then 200 else 0 end)
-    + (case when r.actual_finalist is not null and lower(trim(tp.predicted_finalist)) = lower(trim(r.actual_finalist)) then 180 else 0 end)
-    + (case when r.actual_top_scorer is not null and lower(trim(tp.predicted_top_scorer)) = lower(trim(r.actual_top_scorer)) then 150 else 0 end)
-    + (case when r.actual_best_player is not null and lower(trim(tp.predicted_best_player)) = lower(trim(r.actual_best_player)) then 150 else 0 end)
-    + (case when r.actual_best_goalkeeper is not null and lower(trim(tp.predicted_best_goalkeeper)) = lower(trim(r.actual_best_goalkeeper)) then 150 else 0 end)
+    (case when r.actual_winner is not null and lower(trim(tp.predicted_winner)) = lower(trim(r.actual_winner)) then 400 else 0 end)
+    + (case when r.actual_finalist is not null and lower(trim(tp.predicted_finalist)) = lower(trim(r.actual_finalist)) then 360 else 0 end)
+    + (case when r.actual_top_scorer is not null and lower(trim(tp.predicted_top_scorer)) = lower(trim(r.actual_top_scorer)) then 300 else 0 end)
+    + (case when r.actual_best_player is not null and lower(trim(tp.predicted_best_player)) = lower(trim(r.actual_best_player)) then 300 else 0 end)
+    + (case when r.actual_best_goalkeeper is not null and lower(trim(tp.predicted_best_goalkeeper)) = lower(trim(r.actual_best_goalkeeper)) then 300 else 0 end)
   );
 end;
 $$ language plpgsql security definer;
