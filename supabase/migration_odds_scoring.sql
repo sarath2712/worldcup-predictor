@@ -86,13 +86,7 @@ BEGIN
   -- Extras scoring unchanged — only base prediction points scale with odds
   UPDATE public.match_extras me
   SET points = (
-    -- POTM points (only for non-group-stage matches)
-    (CASE WHEN v_stage NOT LIKE 'Group%'
-          AND v_actual_potm IS NOT NULL
-          AND lower(trim(me.predicted_potm)) = lower(trim(v_actual_potm))
-     THEN 20 ELSE 0 END)
-    +
-    -- First goal points (15 if correct team/none matches)
+    -- First goal points
     (CASE WHEN v_actual_first_goal IS NOT NULL
           AND me.predicted_scorers IS NOT NULL
           AND lower(trim(me.predicted_scorers)) = lower(trim(v_actual_first_goal))

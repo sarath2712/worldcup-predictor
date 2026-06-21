@@ -33,13 +33,6 @@ export default function RulesPage() {
           </div>
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
-              <p className="font-medium text-white">Player of the Match (POTM)</p>
-              <p className="text-sm text-gray-400">Knockout stages only</p>
-            </div>
-            <span className="text-2xl font-bold text-emerald-400">20</span>
-          </div>
-          <div className="px-6 py-4 flex items-center justify-between">
-            <div>
               <p className="font-medium text-white">Team Scored First</p>
               <p className="text-sm text-gray-400">Predict which team scores the first goal</p>
             </div>
@@ -55,8 +48,8 @@ export default function RulesPage() {
         </div>
         <div className="px-6 py-4 bg-emerald-500/10 text-center border-t border-emerald-500/20">
           <p className="text-sm font-semibold text-emerald-400">Maximum Points Per Match (Round 3+)</p>
-          <p className="text-2xl font-black text-white mt-1">80 + 20 + 30 + 60 = 190</p>
-          <p className="text-xs text-gray-400 mt-1">Exact (80) + POTM (knockout) + First Goal (30) + Bonus (up to 2 × 30)</p>
+          <p className="text-2xl font-black text-white mt-1">80 + 30 + 60 = 170</p>
+          <p className="text-xs text-gray-400 mt-1">Exact (80) + First Goal (30) + Bonus (up to 2 × 30)</p>
         </div>
       </div>
 
@@ -100,7 +93,7 @@ export default function RulesPage() {
           </div>
         </div>
         <div className="px-6 py-3 bg-white/5 text-center border-t border-white/10">
-          <p className="text-xs text-gray-500">Max per match: 30 + 15 + 40 = <strong className="text-gray-400">85</strong> (no POTM in group stage)</p>
+          <p className="text-xs text-gray-500">Max per match: 30 + 15 + 40 = <strong className="text-gray-400">85</strong></p>
         </div>
       </div>
 
