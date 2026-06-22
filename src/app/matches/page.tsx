@@ -57,8 +57,50 @@ export default function MatchesPage() {
 
   if (loading) return <div className="text-center py-16">Loading matches...</div>;
 
-  // Group by date (matches already sorted by kickoff_utc)
-  const grouped = matches.reduce((acc, match) => {
+  // Split matches into open vs locked
+  const now = new Date();
+  const openMatches = matches.filter((m) => !isPast(addHours(new Date(m.kickoff_utc), -1)));
+  const lockedMatches = matches.filter((m) => isPast(addHours(new Date(m.kickoff_utc), -1)));
+
+  return (
+    <MatchTabs
+      openMatches={openMatches}
+      lockedMatches={lockedMatches}
+      predictions={predictions}
+      extras={extras}
+      user={user}
+      supabase={supabase}
+      setPredictions={setPredictions}
+      setExtras={setExtras}
+    />
+  );
+}
+
+function MatchTabs({
+  openMatches,
+  lockedMatches,
+  predictions,
+  extras,
+  user,
+  supabase,
+  setPredictions,
+  setExtras,
+}: {
+  openMatches: Match[];
+  lockedMatches: Match[];
+  predictions: Record<number, Prediction>;
+  extras: Record<number, MatchExtras>;
+  user: User | null;
+  supabase: ReturnType<typeof createClient>;
+  setPredictions: React.Dispatch<React.SetStateAction<Record<number, Prediction>>>;
+  setExtras: React.Dispatch<React.SetStateAction<Record<number, MatchExtras>>>;
+}) {
+  const [tab, setTab] = useState<"open" | "locked">("open");
+
+  const currentMatches = tab === "open" ? openMatches : lockedMatches;
+
+  // Group by date
+  const grouped = currentMatches.reduce((acc, match) => {
     const dateKey = format(new Date(match.kickoff_utc), "EEEE, MMMM d, yyyy");
     if (!acc[dateKey]) acc[dateKey] = [];
     acc[dateKey].push(match);
@@ -66,8 +108,38 @@ export default function MatchesPage() {
   }, {} as Record<string, Match[]>);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <h1 className="text-3xl font-bold">Matches</h1>
+
+      {/* Tab buttons */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setTab("open")}
+          className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
+            tab === "open"
+              ? "bg-emerald-600 text-white"
+              : "bg-gray-700/50 text-gray-400 hover:text-white"
+          }`}
+        >
+          Open ({openMatches.length})
+        </button>
+        <button
+          onClick={() => setTab("locked")}
+          className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
+            tab === "locked"
+              ? "bg-red-600 text-white"
+              : "bg-gray-700/50 text-gray-400 hover:text-white"
+          }`}
+        >
+          Locked ({lockedMatches.length})
+        </button>
+      </div>
+
+      {currentMatches.length === 0 && (
+        <p className="text-gray-500 text-center py-8">
+          {tab === "open" ? "No upcoming matches to predict." : "No locked matches yet."}
+        </p>
+      )}
 
       {Object.entries(grouped).map(([date, dateMatches]) => (
         <div key={date}>
