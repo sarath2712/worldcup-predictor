@@ -3,45 +3,73 @@ import { createClient } from "@supabase/supabase-js";
 
 const ESPN_STATS_URL = "https://www.espn.com/soccer/stats/_/league/FIFA.WORLD/season/2026/view/scoring";
 
-async function fetchFromESPN(): Promise<{ rank: number; player_name: string; team: string; goals: number; assists: number }[]> {
+async function fetchFromESPN(): Promise<{ rank: number; player_name: string; team: string; goals: number }[]> {
   const res = await fetch(ESPN_STATS_URL, { headers: { "User-Agent": "Mozilla/5.0" } });
   const html = await res.text();
 
-  // Parse the scoring table from ESPN HTML
-  // ESPN embeds data in __espnfitt__ or we can parse the stats table
-  const scorers: { rank: number; player_name: string; team: string; goals: number; assists: number }[] = [];
+  const scorers: { rank: number; player_name: string; team: string; goals: number }[] = [];
 
-  // Look for the JSON data embedded in the page (ESPN uses server-rendered data)
-  const tableRegex = /<tr[^>]*class="Table__TR[^"]*"[^>]*>([\s\S]*?)<\/tr>/g;
-  const rows = html.match(tableRegex) || [];
+  // ESPN embeds data in window['__espnfitt__'] as JSON
+  const jsonMatch = html.match(/window\[.{0,20}espnfitt.{0,5}\]\s*=\s*(\{[\s\S]*?\});/);
+  if (jsonMatch) {
+    try {
+      const data = JSON.parse(jsonMatch[1]);
+      const tableRows = data?.page?.content?.statistics?.tableRows;
+      if (Array.isArray(tableRows)) {
+        const processRow = (row: any[]) => {
+          if (!Array.isArray(row) || row.length < 4 || typeof row[0] !== "number") return;
+          const rank = row[0];
+          const player = row[1];
+          const team = row[2];
+          const statVals = row.slice(3).filter((r: any) => r?.isStats);
+          const goals = statVals.length > 0 ? parseInt(statVals[statVals.length - 1].value) || 0 : 0;
+          scorers.push({
+            rank,
+            player_name: player?.name || "Unknown",
+            team: team?.name || "Unknown",
+            goals,
+          });
+        };
 
-  let currentRank = 0;
-  for (const row of rows) {
-    // Extract player name
-    const nameMatch = row.match(/class="[^"]*Athlete[^"]*"[^>]*>([^<]+)/i) ||
-                      row.match(/title="([^"]+)"[^>]*class="[^"]*AnchorLink/i);
-    if (!nameMatch) continue;
-
-    // Extract team
-    const teamMatch = row.match(/class="[^"]*team[^"]*"[^>]*>([^<]+)/i) ||
-                      row.match(/<span[^>]*class="[^"]*pl2[^"]*"[^>]*>([^<]+)/i);
-
-    // Extract stats cells
-    const statCells = row.match(/<td[^>]*>([\d]+)<\/td>/g) || [];
-    const stats = statCells.map(c => parseInt(c.replace(/<[^>]+>/g, "")) || 0);
-
-    if (stats.length >= 2) {
-      currentRank++;
-      scorers.push({
-        rank: currentRank,
-        player_name: nameMatch[1].trim(),
-        team: teamMatch ? teamMatch[1].trim() : "Unknown",
-        goals: stats[stats.length - 1], // last stat is usually goals
-        assists: 0,
-      });
+        for (const group of tableRows) {
+          if (!Array.isArray(group)) continue;
+          if (group.length > 0 && typeof group[0] === "number") {
+            processRow(group);
+          } else if (group.length > 0 && Array.isArray(group[0])) {
+            for (const row of group) processRow(row);
+          }
+          if (scorers.length >= 15) break;
+        }
+      }
+    } catch (e) {
+      // JSON parse failed, fall through to legacy parser
     }
+  }
 
-    if (scorers.length >= 15) break;
+  // Legacy fallback: parse HTML table rows
+  if (scorers.length === 0) {
+    const tableRegex = /<tr[^>]*class="Table__TR[^"]*"[^>]*>([\s\S]*?)<\/tr>/g;
+    const rows = html.match(tableRegex) || [];
+    let currentRank = 0;
+    for (const row of rows) {
+      const nameMatch = row.match(/class="[^"]*Athlete[^"]*"[^>]*>([^<]+)/i) ||
+                        row.match(/title="([^"]+)"[^>]*class="[^"]*AnchorLink/i);
+      if (!nameMatch) continue;
+      const teamMatch = row.match(/class="[^"]*team[^"]*"[^>]*>([^<]+)/i) ||
+                        row.match(/<span[^>]*class="[^"]*pl2[^"]*"[^>]*>([^<]+)/i);
+      const statCells = row.match(/<td[^>]*>([\d]+)<\/td>/g) || [];
+      const stats = statCells.map(c => parseInt(c.replace(/<[^>]+>/g, "")) || 0);
+      if (stats.length >= 2) {
+        currentRank++;
+        scorers.push({
+          rank: currentRank,
+          player_name: nameMatch[1].trim(),
+          team: teamMatch ? teamMatch[1].trim() : "Unknown",
+          goals: stats[stats.length - 1],
+        });
+      }
+      if (scorers.length >= 15) break;
+    }
   }
 
   return scorers;
@@ -63,7 +91,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    let scorers: { rank: number; player_name: string; team: string; goals: number; assists: number }[];
+    let scorers: { rank: number; player_name: string; team: string; goals: number }[];
 
     if (body.auto) {
       // Auto-fetch from ESPN
@@ -86,7 +114,6 @@ export async function POST(request: Request) {
       player_name: s.player_name,
       team: s.team,
       goals: s.goals,
-      assists: s.assists || 0,
       updated_at: now,
     }));
 
