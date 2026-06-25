@@ -208,7 +208,6 @@ export default function AdminRegistrationsPage() {
     matchId: number,
     homeScore: string,
     awayScore: string,
-    actualPotm: string,
     actualScorers: string,
     bonusActuals: Record<string, string> | null
   ) => {
@@ -219,7 +218,6 @@ export default function AdminRegistrationsPage() {
       .update({
         home_score: parseInt(homeScore),
         away_score: parseInt(awayScore),
-        actual_potm: actualPotm || null,
         actual_scorers: actualScorers || null,
         bonus_actuals: bonusActuals && Object.keys(bonusActuals).length > 0 ? bonusActuals : null,
       })
@@ -545,7 +543,7 @@ export default function AdminRegistrationsPage() {
           {/* Scoring Guide */}
           <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
             <h3 className="text-sm font-bold text-accent mb-2">Scoring Reference</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs text-gray-300">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-300">
               <div className="bg-white/5 rounded-lg p-2 text-center">
                 <p className="text-lg font-bold text-white">30</p>
                 <p>Exact Score</p>
@@ -553,10 +551,6 @@ export default function AdminRegistrationsPage() {
               <div className="bg-white/5 rounded-lg p-2 text-center">
                 <p className="text-lg font-bold text-white">10</p>
                 <p>Correct Winner</p>
-              </div>
-              <div className="bg-white/5 rounded-lg p-2 text-center">
-                <p className="text-lg font-bold text-white">20</p>
-                <p>POTM</p>
               </div>
               <div className="bg-white/5 rounded-lg p-2 text-center">
                 <p className="text-lg font-bold text-white">15</p>
@@ -567,7 +561,7 @@ export default function AdminRegistrationsPage() {
                 <p className="text-amber-400/80">Match Extra</p>
               </div>
             </div>
-            <p className="text-[11px] text-gray-500 mt-2">Fill in: Home Score, Away Score, Player of the Match, Team Scored First, and Match Extras (if applicable). Points are auto-calculated on save.</p>
+            <p className="text-[11px] text-gray-500 mt-2">Fill in: Home Score, Away Score, Team Scored First, and Match Extras (if applicable). Points are auto-calculated on save.</p>
           </div>
 
           {/* Match Filter Tabs */}
@@ -1002,11 +996,10 @@ function AdminMatchRow({
 }: {
   match: Match;
   saving: boolean;
-  onSave: (id: number, home: string, away: string, potm: string, scorers: string, bonusActuals: Record<string, string> | null) => void;
+  onSave: (id: number, home: string, away: string, scorers: string, bonusActuals: Record<string, string> | null) => void;
 }) {
   const [home, setHome] = useState(match.home_score?.toString() || "");
   const [away, setAway] = useState(match.away_score?.toString() || "");
-  const [potm, setPotm] = useState(match.actual_potm || "");
   const [firstGoal, setFirstGoal] = useState(match.actual_scorers || "");
   const [bonusActuals, setBonusActuals] = useState<Record<string, string>>(
     (match.bonus_actuals as Record<string, string>) || {}
@@ -1059,7 +1052,7 @@ function AdminMatchRow({
           />
         </div>
         <button
-          onClick={() => onSave(match.id, home, away, potm, firstGoal, bonusQuestions.length > 0 ? bonusActuals : null)}
+          onClick={() => onSave(match.id, home, away, firstGoal, bonusQuestions.length > 0 ? bonusActuals : null)}
           disabled={saving || !home || !away}
           className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg disabled:opacity-50 hover:bg-green-700 transition font-semibold"
         >
@@ -1067,20 +1060,8 @@ function AdminMatchRow({
         </button>
       </div>
 
-      {/* POTM and First Goal */}
+      {/* First Goal */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-white/5">
-        {!match.stage.startsWith("Group") && (
-          <div>
-            <label className="text-[10px] text-gray-500 uppercase tracking-wider">Player of the Match (20 pts)</label>
-            <input
-              type="text"
-              value={potm}
-              onChange={(e) => setPotm(e.target.value)}
-              className="w-full border border-white/20 rounded-lg px-3 py-2 bg-white/10 text-white text-sm"
-              placeholder="e.g. Mbappé"
-            />
-          </div>
-        )}
         <div>
           <label className="text-[10px] text-gray-500 uppercase tracking-wider">Team Scored First (15 pts)</label>
           <select
