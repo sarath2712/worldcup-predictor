@@ -95,6 +95,9 @@ export default function AdminRegistrationsPage() {
   const [copied, setCopied] = useState(false);
   const [groupPredCount, setGroupPredCount] = useState(0);
   const [groupPredUserIds, setGroupPredUserIds] = useState<Set<string>>(new Set());
+  const [groupStandings, setGroupStandings] = useState<Record<string, { first: string; second: string; third: string }>>({});
+  const [scoringGroup, setScoringGroup] = useState<string | null>(null);
+  const [groupScoreResult, setGroupScoreResult] = useState<string | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -349,6 +352,85 @@ export default function AdminRegistrationsPage() {
       ? registrations
       : registrations.filter((r) => r.category === filterCategory);
 
+  // Calculate group standings from match results
+  function calcGroupStandings(groupName: string): { team: string; pts: number; gd: number; gf: number }[] {
+    const groupMatches = matches.filter((m) => m.stage === groupName && m.home_score !== null);
+    const teams: Record<string, { pts: number; gd: number; gf: number }> = {};
+    for (const m of groupMatches) {
+      if (!teams[m.home_team]) teams[m.home_team] = { pts: 0, gd: 0, gf: 0 };
+      if (!teams[m.away_team]) teams[m.away_team] = { pts: 0, gd: 0, gf: 0 };
+      const hs = m.home_score!;
+      const as_ = m.away_score!;
+      teams[m.home_team].gf += hs;
+      teams[m.home_team].gd += hs - as_;
+      teams[m.away_team].gf += as_;
+      teams[m.away_team].gd += as_ - hs;
+      if (hs > as_) { teams[m.home_team].pts += 3; }
+      else if (hs < as_) { teams[m.away_team].pts += 3; }
+      else { teams[m.home_team].pts += 1; teams[m.away_team].pts += 1; }
+    }
+    return Object.entries(teams)
+      .map(([team, s]) => ({ team, ...s }))
+      .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+  }
+
+  function getCompletedGroups(): string[] {
+    const groupNames = [...new Set(matches.filter((m) => m.stage?.startsWith("Group")).map((m) => m.stage))];
+    return groupNames.filter((g) => {
+      const groupMatches = matches.filter((m) => m.stage === g);
+      const completedMatches = groupMatches.filter((m) => m.home_score !== null);
+      return groupMatches.length >= 6 && completedMatches.length >= 6;
+    }).sort();
+  }
+
+  async function scoreGroupPredictions(groupName: string) {
+    setScoringGroup(groupName);
+    setGroupScoreResult(null);
+    const standings = calcGroupStandings(groupName);
+    if (standings.length < 3) {
+      setGroupScoreResult(`Not enough teams in ${groupName}`);
+      setScoringGroup(null);
+      return;
+    }
+    const first = standings[0].team;
+    const second = standings[1].team;
+    const third = standings[2].team;
+
+    // Fetch all predictions for this group
+    const { data: preds, error } = await supabase
+      .from("group_predictions")
+      .select("id, predicted_first, predicted_second, predicted_third")
+      .eq("group_name", groupName);
+
+    if (error || !preds) {
+      setGroupScoreResult(`Error fetching predictions: ${error?.message}`);
+      setScoringGroup(null);
+      return;
+    }
+
+    let scored75 = 0, scored50 = 0, scored0 = 0;
+    for (const p of preds) {
+      const got1st = p.predicted_first === first;
+      const got2nd = p.predicted_second === second;
+      const got3rd = p.predicted_third === third;
+      let pts = 0;
+      if (got1st && got2nd && got3rd) { pts = 75; scored75++; }
+      else if (got1st && got2nd) { pts = 50; scored50++; }
+      else { scored0++; }
+
+      await supabase
+        .from("group_predictions")
+        .update({ points: pts })
+        .eq("id", p.id);
+    }
+
+    setGroupStandings((prev) => ({ ...prev, [groupName]: { first, second, third } }));
+    setGroupScoreResult(
+      `${groupName} scored! ${preds.length} predictions: ${scored75} got 75pts, ${scored50} got 50pts, ${scored0} got 0pts. Standings: 1st ${first}, 2nd ${second}, 3rd ${third}`
+    );
+    setScoringGroup(null);
+  }
+
   const categoryCounts = registrations.reduce(
     (acc, r) => {
       acc[r.category] = (acc[r.category] || 0) + 1;
@@ -557,6 +639,81 @@ export default function AdminRegistrationsPage() {
               >
                 {savingTournament ? "Saving..." : "Save & Score Tournament"}
               </button>
+            </div>
+          </div>
+
+          {/* Group Predictions Scoring Section */}
+          <div className="border-t border-white/10 pt-8">
+            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+              📊 Group Predictions Scoring
+            </h2>
+            <p className="text-sm text-gray-500 mb-2">
+              Score group predictions once all 3 rounds are complete. 1st+2nd correct = 50pts, 1st+2nd+3rd = 75pts.
+            </p>
+            {groupScoreResult && (
+              <div className="mb-4 p-3 rounded-lg bg-green-600/20 border border-green-500/30 text-green-300 text-sm">
+                {groupScoreResult}
+              </div>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {(() => {
+                const groupNames = [...new Set(matches.filter((m) => m.stage?.startsWith("Group")).map((m) => m.stage))].sort();
+                return groupNames.map((groupName) => {
+                  const groupMatches = matches.filter((m) => m.stage === groupName);
+                  const completedCount = groupMatches.filter((m) => m.home_score !== null).length;
+                  const isComplete = groupMatches.length >= 6 && completedCount >= 6;
+                  const standings = isComplete ? calcGroupStandings(groupName) : [];
+                  const alreadyScored = groupStandings[groupName] !== undefined;
+
+                  // Check if already scored in DB
+                  const predsForGroup = groupPredCount > 0;
+
+                  return (
+                    <div
+                      key={groupName}
+                      className={`rounded-xl border p-4 ${
+                        isComplete
+                          ? "border-green-500/30 bg-green-600/10"
+                          : "border-white/10 bg-white/5"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-bold text-sm">{groupName}</h3>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          isComplete ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"
+                        }`}>
+                          {completedCount}/{groupMatches.length} matches
+                        </span>
+                      </div>
+
+                      {isComplete && standings.length >= 3 && (
+                        <div className="text-xs text-gray-300 space-y-1 mb-3">
+                          {standings.map((s, i) => (
+                            <div key={s.team} className="flex justify-between">
+                              <span className={i < 2 ? "text-green-400 font-medium" : i === 2 ? "text-yellow-400" : "text-gray-500"}>
+                                {i + 1}. {s.team}
+                              </span>
+                              <span className="text-gray-500">{s.pts}pts GD:{s.gd > 0 ? "+" : ""}{s.gd}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {isComplete ? (
+                        <button
+                          onClick={() => scoreGroupPredictions(groupName)}
+                          disabled={scoringGroup === groupName}
+                          className="w-full px-3 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition"
+                        >
+                          {scoringGroup === groupName ? "Scoring..." : alreadyScored ? "Re-score Group" : "Score Group Predictions"}
+                        </button>
+                      ) : (
+                        <p className="text-xs text-gray-500 text-center py-2">Waiting for matches to complete</p>
+                      )}
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </div>
         </div>
