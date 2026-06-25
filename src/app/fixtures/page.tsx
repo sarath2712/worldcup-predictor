@@ -9,7 +9,7 @@ import { groups, knockoutRounds } from "./data";
 
 type Tab = "fixtures" | "tables" | "scorers";
 type MatchRow = { id: number; stage: string; home_team: string; away_team: string; kickoff_utc: string; venue: string | null; home_score: number | null; away_score: number | null };
-type TopScorer = { id: number; rank: number; player_name: string; team: string; goals: number; assists: number; updated_at: string };
+type TopScorer = { id: number; rank: number; player_name: string; team: string; goals: number; updated_at: string };
 
 export default function FixturesPage() {
   const [tab, setTab] = useState<Tab>("fixtures");
@@ -249,7 +249,6 @@ export default function FixturesPage() {
                     <th className="text-left px-3 py-2.5 font-medium">Player</th>
                     <th className="text-left px-3 py-2.5 font-medium">Team</th>
                     <th className="px-3 py-2.5 font-medium text-center w-16">Goals</th>
-                    <th className="px-3 py-2.5 font-medium text-center w-16">Assists</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -259,7 +258,6 @@ export default function FixturesPage() {
                       <td className="px-3 py-3 font-medium text-white">{scorer.player_name}</td>
                       <td className="px-3 py-3 text-gray-400">{getFlag(scorer.team)} {scorer.team}</td>
                       <td className="px-3 py-3 text-center font-bold text-white">{scorer.goals}</td>
-                      <td className="px-3 py-3 text-center text-gray-400">{scorer.assists}</td>
                     </tr>
                   ))}
                 </tbody>
