@@ -65,9 +65,15 @@ BEGIN
   -- Score predictions
   UPDATE public.predictions
   SET points = CASE
-    -- Exact score match
+    -- Exact score match: 80 + outcome odds points (stacked)
     WHEN predicted_home = v_home_score AND predicted_away = v_away_score THEN
-      CASE WHEN v_has_odds THEN 80
+      CASE WHEN v_has_odds THEN 80 + (
+        CASE
+          WHEN v_home_score > v_away_score THEN odds_to_points(v_home_win_odds)
+          WHEN v_home_score < v_away_score THEN odds_to_points(v_away_win_odds)
+          ELSE odds_to_points(v_draw_odds)
+        END
+      )
       ELSE 30 END
     -- Correct outcome (home win, draw, away win)
     WHEN sign(predicted_home - predicted_away) = sign(v_home_score - v_away_score) THEN
