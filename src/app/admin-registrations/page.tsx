@@ -63,6 +63,18 @@ type SupportQuery = {
   created_at: string;
 };
 
+type SubmissionEntry = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  flat_number: string;
+  file_url: string;
+  file_name: string | null;
+  file_size: number | null;
+  created_at: string;
+};
+
 const categoryLabels: Record<string, string> = {
   mens: "Men's Football",
   womens: "Women's Football",
@@ -77,7 +89,7 @@ export default function AdminRegistrationsPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [activeTab, setActiveTab] = useState<"match-results" | "registrations" | "predictions" | "support">("match-results");
+  const [activeTab, setActiveTab] = useState<"match-results" | "registrations" | "predictions" | "support" | "submissions">("match-results");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [matchFilter, setMatchFilter] = useState<"pending" | "completed" | "all">("pending");
   const [saving, setSaving] = useState<number | null>(null);
@@ -98,6 +110,8 @@ export default function AdminRegistrationsPage() {
   const [groupStandings, setGroupStandings] = useState<Record<string, { first: string; second: string; third: string }>>({});
   const [scoringGroup, setScoringGroup] = useState<string | null>(null);
   const [groupScoreResult, setGroupScoreResult] = useState<string | null>(null);
+  const [caricatureEntries, setCaricatureEntries] = useState<SubmissionEntry[]>([]);
+  const [footballStories, setFootballStories] = useState<SubmissionEntry[]>([]);
   const supabase = createClient();
 
   useEffect(() => {
@@ -197,6 +211,22 @@ export default function AdminRegistrationsPage() {
         if (sq) setSupportQueries(sq);
       } catch {
         // table may not exist yet
+      }
+
+      // Load caricature entries and football stories
+      try {
+        const { data: ce } = await supabase
+          .from("caricature_entries")
+          .select("*")
+          .order("created_at", { ascending: false });
+        if (ce) setCaricatureEntries(ce);
+        const { data: fs } = await supabase
+          .from("football_stories")
+          .select("*")
+          .order("created_at", { ascending: false });
+        if (fs) setFootballStories(fs);
+      } catch {
+        // tables may not exist yet
       }
 
       setLoading(false);
@@ -534,6 +564,14 @@ export default function AdminRegistrationsPage() {
           }`}
         >
           Support ({supportQueries.filter(q => q.status === "open").length})
+        </button>
+        <button
+          onClick={() => setActiveTab("submissions")}
+          className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
+            activeTab === "submissions" ? "bg-accent text-black" : "bg-white/5 text-gray-400 hover:bg-white/10"
+          }`}
+        >
+          Submissions ({caricatureEntries.length + footballStories.length})
         </button>
       </div>
 
@@ -983,6 +1021,75 @@ export default function AdminRegistrationsPage() {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* ===== SUBMISSIONS TAB ===== */}
+      {activeTab === "submissions" && (
+        <div className="space-y-8">
+          {/* Caricature Contest Entries */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
+            <div className="px-6 py-4 bg-accent/10 border-b border-white/10 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-accent">🎨 Caricature Contest ({caricatureEntries.length})</h3>
+            </div>
+            {caricatureEntries.length === 0 ? (
+              <div className="px-6 py-8 text-center text-gray-500">No caricature entries yet.</div>
+            ) : (
+              <div className="divide-y divide-white/5">
+                {caricatureEntries.map((entry) => (
+                  <div key={entry.id} className="px-6 py-4 flex items-center justify-between">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white">{entry.name}</p>
+                      <p className="text-xs text-gray-400">{entry.email} · {entry.phone} · Flat {entry.flat_number}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {entry.file_name || "file"} {entry.file_size ? `(${(entry.file_size / 1024).toFixed(0)} KB)` : ""} · {format(new Date(entry.created_at), "MMM d, h:mm a")}
+                      </p>
+                    </div>
+                    <a
+                      href={entry.file_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-4 px-4 py-2 bg-accent/20 text-accent text-xs font-semibold rounded-lg hover:bg-accent/30 transition flex-shrink-0"
+                    >
+                      Download
+                    </a>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Football Story Entries */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
+            <div className="px-6 py-4 bg-accent/10 border-b border-white/10 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-accent">📖 Football Stories ({footballStories.length})</h3>
+            </div>
+            {footballStories.length === 0 ? (
+              <div className="px-6 py-8 text-center text-gray-500">No football stories yet.</div>
+            ) : (
+              <div className="divide-y divide-white/5">
+                {footballStories.map((entry) => (
+                  <div key={entry.id} className="px-6 py-4 flex items-center justify-between">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-white">{entry.name}</p>
+                      <p className="text-xs text-gray-400">{entry.email} · {entry.phone} · Flat {entry.flat_number}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {entry.file_name || "file"} {entry.file_size ? `(${(entry.file_size / 1024).toFixed(0)} KB)` : ""} · {format(new Date(entry.created_at), "MMM d, h:mm a")}
+                      </p>
+                    </div>
+                    <a
+                      href={entry.file_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-4 px-4 py-2 bg-accent/20 text-accent text-xs font-semibold rounded-lg hover:bg-accent/30 transition flex-shrink-0"
+                    >
+                      Download
+                    </a>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
