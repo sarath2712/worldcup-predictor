@@ -201,6 +201,7 @@ function MatchCard({
   const isLocked = isPast(deadline);
   const hasResult = match.home_score !== null;
   const bonusQuestions = (match.bonus_questions || []) as BonusQuestion[];
+  const isKnockout = !match.stage.startsWith("Group");
   const hasOdds = match.home_win_odds && match.draw_odds && match.away_win_odds;
 
   function oddsToPoints(odds: number): number {
@@ -400,7 +401,7 @@ function MatchCard({
           </div>
           {bonusQuestions.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-[10px] uppercase tracking-wider text-amber-400 font-semibold">⚡ Match Extras ({hasOdds ? 30 : 20} pts each)</p>
+              <p className="text-[10px] uppercase tracking-wider text-amber-400 font-semibold">⚡ Match Extras ({hasOdds || isKnockout ? 30 : 20} pts each)</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {bonusQuestions.map((q) => (
                   <select
