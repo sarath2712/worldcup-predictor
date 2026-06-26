@@ -1185,7 +1185,7 @@ function AdminMatchRow({
       </div>
       {bonusQuestions.length > 0 && (
         <div className="pt-2 border-t border-amber-500/20">
-          <p className="text-[10px] text-amber-400 uppercase tracking-wider font-semibold mb-2">⚡ Match Extras (20 pts each)</p>
+          <p className="text-[10px] text-amber-400 uppercase tracking-wider font-semibold mb-2">⚡ Match Extras ({match.home_win_odds ? 30 : 20} pts each)</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {bonusQuestions.map((q) => (
               <div key={q.type}>
