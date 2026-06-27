@@ -580,26 +580,54 @@ export default function AdminRegistrationsPage() {
         <div className="space-y-6">
           {/* Scoring Guide */}
           <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
-            <h3 className="text-sm font-bold text-accent mb-2">Scoring Reference</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-300">
-              <div className="bg-white/5 rounded-lg p-2 text-center">
-                <p className="text-lg font-bold text-white">30</p>
-                <p>Exact Score</p>
+            <h3 className="text-sm font-bold text-accent mb-3">Scoring Reference</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 text-xs text-gray-300">
+              <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+                <p className="font-bold text-gray-200 mb-2">Standard matches (no odds)</p>
+                <div className="grid grid-cols-4 gap-2 text-center">
+                  <div>
+                    <p className="text-lg font-bold text-white">30</p>
+                    <p>Exact</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-white">10</p>
+                    <p>Outcome</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-white">15</p>
+                    <p>First Goal</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-amber-400">20</p>
+                    <p className="text-amber-400/80">Each Extra</p>
+                  </div>
+                </div>
               </div>
-              <div className="bg-white/5 rounded-lg p-2 text-center">
-                <p className="text-lg font-bold text-white">10</p>
-                <p>Correct Winner</p>
-              </div>
-              <div className="bg-white/5 rounded-lg p-2 text-center">
-                <p className="text-lg font-bold text-white">15</p>
-                <p>First Goal</p>
-              </div>
-              <div className="bg-amber-500/10 rounded-lg p-2 text-center border border-amber-500/20">
-                <p className="text-lg font-bold text-amber-400">20</p>
-                <p className="text-amber-400/80">Match Extra</p>
+              <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3">
+                <p className="font-bold text-emerald-300 mb-2">Odds-based matches</p>
+                <div className="grid grid-cols-4 gap-2 text-center">
+                  <div>
+                    <p className="text-lg font-bold text-emerald-300">80 + outcome</p>
+                    <p>Exact</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-emerald-300">Odds × 20</p>
+                    <p>Outcome</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-emerald-300">30</p>
+                    <p>First Goal</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-amber-400">30</p>
+                    <p className="text-amber-400/80">Each Extra</p>
+                  </div>
+                </div>
               </div>
             </div>
-            <p className="text-[11px] text-gray-500 mt-2">Fill in: Home Score, Away Score, Team Scored First, and Match Extras (if applicable). Points are auto-calculated on save.</p>
+            <p className="text-[11px] text-gray-500 mt-2">
+              Odds outcome points use the winning outcome&apos;s decimal odds × 20. An exact score on an odds match earns both the 80-point exact bonus and the outcome points. Match-specific values appear on every row below.
+            </p>
           </div>
 
           {/* Match Filter Tabs */}
@@ -1115,6 +1143,14 @@ function AdminMatchRow({
   const kickoff = new Date(match.kickoff_utc);
   const isPast = kickoff < new Date();
   const bonusQuestions = (match.bonus_questions || []) as BonusQuestion[];
+  const hasOdds =
+    match.home_win_odds !== null &&
+    match.draw_odds !== null &&
+    match.away_win_odds !== null;
+  const isKnockout = !match.stage.startsWith("Group");
+  const firstGoalPoints = hasOdds ? 30 : 15;
+  const extraPoints = hasOdds || isKnockout ? 30 : 20;
+  const oddsToPoints = (odds: number) => Math.floor(odds * 20);
 
   return (
     <div className={`p-4 rounded-xl border backdrop-blur-sm space-y-3 ${isCompleted ? "bg-green-500/5 border-green-500/20" : isPast ? "bg-yellow-500/5 border-yellow-500/20" : "bg-white/5 border-white/10"}`}>
@@ -1132,6 +1168,41 @@ function AdminMatchRow({
           </p>
         </div>
       </div>
+
+      {/* Match-specific scoring */}
+      {hasOdds ? (
+        <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+              Odds-based scoring
+            </p>
+            <p className="text-[10px] text-emerald-300">
+              Exact score = 80 + correct outcome points
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center text-xs">
+            <div className="rounded-md bg-white/5 p-2">
+              <p className="text-gray-400">{match.home_team} win · {match.home_win_odds!.toFixed(2)}</p>
+              <p className="font-bold text-emerald-300">{oddsToPoints(match.home_win_odds!)} pts</p>
+              <p className="text-[10px] text-gray-500">Exact: {80 + oddsToPoints(match.home_win_odds!)} pts</p>
+            </div>
+            <div className="rounded-md bg-white/5 p-2">
+              <p className="text-gray-400">Draw · {match.draw_odds!.toFixed(2)}</p>
+              <p className="font-bold text-emerald-300">{oddsToPoints(match.draw_odds!)} pts</p>
+              <p className="text-[10px] text-gray-500">Exact: {80 + oddsToPoints(match.draw_odds!)} pts</p>
+            </div>
+            <div className="rounded-md bg-white/5 p-2">
+              <p className="text-gray-400">{match.away_team} win · {match.away_win_odds!.toFixed(2)}</p>
+              <p className="font-bold text-emerald-300">{oddsToPoints(match.away_win_odds!)} pts</p>
+              <p className="text-[10px] text-gray-500">Exact: {80 + oddsToPoints(match.away_win_odds!)} pts</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[11px] text-gray-400">
+          Standard scoring: exact score 30 pts · correct outcome 10 pts
+        </div>
+      )}
 
       {/* Score inputs */}
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr_auto] gap-2 items-end">
@@ -1170,7 +1241,7 @@ function AdminMatchRow({
       {/* First Goal */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-white/5">
         <div>
-          <label className="text-[10px] text-gray-500 uppercase tracking-wider">Team Scored First (15 pts)</label>
+          <label className="text-[10px] text-gray-500 uppercase tracking-wider">Team Scored First ({firstGoalPoints} pts)</label>
           <select
             value={firstGoal}
             onChange={(e) => setFirstGoal(e.target.value)}
@@ -1185,7 +1256,7 @@ function AdminMatchRow({
       </div>
       {bonusQuestions.length > 0 && (
         <div className="pt-2 border-t border-amber-500/20">
-          <p className="text-[10px] text-amber-400 uppercase tracking-wider font-semibold mb-2">⚡ Match Extras ({match.home_win_odds || !match.stage.startsWith("Group") ? 30 : 20} pts each)</p>
+          <p className="text-[10px] text-amber-400 uppercase tracking-wider font-semibold mb-2">⚡ Match Extras ({extraPoints} pts each)</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {bonusQuestions.map((q) => (
               <div key={q.type}>
