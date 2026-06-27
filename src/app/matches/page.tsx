@@ -200,6 +200,7 @@ function MatchCard({
   const deadline = addHours(kickoff, -1);
   const isLocked = isPast(deadline);
   const hasResult = match.home_score !== null;
+  const canEdit = Boolean(user) && !isLocked;
   const bonusQuestions = (match.bonus_questions || []) as BonusQuestion[];
   const isKnockout = !match.stage.startsWith("Group");
   const hasOdds = match.home_win_odds && match.draw_odds && match.away_win_odds;
@@ -209,7 +210,7 @@ function MatchCard({
   }
 
   useEffect(() => {
-    if (isLocked || hasResult) return;
+    if (isLocked) return;
 
     function updateCountdown() {
       const now = new Date();
@@ -235,7 +236,7 @@ function MatchCard({
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
-  }, [isLocked, hasResult]);
+  }, [isLocked]);
 
   const handleSave = async () => {
     if (!user || isLocked) return;
@@ -297,7 +298,7 @@ function MatchCard({
           </span>
         </div>
         <div className="flex items-center gap-2">
-          {!isLocked && !hasResult && timeLeft && (
+          {!isLocked && timeLeft && (
             <span className="text-xs px-2 py-0.5 bg-orange-500/10 text-orange-400 rounded-full font-mono">
               ⏱ {timeLeft}
             </span>
@@ -352,11 +353,7 @@ function MatchCard({
           {match.home_team} <span className="text-xl ml-1">{getFlag(match.home_team)}</span>
         </div>
 
-        {hasResult ? (
-          <div className="text-center font-bold text-lg min-w-[60px]">
-            {match.home_score} - {match.away_score}
-          </div>
-        ) : user && !isLocked ? (
+        {canEdit ? (
           <div className="flex items-center gap-1 min-w-[100px]">
             <input
               type="number"
@@ -376,6 +373,10 @@ function MatchCard({
               className="w-10 text-center border border-white/20 rounded py-1 bg-white/10 text-white"
             />
           </div>
+        ) : hasResult ? (
+          <div className="text-center font-bold text-lg min-w-[60px]">
+            {match.home_score} - {match.away_score}
+          </div>
         ) : (
           <div className="text-center text-gray-400 min-w-[60px]">vs</div>
         )}
@@ -385,7 +386,7 @@ function MatchCard({
         </div>
       </div>
 
-      {user && !isLocked && !hasResult && (
+      {canEdit && (
         <div className="mt-3 space-y-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <select
