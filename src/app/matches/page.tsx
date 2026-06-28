@@ -203,7 +203,11 @@ function MatchCard({
   const canEdit = Boolean(user) && !isLocked;
   const bonusQuestions = (match.bonus_questions || []) as BonusQuestion[];
   const isKnockout = !match.stage.startsWith("Group");
-  const hasOdds = match.home_win_odds && match.draw_odds && match.away_win_odds;
+  const hasOdds = Boolean(
+    match.home_win_odds &&
+    match.away_win_odds &&
+    (isKnockout || match.draw_odds)
+  );
 
   function oddsToPoints(odds: number): number {
     return Math.floor(odds * 20);

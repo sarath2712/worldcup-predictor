@@ -1143,11 +1143,11 @@ function AdminMatchRow({
   const kickoff = new Date(match.kickoff_utc);
   const isPast = kickoff < new Date();
   const bonusQuestions = (match.bonus_questions || []) as BonusQuestion[];
+  const isKnockout = !match.stage.startsWith("Group");
   const hasOdds =
     match.home_win_odds !== null &&
-    match.draw_odds !== null &&
-    match.away_win_odds !== null;
-  const isKnockout = !match.stage.startsWith("Group");
+    match.away_win_odds !== null &&
+    (isKnockout || match.draw_odds !== null);
   const firstGoalPoints = hasOdds ? 30 : 15;
   const extraPoints = hasOdds || isKnockout ? 30 : 20;
   const oddsToPoints = (odds: number) => Math.floor(odds * 20);

@@ -315,7 +315,8 @@ export default function ProfilePage() {
                   <div className="text-center min-w-[60px]">
                     {match.home_score !== null ? (
                       (() => {
-                        const hasOdds = match.home_win_odds && match.draw_odds && match.away_win_odds;
+                        const hasOdds = match.home_win_odds && match.away_win_odds &&
+                          (!match.stage.startsWith("Group") || match.draw_odds);
                         const exactThreshold = hasOdds ? 80 : 30;
                         const isExact = pred.points === exactThreshold;
                         const isCorrect = (pred.points ?? 0) > 0 && !isExact;
@@ -356,7 +357,8 @@ export default function ProfilePage() {
                     )}
                     {extra?.predicted_scorers && (() => {
                       const correct = match.actual_scorers && match.actual_scorers === extra.predicted_scorers;
-                      const hasOddsMatch = match.home_win_odds && match.draw_odds && match.away_win_odds;
+                      const hasOddsMatch = match.home_win_odds && match.away_win_odds &&
+                        (!match.stage.startsWith("Group") || match.draw_odds);
                       const fgPts = hasOddsMatch ? 30 : 15;
                       return (
                         <span className={`px-2 py-0.5 rounded-full ${
@@ -368,7 +370,8 @@ export default function ProfilePage() {
                     })()}
                     {extra?.bonus_answers && (() => {
                       const actuals = match.bonus_actuals;
-                      const hasOdds = match.home_win_odds && match.draw_odds && match.away_win_odds;
+                      const hasOdds = match.home_win_odds && match.away_win_odds &&
+                        (!match.stage.startsWith("Group") || match.draw_odds);
                       const bonusPts = hasOdds ? 30 : 20;
                       return Object.entries(extra.bonus_answers).map(([key, val]) => {
                         const correct = actuals && actuals[key] === val;
