@@ -7,12 +7,12 @@ import { format } from "date-fns";
 import { getFlag } from "@/lib/flags";
 import { groups, knockoutRounds } from "./data";
 
-type Tab = "fixtures" | "tables" | "scorers";
+type Tab = "group" | "knockout" | "tables" | "scorers";
 type MatchRow = { id: number; stage: string; home_team: string; away_team: string; kickoff_utc: string; venue: string | null; home_score: number | null; away_score: number | null };
 type TopScorer = { id: number; rank: number; player_name: string; team: string; goals: number; updated_at: string };
 
 export default function FixturesPage() {
-  const [tab, setTab] = useState<Tab>("fixtures");
+  const [tab, setTab] = useState<Tab>("group");
   const [matches, setMatches] = useState<MatchRow[]>([]);
   const [topScorers, setTopScorers] = useState<TopScorer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,8 +37,11 @@ export default function FixturesPage() {
     loadMatches();
   }, []);
 
-  // Group matches by date (IST - browser local time)
-  const grouped = matches.reduce((acc, match) => {
+  // Keep group-stage and knockout fixtures separate, grouped by date.
+  const fixtureMatches = matches.filter((match) =>
+    tab === "knockout" ? !match.stage.startsWith("Group") : match.stage.startsWith("Group")
+  );
+  const grouped = fixtureMatches.reduce((acc, match) => {
     const dateKey = format(new Date(match.kickoff_utc), "EEE, MMM d");
     if (!acc[dateKey]) acc[dateKey] = [];
     acc[dateKey].push(match);
@@ -55,16 +58,26 @@ export default function FixturesPage() {
       <p className="text-xs text-gray-500 mb-6">All times in IST (Indian Standard Time)</p>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-8">
+      <div className="flex flex-wrap gap-2 mb-8">
         <button
-          onClick={() => setTab("fixtures")}
+          onClick={() => setTab("group")}
           className={`px-5 py-2 rounded-full text-sm font-semibold transition ${
-            tab === "fixtures"
+            tab === "group"
               ? "bg-primary text-white"
               : "bg-white/5 text-gray-400 hover:bg-white/10"
           }`}
         >
-          Fixtures by Day
+          Group Stage
+        </button>
+        <button
+          onClick={() => setTab("knockout")}
+          className={`px-5 py-2 rounded-full text-sm font-semibold transition ${
+            tab === "knockout"
+              ? "bg-primary text-white"
+              : "bg-white/5 text-gray-400 hover:bg-white/10"
+          }`}
+        >
+          Knockout
         </button>
         <button
           onClick={() => setTab("tables")}
@@ -88,7 +101,7 @@ export default function FixturesPage() {
         </button>
       </div>
 
-      {tab === "fixtures" ? (
+      {tab === "group" || tab === "knockout" ? (
         loading ? (
           <div className="text-center py-16 text-gray-400">Loading fixtures...</div>
         ) : (
@@ -136,20 +149,23 @@ export default function FixturesPage() {
             </div>
           ))}
 
-          {/* Knockout Rounds */}
-          <h2 className="text-3xl font-bold mt-12 mb-4 flex items-center gap-2"><svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Knockout Rounds</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {knockoutRounds.map((round) => (
-              <div key={round.name} className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <h3 className="text-lg font-bold mb-1">{round.name}</h3>
-                <p className="text-sm text-gray-400">{round.dates}</p>
-                <p className="text-sm text-gray-500 mt-1">
-                  {round.matches} {round.matches === 1 ? "match" : "matches"}
-                  {round.venue && ` — ${round.venue}`}
-                </p>
+          {tab === "knockout" && (
+            <>
+              <h2 className="text-3xl font-bold mt-12 mb-4 flex items-center gap-2"><svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Round Overview</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {knockoutRounds.map((round) => (
+                  <div key={round.name} className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                    <h3 className="text-lg font-bold mb-1">{round.name}</h3>
+                    <p className="text-sm text-gray-400">{round.dates}</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {round.matches} {round.matches === 1 ? "match" : "matches"}
+                      {round.venue && ` — ${round.venue}`}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </div>
         )
       ) : tab === "tables" ? (
