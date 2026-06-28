@@ -1177,20 +1177,22 @@ function AdminMatchRow({
               Odds-based scoring
             </p>
             <p className="text-[10px] text-emerald-300">
-              Exact score = 80 + correct outcome points
+              Exact score = 80 + correct outcome points{isKnockout ? " (including extra time)" : ""}
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-2 text-center text-xs">
+          <div className={`grid ${isKnockout ? "grid-cols-2" : "grid-cols-3"} gap-2 text-center text-xs`}>
             <div className="rounded-md bg-white/5 p-2">
               <p className="text-gray-400">{match.home_team} win · {match.home_win_odds!.toFixed(2)}</p>
               <p className="font-bold text-emerald-300">{oddsToPoints(match.home_win_odds!)} pts</p>
               <p className="text-[10px] text-gray-500">Exact: {80 + oddsToPoints(match.home_win_odds!)} pts</p>
             </div>
-            <div className="rounded-md bg-white/5 p-2">
-              <p className="text-gray-400">Draw · {match.draw_odds!.toFixed(2)}</p>
-              <p className="font-bold text-emerald-300">{oddsToPoints(match.draw_odds!)} pts</p>
-              <p className="text-[10px] text-gray-500">Exact: {80 + oddsToPoints(match.draw_odds!)} pts</p>
-            </div>
+            {!isKnockout && (
+              <div className="rounded-md bg-white/5 p-2">
+                <p className="text-gray-400">Draw · {match.draw_odds!.toFixed(2)}</p>
+                <p className="font-bold text-emerald-300">{oddsToPoints(match.draw_odds!)} pts</p>
+                <p className="text-[10px] text-gray-500">Exact: {80 + oddsToPoints(match.draw_odds!)} pts</p>
+              </div>
+            )}
             <div className="rounded-md bg-white/5 p-2">
               <p className="text-gray-400">{match.away_team} win · {match.away_win_odds!.toFixed(2)}</p>
               <p className="font-bold text-emerald-300">{oddsToPoints(match.away_win_odds!)} pts</p>
