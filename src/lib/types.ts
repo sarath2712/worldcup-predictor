@@ -49,6 +49,8 @@ export type LeaderboardEntry = {
   exact_scores: number;
   correct_outcomes: number;
   rank: number;
+  group_stage_points?: number;
+  group_top_scorer_points?: number;
 };
 
 export type MatchExtras = {

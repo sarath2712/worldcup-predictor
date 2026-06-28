@@ -19,12 +19,26 @@ export default function LeaderboardPage() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase
-        .from("leaderboard")
-        .select("*")
-        .order("total_points", { ascending: false });
+      const [{ data }, { data: groupPoints }, { data: topScorerPoints }] = await Promise.all([
+        supabase.from("leaderboard").select("*").order("total_points", { ascending: false }),
+        supabase.from("group_predictions").select("user_id, points"),
+        supabase.from("group_topscorer_predictions").select("user_id, points"),
+      ]);
 
-      setEntries(data || []);
+      const groupTotals = new Map<string, number>();
+      for (const row of groupPoints || []) {
+        groupTotals.set(row.user_id, (groupTotals.get(row.user_id) || 0) + (row.points || 0));
+      }
+      const topScorerTotals = new Map<string, number>();
+      for (const row of topScorerPoints || []) {
+        topScorerTotals.set(row.user_id, (topScorerTotals.get(row.user_id) || 0) + (row.points || 0));
+      }
+
+      setEntries((data || []).map((entry) => ({
+        ...entry,
+        group_stage_points: groupTotals.get(entry.user_id) || 0,
+        group_top_scorer_points: topScorerTotals.get(entry.user_id) || 0,
+      })));
 
       // Get most recent completed match
       const { data: recent } = await supabase
@@ -114,12 +128,14 @@ export default function LeaderboardPage() {
         <p className="text-gray-400">No predictions scored yet. Check back after the first match!</p>
       ) : (
         <div className="bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm overflow-x-auto">
-          <table className="w-full min-w-[500px]">
+          <table className="w-full min-w-[760px]">
             <thead className="bg-white/5">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Player</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Points</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Group Stage</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Group Top Scorer</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Exact</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Correct</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Played</th>
@@ -136,6 +152,8 @@ export default function LeaderboardPage() {
                   </td>
                   <td className="px-4 py-3 font-medium">{entry.username}</td>
                   <td className="px-4 py-3 text-center font-bold text-accent">{entry.total_points}</td>
+                  <td className="px-4 py-3 text-center text-sm font-semibold text-emerald-400">{entry.group_stage_points || 0}</td>
+                  <td className="px-4 py-3 text-center text-sm font-semibold text-amber-400">{entry.group_top_scorer_points || 0}</td>
                   <td className="px-4 py-3 text-center text-sm">{entry.exact_scores}</td>
                   <td className="px-4 py-3 text-center text-sm">{entry.correct_outcomes}</td>
                   <td className="px-4 py-3 text-center text-sm text-gray-500">{entry.matches_scored}</td>
