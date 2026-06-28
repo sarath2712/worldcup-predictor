@@ -6,28 +6,29 @@ export default function RulesPage() {
         <span className="text-white">Rules</span>
       </h2>
 
-      {/* NEW: Round 3+ Odds-Based Scoring — TOP */}
+      {/* Knockout odds-based scoring */}
       <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 backdrop-blur-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-emerald-500/20 bg-emerald-500/10">
           <h3 className="text-xl font-bold text-emerald-400 flex items-center gap-2">
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
-            🎯 Round 3 &amp; Knockout — Odds-Based Scoring
+            🎯 Knockout — Odds-Based Scoring
           </h3>
-          <p className="text-sm text-emerald-300/70 mt-1">From Matchday 3 onwards, points scale with betting odds — predict an underdog win for more points!</p>
+          <p className="text-sm text-emerald-300/70 mt-1">Make two separate predictions: the team that advances and the exact score before a penalty shootout.</p>
         </div>
         <div className="divide-y divide-emerald-500/10">
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <p className="font-medium text-white">Exact Score Prediction</p>
-              <p className="text-sm text-gray-400">Predict the correct scoreline</p>
+              <p className="text-sm text-gray-400">Score after 90 minutes plus 30 minutes of extra time, if played</p>
+              <p className="text-xs text-gray-500 mt-1">Penalty shootout kicks are not included in the exact score.</p>
             </div>
             <span className="text-2xl font-bold text-emerald-400">80</span>
           </div>
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
-              <p className="font-medium text-white">Correct Winner / Draw</p>
-              <p className="text-sm text-gray-400">Right outcome, wrong scoreline — points = <strong className="text-emerald-400">Odds × 20</strong></p>
-              <p className="text-xs text-gray-500 mt-1">e.g. Tunisia (23.00) beats Netherlands → <strong className="text-emerald-400">460 pts!</strong></p>
+              <p className="font-medium text-white">Winner Prediction</p>
+              <p className="text-sm text-gray-400">Predict the team that advances — including extra time and penalties</p>
+              <p className="text-xs text-gray-500 mt-1">Points = the selected team&apos;s qualification odds × 20. There is no draw option.</p>
             </div>
             <span className="text-lg font-bold text-emerald-400">Odds×20</span>
           </div>
@@ -41,45 +42,41 @@ export default function RulesPage() {
           <div className="px-6 py-4 flex items-center justify-between bg-amber-500/5">
             <div>
               <p className="font-medium text-amber-400">⚡ Match Extras (Bonus Questions)</p>
-              <p className="text-sm text-gray-400">Star player scoring, halftime leader, penalties — 1 or 2 per match</p>
+              <p className="text-sm text-gray-400">Extra time, penalty shootout and selected star-player questions</p>
             </div>
             <span className="text-2xl font-bold text-amber-400">30 <span className="text-sm font-normal text-gray-400">each</span></span>
           </div>
         </div>
 
-        {/* Example: Portugal vs Uzbekistan */}
+        {/* Knockout example */}
         <div className="px-6 py-5 border-t border-emerald-500/20 bg-emerald-900/20">
           <p className="text-sm font-bold text-emerald-400 mb-3 uppercase tracking-wider">📊 Example — How Odds Scoring Works</p>
           <div className="text-center mb-3">
-            <p className="text-lg font-bold text-white">🇵🇹 Portugal <span className="text-gray-500 mx-2">vs</span> 🇺🇿 Uzbekistan</p>
+            <p className="text-lg font-bold text-white">🇵🇹 Portugal <span className="text-gray-500 mx-2">vs</span> 🇭🇷 Croatia</p>
           </div>
-          <div className="grid grid-cols-3 gap-3 text-center">
+          <div className="grid grid-cols-2 gap-3 text-center">
             <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3">
               <p className="text-xs text-gray-400 mb-1">🇵🇹 Portugal Win</p>
-              <p className="text-xs text-gray-500">Odds: 1.40</p>
-              <p className="text-xl font-black text-emerald-400 mt-1">28 <span className="text-xs font-normal text-gray-400">pts</span></p>
-              <p className="text-[10px] text-gray-500 mt-1">1.40 × 20</p>
-            </div>
-            <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3">
-              <p className="text-xs text-gray-400 mb-1">🤝 Draw</p>
-              <p className="text-xs text-gray-500">Odds: 4.50</p>
-              <p className="text-xl font-black text-amber-400 mt-1">90 <span className="text-xs font-normal text-gray-400">pts</span></p>
-              <p className="text-[10px] text-gray-500 mt-1">4.50 × 20</p>
+              <p className="text-xs text-gray-500">Qualification odds: 1.45</p>
+              <p className="text-xl font-black text-emerald-400 mt-1">29 <span className="text-xs font-normal text-gray-400">pts</span></p>
+              <p className="text-[10px] text-gray-500 mt-1">1.45 × 20</p>
             </div>
             <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3">
-              <p className="text-xs text-gray-400 mb-1">🇺🇿 Uzbekistan Win</p>
-              <p className="text-xs text-gray-500">Odds: 8.00</p>
-              <p className="text-xl font-black text-red-400 mt-1">160 <span className="text-xs font-normal text-gray-400">pts</span></p>
-              <p className="text-[10px] text-gray-500 mt-1">8.00 × 20</p>
+              <p className="text-xs text-gray-400 mb-1">🇭🇷 Croatia Advances</p>
+              <p className="text-xs text-gray-500">Qualification odds: 2.70</p>
+              <p className="text-xl font-black text-red-400 mt-1">54 <span className="text-xs font-normal text-gray-400">pts</span></p>
+              <p className="text-[10px] text-gray-500 mt-1">2.70 × 20</p>
             </div>
           </div>
-          <p className="text-xs text-gray-500 text-center mt-3">⚡ Predict the underdog and get rewarded! Exact score always gives <strong className="text-emerald-400">80 pts</strong> regardless of odds.</p>
+          <div className="mt-4 rounded-lg border border-white/10 bg-white/5 p-3 text-sm text-gray-300">
+            Example: you predict <strong className="text-white">1–1 after extra time</strong> and Portugal to advance on penalties.
+            If both are correct, you receive <strong className="text-emerald-400">80 + 29 = 109 points</strong>.
+          </div>
         </div>
 
         <div className="px-6 py-4 bg-emerald-500/10 text-center border-t border-emerald-500/20">
-          <p className="text-sm font-semibold text-emerald-400">Maximum Points Per Match (Round 3+)</p>
-          <p className="text-2xl font-black text-white mt-1">80 + 30 + 60 = 170</p>
-          <p className="text-xs text-gray-400 mt-1">Exact (80) + First Goal (30) + Bonus (up to 2 × 30)</p>
+          <p className="text-sm font-semibold text-emerald-400">Exact score and winner points stack</p>
+          <p className="text-xs text-gray-400 mt-1">80 exact-score points + winner odds points + first goal and match extras</p>
         </div>
       </div>
 

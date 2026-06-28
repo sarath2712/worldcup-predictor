@@ -396,6 +396,19 @@ function MatchCard({
       {canEdit && (
         <div className="mt-3 space-y-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {isKnockout && (
+              <select
+                value={bonusAnswers.winner_prediction || ""}
+                onChange={(e) =>
+                  setBonusAnswers((prev) => ({ ...prev, winner_prediction: e.target.value }))
+                }
+                className="text-xs px-3 py-1.5 border border-emerald-500/30 rounded-lg bg-emerald-500/5 text-white"
+              >
+                <option value="">Who will advance? (including penalties)</option>
+                <option value={match.home_team}>{match.home_team}</option>
+                <option value={match.away_team}>{match.away_team}</option>
+              </select>
+            )}
             <select
               value={firstGoal}
               onChange={(e) => setFirstGoal(e.target.value)}
@@ -429,21 +442,20 @@ function MatchCard({
               </div>
             </div>
           )}
-          {hasOdds && home !== "" && away !== "" && (
+          {hasOdds && home !== "" && away !== "" && (!isKnockout || bonusAnswers.winner_prediction) && (
             <div className="flex items-center gap-2 text-[10px] text-emerald-400 bg-emerald-500/5 px-3 py-1.5 rounded-lg border border-emerald-500/20">
               <span className="font-semibold">💰 Your potential:</span>
               {(() => {
                 const h = parseInt(home), a = parseInt(away);
                 if (isNaN(h) || isNaN(a)) return null;
-                const outcome = h > a ? "home" : h < a ? "away" : "draw";
-                const isKnockoutDraw = isKnockout && outcome === "draw";
+                const outcome = isKnockout
+                  ? bonusAnswers.winner_prediction === match.home_team ? "home" : "away"
+                  : h > a ? "home" : h < a ? "away" : "draw";
                 const odds = outcome === "home" ? match.home_win_odds! : outcome === "away" ? match.away_win_odds! : match.draw_odds!;
-                const outcomePts = isKnockoutDraw ? 0 : oddsToPoints(odds);
+                const outcomePts = oddsToPoints(odds);
                 return (
                   <>
-                    <span>
-                      {isKnockoutDraw ? "Outcome decided on penalties" : <>Outcome: <b>{outcomePts}</b> pts</>}
-                    </span>
+                    <span>Winner: <b>{outcomePts}</b> pts</span>
                     <span className="text-gray-600">|</span>
                     <span>Exact: <b>80</b> pts</span>
                   </>
@@ -454,7 +466,7 @@ function MatchCard({
           <div className="flex items-center gap-2">
             <button
               onClick={handleSave}
-              disabled={saving || !home || !away}
+              disabled={saving || !home || !away || (isKnockout && !bonusAnswers.winner_prediction)}
               className="text-xs px-3 py-1.5 bg-primary text-white rounded-lg disabled:opacity-50 hover:bg-primary/90 transition"
             >
               {prediction ? "Update" : "Save"} Prediction

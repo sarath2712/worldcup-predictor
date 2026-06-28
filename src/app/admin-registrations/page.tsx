@@ -1242,6 +1242,22 @@ function AdminMatchRow({
 
       {/* First Goal */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-white/5">
+        {isKnockout && (
+          <div>
+            <label className="text-[10px] text-emerald-400 uppercase tracking-wider">Team that advanced (including penalties)</label>
+            <select
+              value={bonusActuals.winner_prediction || ""}
+              onChange={(e) =>
+                setBonusActuals((prev) => ({ ...prev, winner_prediction: e.target.value }))
+              }
+              className="w-full border border-emerald-500/30 rounded-lg px-3 py-2 bg-emerald-500/5 text-white text-sm"
+            >
+              <option value="">Select winner...</option>
+              <option value={match.home_team}>{match.home_team}</option>
+              <option value={match.away_team}>{match.away_team}</option>
+            </select>
+          </div>
+        )}
         <div>
           <label className="text-[10px] text-gray-500 uppercase tracking-wider">Team Scored First ({firstGoalPoints} pts)</label>
           <select
