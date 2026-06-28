@@ -404,7 +404,7 @@ function MatchCard({
                 }
                 className="text-xs px-3 py-1.5 border border-emerald-500/30 rounded-lg bg-emerald-500/5 text-white"
               >
-                <option value="">Who will advance? (including penalties)</option>
+                <option value="">Winner (final outcome after penalties)</option>
                 <option value={match.home_team}>{match.home_team}</option>
                 <option value={match.away_team}>{match.away_team}</option>
               </select>

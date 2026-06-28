@@ -1244,7 +1244,7 @@ function AdminMatchRow({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-white/5">
         {isKnockout && (
           <div>
-            <label className="text-[10px] text-emerald-400 uppercase tracking-wider">Team that advanced (including penalties)</label>
+            <label className="text-[10px] text-emerald-400 uppercase tracking-wider">Winner (final outcome after penalties)</label>
             <select
               value={bonusActuals.winner_prediction || ""}
               onChange={(e) =>

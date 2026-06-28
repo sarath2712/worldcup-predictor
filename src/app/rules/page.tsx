@@ -19,15 +19,15 @@ export default function RulesPage() {
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <p className="font-medium text-white">Exact Score Prediction</p>
-              <p className="text-sm text-gray-400">Score after 90 minutes plus 30 minutes of extra time, if played</p>
+              <p className="text-sm text-gray-400">Score at the end of Regular Time + Extra Time (ET), if played</p>
               <p className="text-xs text-gray-500 mt-1">Penalty shootout kicks are not included in the exact score.</p>
             </div>
             <span className="text-2xl font-bold text-emerald-400">80</span>
           </div>
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
-              <p className="font-medium text-white">Winner Prediction</p>
-              <p className="text-sm text-gray-400">Predict the team that advances — including extra time and penalties</p>
+              <p className="font-medium text-white">Winner</p>
+              <p className="text-sm text-gray-400">Select the winning team based on the final outcome after penalties, if required</p>
               <p className="text-xs text-gray-500 mt-1">Points = the selected team&apos;s qualification odds × 20. There is no draw option.</p>
             </div>
             <span className="text-lg font-bold text-emerald-400">Odds×20</span>
