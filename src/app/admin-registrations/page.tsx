@@ -110,6 +110,9 @@ export default function AdminRegistrationsPage() {
   const [groupStandings, setGroupStandings] = useState<Record<string, { first: string; second: string; third: string }>>({});
   const [scoringGroup, setScoringGroup] = useState<string | null>(null);
   const [groupScoreResult, setGroupScoreResult] = useState<string | null>(null);
+  const [groupTopScorer, setGroupTopScorer] = useState("");
+  const [scoringGroupTopScorer, setScoringGroupTopScorer] = useState(false);
+  const [groupTopScorerResult, setGroupTopScorerResult] = useState<string | null>(null);
   const [caricatureEntries, setCaricatureEntries] = useState<SubmissionEntry[]>([]);
   const [footballStories, setFootballStories] = useState<SubmissionEntry[]>([]);
   const supabase = createClient();
@@ -459,6 +462,43 @@ export default function AdminRegistrationsPage() {
     setScoringGroup(null);
   }
 
+  async function scoreGroupTopScorerPredictions() {
+    const actual = groupTopScorer.trim();
+    if (!actual) {
+      setGroupTopScorerResult("Enter the actual Group Stage Top Scorer.");
+      return;
+    }
+
+    setScoringGroupTopScorer(true);
+    setGroupTopScorerResult(null);
+
+    const { data: preds, error } = await supabase
+      .from("group_topscorer_predictions")
+      .select("id, predicted_topscorer");
+
+    if (error || !preds) {
+      setGroupTopScorerResult(`Error fetching predictions: ${error?.message}`);
+      setScoringGroupTopScorer(false);
+      return;
+    }
+
+    const normalize = (value: string) => value.trim().toLocaleLowerCase();
+    let correct = 0;
+    for (const prediction of preds) {
+      const points = normalize(prediction.predicted_topscorer) === normalize(actual) ? 75 : 0;
+      if (points === 75) correct++;
+      await supabase
+        .from("group_topscorer_predictions")
+        .update({ points })
+        .eq("id", prediction.id);
+    }
+
+    setGroupTopScorerResult(
+      `Top scorer predictions scored: ${correct} of ${preds.length} received 75 points for ${actual}.`
+    );
+    setScoringGroupTopScorer(false);
+  }
+
   const categoryCounts = registrations.reduce(
     (acc, r) => {
       acc[r.category] = (acc[r.category] || 0) + 1;
@@ -774,6 +814,32 @@ export default function AdminRegistrationsPage() {
                   );
                 });
               })()}
+            </div>
+
+            <div className="mt-6 rounded-xl border border-accent/30 bg-accent/5 p-4">
+              <h3 className="font-bold text-accent">⚽ Group Stage Top Scorer</h3>
+              <p className="text-xs text-gray-500 mt-1 mb-3">
+                Enter the final group-stage top scorer exactly once all group matches are complete. Correct predictions receive 75 points.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="text"
+                  value={groupTopScorer}
+                  onChange={(e) => setGroupTopScorer(e.target.value)}
+                  placeholder="Enter player name"
+                  className="flex-1 border border-white/20 rounded-lg px-3 py-2 bg-white/10 text-white text-sm"
+                />
+                <button
+                  onClick={scoreGroupTopScorerPredictions}
+                  disabled={scoringGroupTopScorer || !groupTopScorer.trim()}
+                  className="px-4 py-2 bg-accent text-white text-sm font-semibold rounded-lg disabled:opacity-50 hover:bg-accent/90 transition"
+                >
+                  {scoringGroupTopScorer ? "Scoring..." : "Score Top Scorer Predictions"}
+                </button>
+              </div>
+              {groupTopScorerResult && (
+                <p className="text-sm text-green-300 mt-3">{groupTopScorerResult}</p>
+              )}
             </div>
           </div>
         </div>
