@@ -423,41 +423,25 @@ export default function AdminRegistrationsPage() {
       setScoringGroup(null);
       return;
     }
-    const first = standings[0].team;
-    const second = standings[1].team;
-    const third = standings[2].team;
-
-    // Fetch all predictions for this group
-    const { data: preds, error } = await supabase
-      .from("group_predictions")
-      .select("id, predicted_first, predicted_second, predicted_third")
-      .eq("group_name", groupName);
-
-    if (error || !preds) {
-      setGroupScoreResult(`Error fetching predictions: ${error?.message}`);
+    const { data: { session } } = await supabase.auth.getSession();
+    const response = await fetch("/api/score-group-predictions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify({ action: "group", group_name: groupName }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setGroupScoreResult(result.error || "Unable to score predictions.");
       setScoringGroup(null);
       return;
     }
-
-    let scored75 = 0, scored50 = 0, scored0 = 0;
-    for (const p of preds) {
-      const got1st = p.predicted_first === first;
-      const got2nd = p.predicted_second === second;
-      const got3rd = p.predicted_third === third;
-      let pts = 0;
-      if (got1st && got2nd && got3rd) { pts = 75; scored75++; }
-      else if (got1st && got2nd) { pts = 50; scored50++; }
-      else { scored0++; }
-
-      await supabase
-        .from("group_predictions")
-        .update({ points: pts })
-        .eq("id", p.id);
-    }
-
+    const [first, second, third] = result.standings;
     setGroupStandings((prev) => ({ ...prev, [groupName]: { first, second, third } }));
     setGroupScoreResult(
-      `${groupName} scored! ${preds.length} predictions: ${scored75} got 75pts, ${scored50} got 50pts, ${scored0} got 0pts. Standings: 1st ${first}, 2nd ${second}, 3rd ${third}`
+      `${groupName} scored for all ${result.total} players: ${result.scored75} got 75pts, ${result.scored50} got 50pts.`
     );
     setScoringGroup(null);
   }
@@ -472,29 +456,20 @@ export default function AdminRegistrationsPage() {
     setScoringGroupTopScorer(true);
     setGroupTopScorerResult(null);
 
-    const { data: preds, error } = await supabase
-      .from("group_topscorer_predictions")
-      .select("id, predicted_topscorer");
-
-    if (error || !preds) {
-      setGroupTopScorerResult(`Error fetching predictions: ${error?.message}`);
-      setScoringGroupTopScorer(false);
-      return;
-    }
-
-    const normalize = (value: string) => value.trim().toLocaleLowerCase();
-    let correct = 0;
-    for (const prediction of preds) {
-      const points = normalize(prediction.predicted_topscorer) === normalize(actual) ? 75 : 0;
-      if (points === 75) correct++;
-      await supabase
-        .from("group_topscorer_predictions")
-        .update({ points })
-        .eq("id", prediction.id);
-    }
-
+    const { data: { session } } = await supabase.auth.getSession();
+    const response = await fetch("/api/score-group-predictions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify({ action: "top_scorer", actual }),
+    });
+    const result = await response.json();
     setGroupTopScorerResult(
-      `Top scorer predictions scored: ${correct} of ${preds.length} received 75 points for ${actual}.`
+      response.ok
+        ? `Top scorer predictions scored: ${result.correct} of ${result.total} received 75 points for ${actual}.`
+        : result.error || "Unable to score top scorer predictions."
     );
     setScoringGroupTopScorer(false);
   }
