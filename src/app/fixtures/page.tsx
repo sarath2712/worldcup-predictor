@@ -11,6 +11,20 @@ type Tab = "group" | "knockout" | "tables" | "scorers";
 type MatchRow = { id: number; stage: string; home_team: string; away_team: string; kickoff_utc: string; venue: string | null; home_score: number | null; away_score: number | null };
 type TopScorer = { id: number; rank: number; player_name: string; team: string; goals: number; updated_at: string };
 
+const istDateFormatter = new Intl.DateTimeFormat("en-IN", {
+  timeZone: "Asia/Kolkata",
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+});
+
+const istTimeFormatter = new Intl.DateTimeFormat("en-IN", {
+  timeZone: "Asia/Kolkata",
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+});
+
 export default function FixturesPage() {
   const [tab, setTab] = useState<Tab>("group");
   const [matches, setMatches] = useState<MatchRow[]>([]);
@@ -42,7 +56,7 @@ export default function FixturesPage() {
     tab === "knockout" ? !match.stage.startsWith("Group") : match.stage.startsWith("Group")
   );
   const grouped = fixtureMatches.reduce((acc, match) => {
-    const dateKey = format(new Date(match.kickoff_utc), "EEE, MMM d");
+    const dateKey = istDateFormatter.format(new Date(match.kickoff_utc));
     if (!acc[dateKey]) acc[dateKey] = [];
     acc[dateKey].push(match);
     return acc;
@@ -120,7 +134,7 @@ export default function FixturesPage() {
                         {match.stage}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {format(new Date(match.kickoff_utc), "h:mm a")}
+                        {istTimeFormatter.format(new Date(match.kickoff_utc))}
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
