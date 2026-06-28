@@ -28,10 +28,21 @@ export async function POST(request: Request) {
       .select("id, predicted_topscorer");
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-    const normalize = (value: string) => value.trim().toLocaleLowerCase();
+    const normalize = (value: string) =>
+      value
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .toLocaleLowerCase();
+    const normalizedActual = normalize(actual);
+    const surname = normalizedActual.split(/\s+/).at(-1) || normalizedActual;
     let correct = 0;
     for (const prediction of predictions || []) {
-      const points = normalize(prediction.predicted_topscorer) === normalize(actual) ? 75 : 0;
+      const normalizedPrediction = normalize(prediction.predicted_topscorer);
+      const isCorrect =
+        normalizedPrediction === normalizedActual ||
+        normalizedPrediction.split(/\s+/).includes(surname);
+      const points = isCorrect ? 75 : 0;
       if (points) correct++;
       await service.from("group_topscorer_predictions").update({ points }).eq("id", prediction.id);
     }
