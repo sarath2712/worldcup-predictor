@@ -17,7 +17,7 @@ type Message = {
 const WELCOME: Message = {
   role: "assistant",
   content:
-    "Hi! I can explain your predictions, match points, extras, standings, and the leaderboard. What would you like to check?",
+    "Hi! Ask me about your predictions, match points, football, World Cup history—or ask me to tell you a football joke. What would you like to know?",
 };
 
 const ZIZU_HIGHLIGHT_UNTIL = Date.parse("2026-07-03T23:59:59+05:30");
@@ -210,7 +210,7 @@ export function PredictionChat() {
             ? [
                 {
                   role: "assistant",
-                  content: `Hi ${data.username}! I can explain your predictions, match points, extras, standings, and the leaderboard. What would you like to check?`,
+                  content: `Hi ${data.username}! Ask me about your predictions, match points, football, World Cup history—or ask me to tell you a football joke. What would you like to know?`,
                 },
               ]
             : current
@@ -378,7 +378,7 @@ export function PredictionChat() {
                 onKeyDown={handleKeyDown}
                 rows={1}
                 maxLength={1500}
-                placeholder="Ask about your predictions…"
+                placeholder="Ask ZiZu about football…"
                 className="max-h-28 min-h-11 min-w-0 flex-1 resize-none rounded-2xl border border-white/15 bg-white/10 px-3 py-2.5 text-base text-white outline-none placeholder:text-gray-500 focus:border-emerald-400/60 sm:px-4 sm:py-3 sm:text-sm"
               />
               <button
@@ -391,7 +391,7 @@ export function PredictionChat() {
               </button>
             </form>
             <p className="mt-2 text-center text-[10px] text-gray-600">
-              Prediction help only · verify important scores on your profile
+              Predictions · football questions · jokes
             </p>
           </div>
         </section>
