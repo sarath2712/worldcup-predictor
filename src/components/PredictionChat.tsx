@@ -115,7 +115,7 @@ export function PredictionChat() {
       {open && (
         <section
           aria-label="Open ZiZu AI Assistant"
-          className="fixed inset-x-2 bottom-24 top-2 flex w-auto flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-950/90 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:static sm:mb-3 sm:h-[min(72vh,590px)] sm:w-[calc(100vw-2rem)] sm:max-w-[390px]"
+          className="fixed bottom-20 right-2 flex h-[min(60dvh,440px)] w-[calc(100vw-1rem)] max-w-[340px] flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-950/90 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:static sm:mb-3 sm:h-[min(72vh,590px)] sm:w-[calc(100vw-2rem)] sm:max-w-[390px]"
         >
           <header className="flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-emerald-500/15 via-transparent to-amber-400/10 px-4 py-3">
             <div className="flex items-center gap-3">
