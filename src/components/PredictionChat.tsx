@@ -111,15 +111,15 @@ export function PredictionChat() {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-[80] sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-3 z-[80] sm:bottom-6 sm:right-6">
       {open && (
         <section
           aria-label="Open ZiZu AI Assistant"
-          className="fixed bottom-20 right-2 flex h-[min(60dvh,440px)] w-[calc(100vw-1rem)] max-w-[340px] flex-col overflow-hidden rounded-3xl border border-white/15 bg-slate-950/90 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:static sm:mb-3 sm:h-[min(72vh,590px)] sm:w-[calc(100vw-2rem)] sm:max-w-[390px]"
+          className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] right-2 flex h-[min(58dvh,420px)] w-[calc(100vw-1rem)] max-w-[340px] flex-col overflow-hidden rounded-2xl border border-white/15 bg-slate-950/95 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:static sm:mb-3 sm:h-[min(72vh,590px)] sm:w-[calc(100vw-2rem)] sm:max-w-[390px] sm:rounded-3xl"
         >
-          <header className="flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-emerald-500/15 via-transparent to-amber-400/10 px-4 py-3">
+          <header className="flex shrink-0 items-center justify-between border-b border-white/10 bg-gradient-to-r from-emerald-500/15 via-transparent to-amber-400/10 px-3 py-2.5 sm:px-4 sm:py-3">
             <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/10 text-2xl">
+              <span className="grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/10 text-xl sm:h-10 sm:w-10 sm:text-2xl">
                 ⚽
               </span>
               <div>
@@ -141,7 +141,7 @@ export function PredictionChat() {
 
           <div
             ref={scrollRef}
-            className="flex-1 space-y-3 overflow-y-auto px-4 py-4"
+            className="min-h-0 min-w-0 flex-1 space-y-3 overflow-x-hidden overflow-y-auto px-3 py-3 sm:px-4 sm:py-4"
             aria-live="polite"
           >
             {messages.map((message, index) => (
@@ -152,7 +152,7 @@ export function PredictionChat() {
                 }`}
               >
                 <div
-                  className={`max-w-[88%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                  className={`max-w-[88%] whitespace-pre-wrap break-words [overflow-wrap:anywhere] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                     message.role === "user"
                       ? "rounded-br-md bg-emerald-500 text-slate-950"
                       : "rounded-bl-md border border-white/10 bg-white/10 text-gray-100"
@@ -183,7 +183,7 @@ export function PredictionChat() {
                 {error}
               </p>
             )}
-            <form onSubmit={sendMessage} className="flex items-end gap-2">
+            <form onSubmit={sendMessage} className="flex min-w-0 items-end gap-2">
               <textarea
                 ref={inputRef}
                 value={input}
@@ -192,7 +192,7 @@ export function PredictionChat() {
                 rows={1}
                 maxLength={1500}
                 placeholder="Ask about your predictions…"
-                className="max-h-28 min-h-11 flex-1 resize-none rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-gray-500 focus:border-emerald-400/60"
+                className="max-h-28 min-h-11 min-w-0 flex-1 resize-none rounded-2xl border border-white/15 bg-white/10 px-3 py-2.5 text-base text-white outline-none placeholder:text-gray-500 focus:border-emerald-400/60 sm:px-4 sm:py-3 sm:text-sm"
               />
               <button
                 type="submit"
