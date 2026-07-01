@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ConditionalNavbar } from "@/components/ConditionalNavbar";
 import { ConditionalMain } from "@/components/ConditionalMain";
+import { PredictionChat } from "@/components/PredictionChat";
 
 export const metadata: Metadata = {
   title: "FIFAWC2026 Predictor",
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen">
         <ConditionalNavbar />
         <ConditionalMain>{children}</ConditionalMain>
+        <PredictionChat />
       </body>
     </html>
   );
