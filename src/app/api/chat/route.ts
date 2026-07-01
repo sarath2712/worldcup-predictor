@@ -505,11 +505,22 @@ export async function POST(request: Request) {
     }
   }
 
-  if (wantsPredictionHistory(latestQuestion) && mentioned.length === 0) {
+  const wantsNamedAdminHistory =
+    isAdmin &&
+    mentionedParticipants.length === 1 &&
+    /\b(predictions?|history|breakdown|points?|summary)\b/i.test(latestQuestion);
+  const historyParticipant = wantsNamedAdminHistory
+    ? mentionedParticipants[0]
+    : currentParticipant;
+
+  if (
+    (wantsPredictionHistory(latestQuestion) && mentioned.length === 0) ||
+    wantsNamedAdminHistory
+  ) {
     const extrasByMatch = new Map(
-      currentParticipant.matchExtras.map((extra) => [extra.match_id, extra])
+      historyParticipant.matchExtras.map((extra) => [extra.match_id, extra])
     );
-    const rows = currentParticipant.predictions.map((prediction, index) => {
+    const rows = historyParticipant.predictions.map((prediction, index) => {
       const match = matchById.get(prediction.match_id);
       const extra = extrasByMatch.get(prediction.match_id);
       const played =
@@ -529,36 +540,36 @@ export async function POST(request: Request) {
           : "   Points: pending until the match is scored",
       ].join("\n");
     });
-    const matchPoints = currentParticipant.predictions.reduce(
+    const matchPoints = historyParticipant.predictions.reduce(
       (sum, prediction) => sum + (prediction.points || 0),
       0
     );
-    const extraPoints = currentParticipant.matchExtras.reduce(
+    const extraPoints = historyParticipant.matchExtras.reduce(
       (sum, extra) => sum + (extra.points || 0),
       0
     );
-    const groupPoints = currentParticipant.groupPredictions.reduce(
+    const groupPoints = historyParticipant.groupPredictions.reduce(
       (sum, prediction) => sum + (prediction.points || 0),
       0
     );
     const groupTopScorerPoints =
-      currentParticipant.groupTopScorer?.points || 0;
+      historyParticipant.groupTopScorer?.points || 0;
     const tournamentPoints =
-      currentParticipant.tournamentPrediction?.points || 0;
+      historyParticipant.tournamentPrediction?.points || 0;
     const grandTotal =
       matchPoints +
       extraPoints +
       groupPoints +
       groupTopScorerPoints +
       tournamentPoints;
-    const groupRows = currentParticipant.groupPredictions.map(
+    const groupRows = historyParticipant.groupPredictions.map(
       (prediction) =>
         `${prediction.group_name}: ${prediction.predicted_first}, ${prediction.predicted_second}, ${prediction.predicted_third} — ${prediction.points ?? "pending"} points`
     );
-    const tournament = currentParticipant.tournamentPrediction;
+    const tournament = historyParticipant.tournamentPrediction;
 
     const answer = [
-      `${currentParticipant.username}'s complete prediction history`,
+      `${historyParticipant.username}'s complete prediction history`,
       "",
       `Points summary: match predictions ${matchPoints} + match extras ${extraPoints} + group predictions ${groupPoints} + group top scorer ${groupTopScorerPoints} + tournament ${tournamentPoints} = ${grandTotal}`,
       "",
@@ -566,8 +577,8 @@ export async function POST(request: Request) {
       "",
       "Group predictions",
       groupRows.length ? groupRows.join("\n") : "No group predictions recorded.",
-      currentParticipant.groupTopScorer
-        ? `Group-stage top scorer: ${currentParticipant.groupTopScorer.predicted_topscorer} — ${groupTopScorerPoints} points`
+      historyParticipant.groupTopScorer
+        ? `Group-stage top scorer: ${historyParticipant.groupTopScorer.predicted_topscorer} — ${groupTopScorerPoints} points`
         : "Group-stage top scorer: not predicted.",
       "",
       "Tournament predictions",
