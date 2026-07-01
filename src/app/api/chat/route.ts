@@ -333,7 +333,7 @@ export async function POST(request: Request) {
           mentionedTeams.includes(match.home_team) ||
           mentionedTeams.includes(match.away_team)
       )
-    : [...completedMatches.slice(-12), ...upcomingMatches.slice(0, 8)];
+    : [...completedMatches.slice(-6), ...upcomingMatches.slice(0, 4)];
   const contextMatchIds = new Set(contextMatches.map((match) => match.id));
   const matchById = new Map(safeMatches.map((match) => [match.id, match]));
 
@@ -507,7 +507,7 @@ export async function POST(request: Request) {
     ...mentioned.map((profile) => profile.id),
   ]);
   const compactLeaderboard = [
-    ...leaderboardRows.slice(0, 20),
+    ...leaderboardRows.slice(0, 10),
     ...leaderboardRows.filter((row) => importantUserIds.has(row.user_id)),
   ].filter(
     (row, index, rows) =>
@@ -517,9 +517,9 @@ export async function POST(request: Request) {
   const context = {
     generatedAt: new Date().toISOString(),
     websiteAreas: SITE_AREAS,
-    signedInParticipant: compactParticipant(currentParticipant, 20),
+    signedInParticipant: compactParticipant(currentParticipant, 8),
     specificallyMentionedParticipants: mentionedParticipants.map((participant) =>
-      compactParticipant(participant, 20)
+      compactParticipant(participant, 8)
     ),
     leaderboard: compactLeaderboard,
     relevantRecentAndUpcomingMatches: contextMatches,
@@ -561,50 +561,67 @@ STYLE:
 SITE_CONTEXT:
 ${JSON.stringify(context)}`;
 
-  try {
-    const groqResponse = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "User-Agent": "fifa2026-prediction-assistant/1.0",
-        },
-        body: JSON.stringify({
-          model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
-          messages: [{ role: "system", content: systemPrompt }, ...messages],
-          temperature: 0.2,
-          max_completion_tokens: 700,
-        }),
-        signal: AbortSignal.timeout(25_000),
+  const preferredModel =
+    process.env.GROQ_MODEL ||
+    "meta-llama/llama-4-scout-17b-16e-instruct";
+  const models = Array.from(
+    new Set([
+      preferredModel,
+      "meta-llama/llama-4-scout-17b-16e-instruct",
+      "llama-3.1-8b-instant",
+    ])
+  ).slice(0, 2);
+
+  for (const [attempt, model] of models.entries()) {
+    try {
+      const groqResponse = await fetch(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+            "User-Agent": "fifa2026-prediction-assistant/1.0",
+          },
+          body: JSON.stringify({
+            model,
+            messages: [{ role: "system", content: systemPrompt }, ...messages],
+            temperature: 0.2,
+            max_completion_tokens: 600,
+          }),
+          signal: AbortSignal.timeout(12_000),
+        }
+      );
+
+      if (groqResponse.ok) {
+        const completion = await groqResponse.json();
+        const answer = completion?.choices?.[0]?.message?.content?.trim();
+        if (answer) return NextResponse.json({ answer });
+      } else {
+        const detail = await groqResponse.text();
+        console.error(
+          "Groq chat attempt failed",
+          model,
+          groqResponse.status,
+          detail.slice(0, 300)
+        );
+        const retryable =
+          groqResponse.status === 413 ||
+          groqResponse.status === 429 ||
+          groqResponse.status >= 500;
+        if (!retryable || attempt === models.length - 1) break;
       }
-    );
-
-    if (!groqResponse.ok) {
-      const detail = await groqResponse.text();
-      console.error("Groq chat failed", groqResponse.status, detail.slice(0, 300));
-      return NextResponse.json(
-        { error: "The assistant is temporarily unavailable." },
-        { status: 502 }
-      );
+    } catch (error) {
+      console.error("Groq chat attempt failed", model, error);
+      if (attempt === models.length - 1) break;
     }
-
-    const completion = await groqResponse.json();
-    const answer = completion?.choices?.[0]?.message?.content?.trim();
-    if (!answer) {
-      return NextResponse.json(
-        { error: "The assistant returned an empty response." },
-        { status: 502 }
-      );
-    }
-
-    return NextResponse.json({ answer });
-  } catch (error) {
-    console.error("Groq chat request failed", error);
-    return NextResponse.json(
-      { error: "The assistant timed out. Please try again." },
-      { status: 504 }
-    );
   }
+
+  return NextResponse.json(
+    {
+      error:
+        "ZiZu is busy at the moment. Please wait a few seconds and try again.",
+    },
+    { status: 503, headers: { "Retry-After": "10" } }
+  );
 }
