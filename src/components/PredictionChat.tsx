@@ -54,7 +54,9 @@ export function PredictionChat() {
   }, []);
 
   useEffect(() => {
-    if (open) inputRef.current?.focus();
+    if (open && window.matchMedia("(min-width: 640px)").matches) {
+      inputRef.current?.focus();
+    }
   }, [open]);
 
   useEffect(() => {
