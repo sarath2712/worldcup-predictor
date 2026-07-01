@@ -13,14 +13,24 @@ const WELCOME: Message = {
     "Hi! I can explain your predictions, match points, extras, standings, and the leaderboard. What would you like to check?",
 };
 
+const ZIZU_HIGHLIGHT_UNTIL = Date.parse("2026-07-03T23:59:59+05:30");
+
 export function PredictionChat() {
   const [open, setOpen] = useState(false);
+  const [highlighted, setHighlighted] = useState(false);
   const [messages, setMessages] = useState<Message[]>([WELCOME]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    setHighlighted(
+      Date.now() < ZIZU_HIGHLIGHT_UNTIL &&
+        localStorage.getItem("zizu-discovered") !== "true"
+    );
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -109,6 +119,14 @@ export function PredictionChat() {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       void sendMessage();
+    }
+  }
+
+  function toggleChat() {
+    setOpen((current) => !current);
+    if (!open && highlighted) {
+      localStorage.setItem("zizu-discovered", "true");
+      setHighlighted(false);
     }
   }
 
@@ -214,11 +232,23 @@ export function PredictionChat() {
 
       <button
         type="button"
-        onClick={() => setOpen((current) => !current)}
+        onClick={toggleChat}
         aria-label={open ? "Close prediction assistant" : "Open prediction assistant"}
         aria-expanded={open}
-        className="group relative ml-auto grid h-16 w-16 place-items-center rounded-full border border-white/25 bg-slate-900/65 text-3xl shadow-xl shadow-black/40 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:scale-105 hover:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-emerald-400/70"
+        className={`group relative ml-auto grid h-16 w-16 place-items-center rounded-full border bg-slate-900/75 text-3xl shadow-xl backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:scale-105 hover:bg-slate-800/90 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 ${
+          highlighted
+            ? "border-amber-300 shadow-amber-400/40 ring-4 ring-amber-300/30"
+            : "border-white/25 shadow-black/40"
+        }`}
       >
+        {highlighted && (
+          <>
+            <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-amber-300/35" />
+            <span className="absolute right-[4.5rem] top-1/2 w-max -translate-y-1/2 animate-bounce rounded-full border border-amber-300/50 bg-slate-950/95 px-3 py-1.5 text-xs font-bold text-amber-200 shadow-lg">
+              New · Ask ZiZu
+            </span>
+          </>
+        )}
         <span className="absolute inset-1 animate-pulse rounded-full border border-emerald-300/20" />
         <span className="relative drop-shadow-lg transition group-hover:rotate-6">
           ⚽
