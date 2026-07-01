@@ -290,6 +290,31 @@ export default function ProfilePage() {
             const match = pred.matches;
             const extra = extras[match.id];
             const matchTotal = (pred.points || 0) + (extra?.points || 0);
+            const isKnockout = !match.stage.startsWith("Group");
+            const hasOdds = Boolean(
+              match.home_win_odds &&
+              match.away_win_odds &&
+              (isKnockout || match.draw_odds)
+            );
+            const isExactScore =
+              match.home_score !== null &&
+              match.away_score !== null &&
+              pred.predicted_home === match.home_score &&
+              pred.predicted_away === match.away_score;
+            const predictedWinner = extra?.bonus_answers?.winner_prediction;
+            const actualWinner = match.bonus_actuals?.winner_prediction;
+            const winnerCorrect =
+              isKnockout &&
+              Boolean(predictedWinner) &&
+              predictedWinner === actualWinner;
+            const winnerOdds =
+              predictedWinner === match.home_team
+                ? match.home_win_odds
+                : predictedWinner === match.away_team
+                  ? match.away_win_odds
+                  : null;
+            const winnerPoints =
+              winnerCorrect && winnerOdds ? Math.floor(winnerOdds * 20) : 0;
             return (
               <div
                 key={pred.id}
@@ -315,21 +340,17 @@ export default function ProfilePage() {
                   <div className="text-center min-w-[60px]">
                     {match.home_score !== null ? (
                       (() => {
-                        const hasOdds = match.home_win_odds && match.away_win_odds &&
-                          (!match.stage.startsWith("Group") || match.draw_odds);
-                        const exactThreshold = hasOdds ? 80 : 30;
-                        const isExact = pred.points === exactThreshold;
-                        const isCorrect = (pred.points ?? 0) > 0 && !isExact;
+                        const isCorrect = (pred.points ?? 0) > 0 && !isExactScore;
                         return (
                           <>
                             <p className="font-bold text-sm">
                               {match.home_score} - {match.away_score}
                             </p>
                             <p className={`text-xs font-medium ${
-                              isExact ? "text-green-600" :
+                              isExactScore ? "text-green-600" :
                               isCorrect ? "text-yellow-600" : "text-red-600"
                             }`}>
-                              {isExact ? "Exact!" :
+                              {isExactScore ? "Exact!" :
                                isCorrect ? `✓ +${pred.points}` : "✗ Wrong"}
                             </p>
                           </>
@@ -350,10 +371,33 @@ export default function ProfilePage() {
                 {/* Points Breakdown */}
                 {match.home_score !== null && (extra || pred.points !== null) && (
                   <div className="mt-2 pt-2 border-t border-white/5 flex flex-wrap gap-2 text-xs">
-                    {pred.points !== null && (
+                    {pred.points !== null && !isKnockout && (
                       <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400">
                         Score: +{pred.points}
                       </span>
+                    )}
+                    {pred.points !== null && isKnockout && (
+                      <>
+                        <span className={`px-2 py-0.5 rounded-full ${
+                          isExactScore
+                            ? "bg-blue-500/10 text-blue-400"
+                            : "bg-red-500/10 text-red-400"
+                        }`}>
+                          Exact score: {isExactScore ? "+80" : "+0"}
+                        </span>
+                        {predictedWinner && (
+                          <span className={`px-2 py-0.5 rounded-full ${
+                            winnerCorrect
+                              ? "bg-emerald-500/10 text-emerald-400"
+                              : "bg-red-500/10 text-red-400"
+                          }`}>
+                            Winner: {predictedWinner}{" "}
+                            {winnerCorrect
+                              ? `+${winnerPoints} (${winnerOdds?.toFixed(2)} × 20)`
+                              : "+0"}
+                          </span>
+                        )}
+                      </>
                     )}
                     {extra?.predicted_scorers && (() => {
                       const correct = match.actual_scorers && match.actual_scorers === extra.predicted_scorers;
@@ -373,7 +417,9 @@ export default function ProfilePage() {
                       const hasOdds = match.home_win_odds && match.away_win_odds &&
                         (!match.stage.startsWith("Group") || match.draw_odds);
                       const bonusPts = hasOdds ? 30 : 20;
-                      return Object.entries(extra.bonus_answers).map(([key, val]) => {
+                      return Object.entries(extra.bonus_answers)
+                        .filter(([key]) => key !== "winner_prediction")
+                        .map(([key, val]) => {
                         const correct = actuals && actuals[key] === val;
                         return (
                           <span key={key} className={`px-2 py-0.5 rounded-full ${
@@ -382,7 +428,7 @@ export default function ProfilePage() {
                             {key.replace(/_/g, " ")}: {val} {correct ? `+${bonusPts}` : "+0"}
                           </span>
                         );
-                      });
+                        });
                     })()}
                   </div>
                 )}
