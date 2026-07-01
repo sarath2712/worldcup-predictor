@@ -200,15 +200,23 @@ async function participantContext(
 }
 
 function wantsPredictionHistory(question: string) {
+  if (
+    /\b(update|change|edit|modify|replace|submit|save|delete|remove|cancel)\b/i.test(
+      question
+    )
+  ) {
+    return false;
+  }
+
   return (
     /\b(all|full|complete|entire)\b.*\b(predictions?|history)\b/i.test(question) ||
     /\b(predictions?|prediction)\b.*\b(history|breakdown|calculated)\b/i.test(
       question
     ) ||
-    /\b(my|me|myself)\b.*\b(summary|performance|predictions?|history|points)\b/i.test(
+    /\b(my|me|myself)\b.*\b(summary|performance|history|points|show\s+(?:all\s+)?predictions?)\b/i.test(
       question
     ) ||
-    /\b(summary|performance|predictions?|history|points)\b.*\b(my|me|myself)\b/i.test(
+    /\b(summary|performance|history|points|show\s+(?:all\s+)?predictions?)\b.*\b(my|me|myself)\b/i.test(
       question
     ) ||
     /\bhow\s+(am|did)\s+i\b/i.test(question)
@@ -688,6 +696,7 @@ SCOPE:
 - If the requested record, participant, fixture, result, or prediction is missing from SITE_CONTEXT, say exactly which information is unavailable. Do not fill gaps by inference.
 - You may calculate and explain points from the supplied data.
 - You have read-only access. Never offer or claim to create, edit, delete, approve, or otherwise change any account, prediction, score, match, or database record.
+- If asked to update/change/edit a prediction, do not return a prediction summary. Briefly explain that ZiZu is read-only and direct the user to the Matches page to edit it before kickoff; if the match is already locked, state that it can no longer be changed.
 - When SITE_CONTEXT.requesterRole is "admin" and adminReadEnabled is true, you may summarize the other participants' prediction details supplied in SITE_CONTEXT. This exception applies only to prediction data explicitly supplied in the context.
 - For admin questions asking who predicted a named fixture correctly or requesting all predictions for it, use SITE_CONTEXT.adminMatchPredictionAudit and include every supplied participant in a compact table.
 - In fixture audits, distinguish exact-score correctness from correct outcome/advancing-winner correctness. Show predicted score, predicted winner when present, match points, extra points, and total points. Never equate "received points" with "exact score" unless the predicted and actual scores are identical.
