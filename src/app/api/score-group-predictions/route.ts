@@ -79,6 +79,15 @@ export async function POST(request: Request) {
     .sort((a, b) => b[1].pts - a[1].pts || b[1].gd - a[1].gd || b[1].gf - a[1].gf)
     .map(([team]) => team);
 
+  const normalizeTeam = (value: string) =>
+    value
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/&/g, " and ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+
   const { data: predictions, error } = await service
     .from("group_predictions")
     .select("id, predicted_first, predicted_second, predicted_third")
@@ -88,11 +97,11 @@ export async function POST(request: Request) {
   let scored75 = 0;
   let scored50 = 0;
   for (const prediction of predictions || []) {
-    const perfect = prediction.predicted_first === standings[0]
-      && prediction.predicted_second === standings[1]
-      && prediction.predicted_third === standings[2];
-    const topTwo = prediction.predicted_first === standings[0]
-      && prediction.predicted_second === standings[1];
+    const perfect = normalizeTeam(prediction.predicted_first) === normalizeTeam(standings[0])
+      && normalizeTeam(prediction.predicted_second) === normalizeTeam(standings[1])
+      && normalizeTeam(prediction.predicted_third) === normalizeTeam(standings[2]);
+    const topTwo = normalizeTeam(prediction.predicted_first) === normalizeTeam(standings[0])
+      && normalizeTeam(prediction.predicted_second) === normalizeTeam(standings[1]);
     const points = perfect ? 75 : topTwo ? 50 : 0;
     if (points === 75) scored75++;
     if (points === 50) scored50++;
