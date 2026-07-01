@@ -1,6 +1,13 @@
 "use client";
 
-import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
+import {
+  FormEvent,
+  KeyboardEvent,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 type Message = {
   role: "user" | "assistant";
@@ -14,6 +21,162 @@ const WELCOME: Message = {
 };
 
 const ZIZU_HIGHLIGHT_UNTIL = Date.parse("2026-07-03T23:59:59+05:30");
+
+function inlineFormat(text: string): ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) =>
+    part.startsWith("**") && part.endsWith("**") ? (
+      <strong key={index} className="font-semibold text-emerald-200">
+        {part.slice(2, -2)}
+      </strong>
+    ) : (
+      part
+    )
+  );
+}
+
+function AssistantContent({ content }: { content: string }) {
+  const lines = content.split("\n");
+  const blocks: ReactNode[] = [];
+  const sectionNames = new Set([
+    "Points summary",
+    "Group predictions",
+    "Tournament predictions",
+    "Calculation guide",
+  ]);
+
+  for (let index = 0; index < lines.length; ) {
+    const line = lines[index].trimEnd();
+    if (!line.trim()) {
+      index += 1;
+      continue;
+    }
+
+    if (
+      line.trim().startsWith("|") &&
+      lines[index + 1]?.trim().match(/^\|?[\s:-]+\|/)
+    ) {
+      const tableLines: string[] = [line];
+      index += 2;
+      while (index < lines.length && lines[index].trim().startsWith("|")) {
+        tableLines.push(lines[index].trim());
+        index += 1;
+      }
+      const rows = tableLines.map((row) =>
+        row
+          .replace(/^\||\|$/g, "")
+          .split("|")
+          .map((cell) => cell.trim())
+      );
+      blocks.push(
+        <div
+          key={`table-${index}`}
+          className="my-2 overflow-x-auto rounded-xl border border-emerald-400/20"
+        >
+          <table className="w-full min-w-max text-left text-xs">
+            <thead className="bg-emerald-400/15 text-emerald-200">
+              <tr>
+                {rows[0].map((cell, cellIndex) => (
+                  <th key={cellIndex} className="px-2.5 py-2 font-semibold">
+                    {inlineFormat(cell)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/10">
+              {rows.slice(1).map((row, rowIndex) => (
+                <tr key={rowIndex} className="odd:bg-white/[0.03]">
+                  {row.map((cell, cellIndex) => (
+                    <td
+                      key={cellIndex}
+                      className={`px-2.5 py-2 ${
+                        /\b(points?|total|\+\d+)\b/i.test(cell)
+                          ? "font-medium text-amber-200"
+                          : "text-gray-200"
+                      }`}
+                    >
+                      {inlineFormat(cell)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+      continue;
+    }
+
+    if (/^\d+\.\s/.test(line)) {
+      const cardLines = [line];
+      index += 1;
+      while (index < lines.length && /^\s{2,}\S/.test(lines[index])) {
+        cardLines.push(lines[index].trim());
+        index += 1;
+      }
+      blocks.push(
+        <div
+          key={`card-${index}`}
+          className="my-2 rounded-xl border border-sky-400/20 bg-sky-400/[0.06] px-3 py-2"
+        >
+          {cardLines.map((cardLine, cardIndex) => (
+            <p
+              key={cardIndex}
+              className={
+                cardIndex === 0
+                  ? "font-semibold text-sky-200"
+                  : /\bpoints?:/i.test(cardLine)
+                    ? "mt-1 text-xs font-medium text-amber-200"
+                    : "mt-1 text-xs text-gray-300"
+              }
+            >
+              {inlineFormat(cardLine)}
+            </p>
+          ))}
+        </div>
+      );
+      continue;
+    }
+
+    const cleanHeading = line.replace(/^#{1,4}\s*/, "").trim();
+    if (/^#{1,4}\s/.test(line) || sectionNames.has(cleanHeading)) {
+      blocks.push(
+        <h3
+          key={`heading-${index}`}
+          className="mb-1 mt-3 border-b border-emerald-400/20 pb-1 font-semibold text-emerald-200 first:mt-0"
+        >
+          {inlineFormat(cleanHeading)}
+        </h3>
+      );
+    } else if (/^[-*]\s+/.test(line.trim())) {
+      blocks.push(
+        <div key={`bullet-${index}`} className="flex gap-2 py-0.5">
+          <span className="text-emerald-300">•</span>
+          <span>{inlineFormat(line.trim().replace(/^[-*]\s+/, ""))}</span>
+        </div>
+      );
+    } else {
+      const isTotal = /\b(total|points summary|rank)\b/i.test(line);
+      const isPending = /\bpending\b/i.test(line);
+      blocks.push(
+        <p
+          key={`line-${index}`}
+          className={`py-0.5 ${
+            isPending
+              ? "text-amber-200"
+              : isTotal
+                ? "font-medium text-emerald-200"
+                : ""
+          }`}
+        >
+          {inlineFormat(line)}
+        </p>
+      );
+    }
+    index += 1;
+  }
+
+  return <div className="space-y-0.5">{blocks}</div>;
+}
 
 export function PredictionChat() {
   const [open, setOpen] = useState(false);
@@ -172,13 +335,17 @@ export function PredictionChat() {
                 }`}
               >
                 <div
-                  className={`max-w-[88%] whitespace-pre-wrap break-words [overflow-wrap:anywhere] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                  className={`whitespace-pre-wrap break-words [overflow-wrap:anywhere] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                     message.role === "user"
-                      ? "rounded-br-md bg-emerald-500 text-slate-950"
-                      : "rounded-bl-md border border-white/10 bg-white/10 text-gray-100"
+                      ? "max-w-[88%] rounded-br-md bg-emerald-500 text-slate-950"
+                      : "max-w-[96%] rounded-bl-md border border-white/10 bg-white/10 text-gray-100"
                   }`}
                 >
-                  {message.content}
+                  {message.role === "assistant" ? (
+                    <AssistantContent content={message.content} />
+                  ) : (
+                    message.content
+                  )}
                 </div>
               </div>
             ))}
