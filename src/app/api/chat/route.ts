@@ -216,6 +216,7 @@ function wantsPredictionHistory(question: string) {
 }
 
 export async function POST(request: Request) {
+  const requestStartedAt = Date.now();
   if (isRateLimited(clientKey(request))) {
     return NextResponse.json(
       { error: "Too many questions. Give the assistant a short half-time break." },
@@ -248,6 +249,17 @@ export async function POST(request: Request) {
   const questionLower = latestQuestion.toLowerCase();
   const asksAboutPlaystation =
     /\b(playstation|play station|ps world cup|ps5|ps4)\b/i.test(latestQuestion);
+  const usageCategory = asksAboutPlaystation
+    ? "playstation"
+    : wantsPredictionHistory(latestQuestion)
+      ? "personal_history"
+      : /\b(prediction|points?|leaderboard|rank|fixture|match|group|tournament)\b/i.test(
+            latestQuestion
+          )
+        ? "predictions"
+        : /\b(joke|funny)\b/i.test(latestQuestion)
+          ? "football_joke"
+          : "football";
 
   const supabase = createServerSupabase();
   const {
@@ -260,10 +272,10 @@ export async function POST(request: Request) {
       { status: 401 }
     );
   }
+  const authenticatedUserId = user.id;
   const isAdmin = ADMIN_USER_IDS.has(user.id);
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const adminReadClient =
-    isAdmin && serviceRoleKey
+  const serviceClient = serviceRoleKey
       ? createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
           serviceRoleKey,
@@ -275,6 +287,28 @@ export async function POST(request: Request) {
           }
         )
       : null;
+  const adminReadClient = isAdmin ? serviceClient : null;
+
+  async function trackUsage(details: {
+    status: "success" | "failed";
+    model: string;
+    inputTokens?: number;
+    outputTokens?: number;
+    errorCode?: string;
+  }) {
+    if (!serviceClient) return;
+    const { error } = await serviceClient.from("zizu_usage").insert({
+      user_id: authenticatedUserId,
+      category: usageCategory,
+      status: details.status,
+      model: details.model,
+      latency_ms: Date.now() - requestStartedAt,
+      input_tokens: details.inputTokens ?? null,
+      output_tokens: details.outputTokens ?? null,
+      error_code: details.errorCode ?? null,
+    });
+    if (error) console.error("ZiZu analytics insert failed", error.message);
+  }
 
   const [currentParticipant, matches, leaderboard, profiles] = await Promise.all([
     participantContext(supabase, user.id),
@@ -519,6 +553,7 @@ export async function POST(request: Request) {
       "For each match, total = match points + match-extra points. Pending matches receive points only after scoring.",
     ].join("\n");
 
+    await trackUsage({ status: "success", model: "database" });
     return NextResponse.json(
       { answer },
       { headers: { "Cache-Control": "private, no-store" } }
@@ -708,7 +743,15 @@ ${JSON.stringify(context)}`;
       if (groqResponse.ok) {
         const completion = await groqResponse.json();
         const answer = completion?.choices?.[0]?.message?.content?.trim();
-        if (answer) return NextResponse.json({ answer });
+        if (answer) {
+          await trackUsage({
+            status: "success",
+            model,
+            inputTokens: completion?.usage?.prompt_tokens,
+            outputTokens: completion?.usage?.completion_tokens,
+          });
+          return NextResponse.json({ answer });
+        }
       } else {
         const detail = await groqResponse.text();
         console.error(
@@ -729,6 +772,11 @@ ${JSON.stringify(context)}`;
     }
   }
 
+  await trackUsage({
+    status: "failed",
+    model: models.join(" -> "),
+    errorCode: "groq_unavailable",
+  });
   return NextResponse.json(
     {
       error:
