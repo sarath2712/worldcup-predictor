@@ -268,6 +268,10 @@ export async function POST(request: Request) {
         : /\b(joke|funny)\b/i.test(latestQuestion)
           ? "football_joke"
           : "football";
+  const asksAboutAllParticipants =
+    /\b(all|every|everyone|everybody)\b.*\b(users?|people|participants?|players?)\b/i.test(
+      latestQuestion
+    );
 
   const supabase = createServerSupabase();
   const {
@@ -333,7 +337,10 @@ export async function POST(request: Request) {
       )
       .order("rank", { ascending: true })
       .limit(100),
-    supabase.from("profiles").select("id,username").limit(250),
+    (adminReadClient || supabase)
+      .from("profiles")
+      .select("id,username")
+      .limit(250),
   ]);
 
   const playstationScores = asksAboutPlaystation
@@ -344,12 +351,22 @@ export async function POST(request: Request) {
     : { data: [] };
   const mentioned = (profiles.data || [])
     .filter(
-      (profile) =>
-        profile.id !== user.id &&
-        profile.username.length >= 3 &&
-        questionLower.includes(profile.username.toLowerCase())
+      (profile) => {
+        const normalizedUsername = profile.username.toLowerCase();
+        const meaningfulNameParts = normalizedUsername
+          .split(/\s+/)
+          .filter((part: string) => part.length >= 3);
+        return (
+          profile.id !== user.id &&
+          profile.username.length >= 3 &&
+          (questionLower.includes(normalizedUsername) ||
+            meaningfulNameParts.some((part: string) =>
+              questionLower.includes(part)
+            ))
+        );
+      }
     )
-    .slice(0, 2);
+    .slice(0, isAdmin ? 5 : 2);
 
   const mentionedParticipants = await Promise.all(
     mentioned.map((profile) =>
@@ -655,7 +672,9 @@ export async function POST(request: Request) {
     ...mentioned.map((profile) => profile.id),
   ]);
   const compactLeaderboard = [
-    ...leaderboardRows.slice(0, 10),
+    ...(isAdmin && asksAboutAllParticipants
+      ? leaderboardRows
+      : leaderboardRows.slice(0, 10)),
     ...leaderboardRows.filter((row) => importantUserIds.has(row.user_id)),
   ].filter(
     (row, index, rows) =>
@@ -667,6 +686,10 @@ export async function POST(request: Request) {
     siteTimezone: "Asia/Kolkata",
     requesterRole: isAdmin ? "admin" : "participant",
     adminReadEnabled: Boolean(adminReadClient),
+    adminParticipantDirectory:
+      isAdmin && adminReadClient
+        ? (profiles.data || []).map((profile) => profile.username)
+        : null,
     websiteAreas: SITE_AREAS,
     signedInParticipant: compactParticipant(currentParticipant, 8),
     specificallyMentionedParticipants: mentionedParticipants.map(
@@ -698,6 +721,8 @@ SCOPE:
 - You have read-only access. Never offer or claim to create, edit, delete, approve, or otherwise change any account, prediction, score, match, or database record.
 - If asked to update/change/edit a prediction, do not return a prediction summary. Briefly explain that ZiZu is read-only and direct the user to the Matches page to edit it before kickoff; if the match is already locked, state that it can no longer be changed.
 - When SITE_CONTEXT.requesterRole is "admin" and adminReadEnabled is true, you may summarize the other participants' prediction details supplied in SITE_CONTEXT. This exception applies only to prediction data explicitly supplied in the context.
+- SARATHJS is the authorized admin. When requesterRole is "admin" and adminReadEnabled is true, do not refuse requests for other users' prediction information on privacy grounds. The admin may inspect every participant's predictions, extras, groups, tournament picks, and points through read-only queries.
+- For a broad admin request about all users, give the complete compact overview available in the leaderboard. Explain that the admin can request full detail by participant name or fixture when listing every individual prediction would exceed a useful chat response; do not claim the admin lacks permission.
 - For admin questions asking who predicted a named fixture correctly or requesting all predictions for it, use SITE_CONTEXT.adminMatchPredictionAudit and include every supplied participant in a compact table.
 - In fixture audits, distinguish exact-score correctness from correct outcome/advancing-winner correctness. Show predicted score, predicted winner when present, match points, extra points, and total points. Never equate "received points" with "exact score" unless the predicted and actual scores are identical.
 - When asked for another participant's summary, always provide the public leaderboard fields available for that participant: rank, total points, matches scored, exact scores, and correct outcomes.
