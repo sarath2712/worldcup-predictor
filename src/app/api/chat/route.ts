@@ -356,6 +356,91 @@ export async function POST(request: Request) {
     : [...completedMatches.slice(-6), ...upcomingMatches.slice(0, 4)];
   const contextMatchIds = new Set(contextMatches.map((match) => match.id));
   const matchById = new Map(safeMatches.map((match) => [match.id, match]));
+  const profileById = new Map(
+    (profiles.data || []).map((profile) => [profile.id, profile.username])
+  );
+
+  let adminMatchPredictionAudit: Array<{
+    matchId: number;
+    fixture: string;
+    result: string | null;
+    username: string;
+    predictedScore: string;
+    matchPoints: number | null;
+    extraPoints: number | null;
+    predictedWinner: string | null;
+  }> = [];
+
+  if (isAdmin && adminReadClient && mentionedTeams.length >= 2) {
+    const requestedMatches = contextMatches.filter(
+      (match) =>
+        mentionedTeams.includes(match.home_team) &&
+        mentionedTeams.includes(match.away_team)
+    );
+    const requestedMatchIds = requestedMatches.map((match) => match.id);
+
+    if (requestedMatchIds.length > 0) {
+      const [allPredictions, allExtras] = await Promise.all([
+        adminReadClient
+          .from("predictions")
+          .select("user_id,match_id,predicted_home,predicted_away,points")
+          .in("match_id", requestedMatchIds)
+          .limit(250),
+        adminReadClient
+          .from("match_extras")
+          .select("user_id,match_id,bonus_answers,points")
+          .in("match_id", requestedMatchIds)
+          .limit(250),
+      ]);
+      const extrasByUserMatch = new Map(
+        (allExtras.data || []).map((extra) => [
+          `${extra.user_id}:${extra.match_id}`,
+          extra,
+        ])
+      );
+      const auditUserIds = Array.from(
+        new Set((allPredictions.data || []).map((prediction) => prediction.user_id))
+      );
+      const { data: auditProfiles } =
+        auditUserIds.length > 0
+          ? await adminReadClient
+              .from("profiles")
+              .select("id,username")
+              .in("id", auditUserIds)
+          : { data: [] };
+      const auditProfileById = new Map(
+        (auditProfiles || []).map((profile) => [profile.id, profile.username])
+      );
+
+      adminMatchPredictionAudit = (allPredictions.data || []).map(
+        (prediction) => {
+          const match = matchById.get(prediction.match_id);
+          const extra = extrasByUserMatch.get(
+            `${prediction.user_id}:${prediction.match_id}`
+          );
+          return {
+            matchId: prediction.match_id,
+            fixture: match
+              ? `${match.home_team} vs ${match.away_team}`
+              : "Unknown fixture",
+            result:
+              match?.home_score !== null && match?.away_score !== null
+                ? `${match?.home_score}-${match?.away_score}`
+                : null,
+            username:
+              auditProfileById.get(prediction.user_id) ||
+              profileById.get(prediction.user_id) ||
+              "Unknown participant",
+            predictedScore: `${prediction.predicted_home}-${prediction.predicted_away}`,
+            matchPoints: prediction.points,
+            extraPoints: extra?.points ?? null,
+            predictedWinner:
+              extra?.bonus_answers?.winner_prediction ?? null,
+          };
+        }
+      );
+    }
+  }
 
   if (wantsPredictionHistory(latestQuestion) && mentioned.length === 0) {
     const extrasByMatch = new Map(
@@ -545,6 +630,7 @@ export async function POST(request: Request) {
     ),
     leaderboard: compactLeaderboard,
     relevantRecentAndUpcomingMatches: contextMatches,
+    adminMatchPredictionAudit,
     playstationWorldCup: asksAboutPlaystation
       ? {
           fixtures: PLAYSTATION_FIXTURES,
@@ -563,6 +649,8 @@ SCOPE:
 - You may calculate and explain points from the supplied data.
 - You have read-only access. Never offer or claim to create, edit, delete, approve, or otherwise change any account, prediction, score, match, or database record.
 - When SITE_CONTEXT.requesterRole is "admin" and adminReadEnabled is true, you may summarize the other participants' prediction details supplied in SITE_CONTEXT. This exception applies only to prediction data explicitly supplied in the context.
+- For admin questions asking who predicted a named fixture correctly or requesting all predictions for it, use SITE_CONTEXT.adminMatchPredictionAudit and include every supplied participant in a compact table.
+- In fixture audits, distinguish exact-score correctness from correct outcome/advancing-winner correctness. Show predicted score, predicted winner when present, match points, extra points, and total points. Never equate "received points" with "exact score" unless the predicted and actual scores are identical.
 - When asked for another participant's summary, always provide the public leaderboard fields available for that participant: rank, total points, matches scored, exact scores, and correct outcomes.
 - If their match-by-match prediction details are not visible, say so only after giving the available public summary. Do not treat missing private details as zero predictions and do not guess.
 - Predictions unavailable because of kickoff privacy must remain private.
@@ -610,7 +698,8 @@ ${JSON.stringify(context)}`;
             model,
             messages: [{ role: "system", content: systemPrompt }, ...messages],
             temperature: 0.2,
-            max_completion_tokens: 600,
+            max_completion_tokens:
+              adminMatchPredictionAudit.length > 0 ? 1000 : 600,
           }),
           signal: AbortSignal.timeout(12_000),
         }
