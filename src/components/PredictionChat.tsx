@@ -294,7 +294,7 @@ export function PredictionChat() {
   }
 
   return (
-    <div className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-3 z-[80] sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-5 z-[80] sm:bottom-6 sm:right-6">
       {open && (
         <section
           aria-label="Open ZiZu AI Assistant"
@@ -408,6 +408,30 @@ export function PredictionChat() {
             : "border-white/25 shadow-black/40"
         }`}
       >
+        <svg
+          viewBox="0 0 100 100"
+          aria-hidden="true"
+          className="pointer-events-none absolute -inset-4 h-24 w-24 overflow-visible text-emerald-200 drop-shadow-[0_0_5px_rgba(110,231,183,0.8)]"
+        >
+          <defs>
+            <path id="zizu-label-arc" d="M 10,55 A 42,42 0 0,1 90,55" />
+          </defs>
+          <text
+            fill="currentColor"
+            fontSize="10"
+            fontWeight="800"
+            letterSpacing="2"
+            className="animate-pulse"
+          >
+            <textPath
+              href="#zizu-label-arc"
+              startOffset="50%"
+              textAnchor="middle"
+            >
+              ASK ZIZU
+            </textPath>
+          </text>
+        </svg>
         {highlighted && (
           <>
             <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-amber-300/35" />
@@ -417,7 +441,7 @@ export function PredictionChat() {
           </>
         )}
         <span className="absolute inset-1 animate-pulse rounded-full border border-emerald-300/20" />
-        <span className="relative drop-shadow-lg transition group-hover:rotate-6">
+        <span className="relative animate-[bounce_2.2s_ease-in-out_infinite] drop-shadow-lg transition group-hover:rotate-6">
           ⚽
         </span>
         {!open && (
