@@ -398,7 +398,11 @@ export async function POST(request: Request) {
     )
   );
   const mentionedTeams = teams.filter((team) =>
-    normalizedQuestion.includes(normalize(team))
+    normalizedQuestion.includes(normalize(team)) ||
+    normalize(team)
+      .split(/\s+/)
+      .filter((part) => part.length >= 4)
+      .some((part) => normalizedQuestion.includes(part))
   );
   const completedMatches = safeMatches.filter(
     (match) => new Date(match.kickoff_utc).getTime() <= now
@@ -696,7 +700,39 @@ export async function POST(request: Request) {
       (participant) => compactParticipant(participant, isAdmin ? 16 : 8)
     ),
     leaderboard: compactLeaderboard,
-    relevantRecentAndUpcomingMatches: contextMatches,
+    relevantRecentAndUpcomingMatches: contextMatches.map((match) => {
+      const isKnockout = !match.stage.startsWith("Group");
+      const hasOdds = Boolean(
+        match.home_win_odds &&
+          match.away_win_odds &&
+          (isKnockout || match.draw_odds)
+      );
+      return {
+        ...match,
+        scoringMode: hasOdds ? "odds_based" : "standard",
+        possibleOutcomePoints: hasOdds
+          ? {
+              [`${match.home_team} win`]: Math.floor(
+                Number(match.home_win_odds) * 20
+              ),
+              ...(!isKnockout && match.draw_odds
+                ? { draw: Math.floor(Number(match.draw_odds) * 20) }
+                : {}),
+              [`${match.away_team} win`]: Math.floor(
+                Number(match.away_win_odds) * 20
+              ),
+            }
+          : {
+              correctOutcome: SITE_RULES.standardScoring.correctOutcome,
+            },
+        exactScorePoints: hasOdds
+          ? SITE_RULES.oddsScoring.exactScore
+          : SITE_RULES.standardScoring.exactScore,
+        firstGoalPoints: hasOdds
+          ? SITE_RULES.oddsScoring.firstGoalTeam
+          : SITE_RULES.standardScoring.firstGoalTeam,
+      };
+    }),
     adminMatchPredictionAudit,
     playstationWorldCup: asksAboutPlaystation
       ? {
@@ -718,6 +754,9 @@ SCOPE:
 - Never present model knowledge as current/live information. If a recent or current football fact is not supplied in SITE_CONTEXT, say that you cannot verify it from the available data.
 - If the requested record, participant, fixture, result, or prediction is missing from SITE_CONTEXT, say exactly which information is unavailable. Do not fill gaps by inference.
 - You may calculate and explain points from the supplied data.
+- For a named fixture, obey that fixture's scoringMode and possibleOutcomePoints. If scoringMode is "odds_based", never quote the standard 10-point outcome or 30-point exact-score rules for that match.
+- For an odds-based fixture, answer a winner-points question using the named team's precomputed possibleOutcomePoints value. Also state the exact-score and first-goal points only if relevant to the question. Do not ask the user to provide odds when they are present in SITE_CONTEXT.
+- Never combine standard correct-outcome points with odds-based outcome/winner points. They are alternative scoring modes, not cumulative awards.
 - You have read-only access. Never offer or claim to create, edit, delete, approve, or otherwise change any account, prediction, score, match, or database record.
 - If asked to update/change/edit a prediction, do not return a prediction summary. Briefly explain that ZiZu is read-only and direct the user to the Matches page to edit it before kickoff; if the match is already locked, state that it can no longer be changed.
 - When SITE_CONTEXT.requesterRole is "admin" and adminReadEnabled is true, you may summarize the other participants' prediction details supplied in SITE_CONTEXT. This exception applies only to prediction data explicitly supplied in the context.
