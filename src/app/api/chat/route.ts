@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 import { createServerSupabase } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -11,6 +12,9 @@ type ChatMessage = {
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_REQUESTS = 20;
 const requestLog = new Map<string, number[]>();
+const ADMIN_USER_IDS = new Set([
+  "c650a8d0-428e-49e3-a225-f2787bd8fd77", // SARATHJS
+]);
 
 const SITE_RULES = {
   purpose:
@@ -135,7 +139,6 @@ export async function GET() {
   if (!user) {
     return NextResponse.json({ error: "Not signed in." }, { status: 401 });
   }
-
   const { data: profile } = await supabase
     .from("profiles")
     .select("username")
@@ -257,6 +260,21 @@ export async function POST(request: Request) {
       { status: 401 }
     );
   }
+  const isAdmin = ADMIN_USER_IDS.has(user.id);
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const adminReadClient =
+    isAdmin && serviceRoleKey
+      ? createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          serviceRoleKey,
+          {
+            auth: {
+              autoRefreshToken: false,
+              persistSession: false,
+            },
+          }
+        )
+      : null;
 
   const [currentParticipant, matches, leaderboard, profiles] = await Promise.all([
     participantContext(supabase, user.id),
@@ -292,7 +310,9 @@ export async function POST(request: Request) {
     .slice(0, 2);
 
   const mentionedParticipants = await Promise.all(
-    mentioned.map((profile) => participantContext(supabase, profile.id))
+    mentioned.map((profile) =>
+      participantContext(adminReadClient || supabase, profile.id)
+    )
   );
 
   const now = Date.now();
@@ -337,7 +357,7 @@ export async function POST(request: Request) {
   const contextMatchIds = new Set(contextMatches.map((match) => match.id));
   const matchById = new Map(safeMatches.map((match) => [match.id, match]));
 
-  if (wantsPredictionHistory(latestQuestion)) {
+  if (wantsPredictionHistory(latestQuestion) && mentioned.length === 0) {
     const extrasByMatch = new Map(
       currentParticipant.matchExtras.map((extra) => [extra.match_id, extra])
     );
@@ -516,10 +536,12 @@ export async function POST(request: Request) {
 
   const context = {
     generatedAt: new Date().toISOString(),
+    requesterRole: isAdmin ? "admin" : "participant",
+    adminReadEnabled: Boolean(adminReadClient),
     websiteAreas: SITE_AREAS,
     signedInParticipant: compactParticipant(currentParticipant, 8),
-    specificallyMentionedParticipants: mentionedParticipants.map((participant) =>
-      compactParticipant(participant, 8)
+    specificallyMentionedParticipants: mentionedParticipants.map(
+      (participant) => compactParticipant(participant, isAdmin ? 16 : 8)
     ),
     leaderboard: compactLeaderboard,
     relevantRecentAndUpcomingMatches: contextMatches,
@@ -540,6 +562,7 @@ SCOPE:
 - For site-specific scores, predictions and schedules, use only SITE_CONTEXT. For general football knowledge, use your established knowledge and clearly say when a current or uncertain fact cannot be verified from the supplied context.
 - You may calculate and explain points from the supplied data.
 - You have read-only access. Never offer or claim to create, edit, delete, approve, or otherwise change any account, prediction, score, match, or database record.
+- When SITE_CONTEXT.requesterRole is "admin" and adminReadEnabled is true, you may summarize the other participants' prediction details supplied in SITE_CONTEXT. This exception applies only to prediction data explicitly supplied in the context.
 - When asked for another participant's summary, always provide the public leaderboard fields available for that participant: rank, total points, matches scored, exact scores, and correct outcomes.
 - If their match-by-match prediction details are not visible, say so only after giving the available public summary. Do not treat missing private details as zero predictions and do not guess.
 - Predictions unavailable because of kickoff privacy must remain private.
