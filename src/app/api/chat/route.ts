@@ -697,6 +697,76 @@ export async function POST(request: Request) {
     );
   }
 
+  const asksAboutExactScores = /\bexact(?:\s+score)?s?\b/i.test(
+    latestQuestion
+  );
+  const exactScoreParticipant =
+    isAdmin && mentionedParticipants.length === 1
+      ? mentionedParticipants[0]
+      : mentioned.length === 0
+        ? currentParticipant
+        : null;
+  const wantsExactScoreResponse =
+    asksAboutExactScores &&
+    exactScoreParticipant !== null &&
+    specificallyMentionedMatches.length === 0;
+
+  if (wantsExactScoreResponse && exactScoreParticipant) {
+    const participant = exactScoreParticipant;
+    const extrasByMatch = new Map(
+      participant.matchExtras.map((extra) => [extra.match_id, extra])
+    );
+    const exactPredictions = participant.predictions.filter((prediction) => {
+      const match = matchById.get(prediction.match_id);
+      if (!match) return false;
+      return (
+        match.home_score !== null &&
+        match.away_score !== null &&
+        prediction.predicted_home === match.home_score &&
+        prediction.predicted_away === match.away_score
+      );
+    });
+    const asksForList =
+      /\b(all|highlight|show|list|which|what)\b/i.test(latestQuestion) ||
+      /\bexact(?:\s+score)?s?\b.*\b(predictions?|matches?)\b/i.test(
+        latestQuestion
+      );
+    const showAllQuestion = `Show all predictions for ${participant.username}`;
+    const showExactQuestion = `Show all exact score predictions for ${participant.username}`;
+
+    const answer = asksForList
+      ? [
+          `### ${participant.username} — exact-score predictions`,
+          `**${exactPredictions.length} exact scores so far**`,
+          "",
+          exactPredictions.length
+            ? [
+                "| Fixture | Stage | Prediction / result | Match points | Extras | Total |",
+                "|---|---|---:|---:|---:|---:|",
+                ...exactPredictions.map((prediction) => {
+                  const match = matchById.get(prediction.match_id)!;
+                  const extraPoints =
+                    extrasByMatch.get(prediction.match_id)?.points ?? 0;
+                  const matchPoints = prediction.points ?? 0;
+                  return `| ${match.home_team} vs ${match.away_team} | ${match.stage} | ${prediction.predicted_home}-${prediction.predicted_away} | ${matchPoints} | ${extraPoints} | ${matchPoints + extraPoints} |`;
+                }),
+              ].join("\n")
+            : "No completed exact-score predictions yet.",
+        ].join("\n")
+      : `${participant.username} has **${exactPredictions.length} exact-score predictions** so far.`;
+
+    await trackUsage({ status: "success", model: "database" });
+    return NextResponse.json(
+      {
+        answer,
+        suggestions: asksForList
+          ? [showAllQuestion]
+          : [showExactQuestion, showAllQuestion],
+      },
+      { headers: { "Cache-Control": "private, no-store" } }
+    );
+  }
+
   const wantsNamedAdminHistory =
     isAdmin &&
     mentionedParticipants.length === 1 &&
