@@ -22,6 +22,7 @@ export default function ProfilePage() {
   const [groupTopscorer, setGroupTopscorer] = useState<GroupTopscorerPred | null>(null);
   const [userInfo, setUserInfo] = useState<{ username: string; email: string; mobile: string; flatNumber: string }>({ username: "", email: "", mobile: "", flatNumber: "" });
   const [totalPoints, setTotalPoints] = useState(0);
+  const [leaderboardPoints, setLeaderboardPoints] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
@@ -104,6 +105,16 @@ export default function ProfilePage() {
       const gtsPoints = gtsData?.points || 0;
 
       setTotalPoints(predPoints + extraPoints + tournamentPoints + groupPoints + gtsPoints);
+      const leaderboardResponse = await fetch("/api/leaderboard", {
+        cache: "no-store",
+      });
+      if (leaderboardResponse.ok) {
+        const payload = await leaderboardResponse.json();
+        const ownEntry = (payload.entries || []).find(
+          (entry: { user_id: string }) => entry.user_id === user.id
+        );
+        if (ownEntry) setLeaderboardPoints(ownEntry.total_points);
+      }
       setLoading(false);
     }
     load();
@@ -112,7 +123,7 @@ export default function ProfilePage() {
   if (loading) return <div className="text-center py-16">Loading profile...</div>;
 
   return (
-    <div className="space-y-6 max-w-2xl mx-auto px-4 py-8">
+    <div className="space-y-6 max-w-5xl mx-auto px-4 py-8">
       <div className="flex gap-4 mb-2">
         <Link href="/" className="text-sm text-gray-400 hover:text-white transition">
           &larr; Home
@@ -169,10 +180,58 @@ export default function ProfilePage() {
       )}
 
       {/* Total Points */}
-      <div className="p-5 bg-gradient-to-r from-accent/20 to-primary/20 rounded-2xl border border-accent/30 backdrop-blur-sm text-center">
-        <p className="text-sm text-gray-400 mb-1">Total Points</p>
-        <p className="text-4xl font-extrabold text-accent">{totalPoints}</p>
-        <p className="text-xs text-gray-500 mt-1">Match + Group + Tournament</p>
+      <div className="p-5 bg-gradient-to-r from-accent/20 to-primary/20 rounded-2xl border border-accent/30 backdrop-blur-sm">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm text-gray-400">Points reconciliation</p>
+            <p className="text-4xl font-extrabold text-accent">{totalPoints}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Sum of every section shown below
+            </p>
+          </div>
+          <div className={`rounded-xl border px-4 py-2 text-sm ${
+            leaderboardPoints === null
+              ? "border-white/10 bg-white/5 text-gray-400"
+              : leaderboardPoints === totalPoints
+                ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+                : "border-red-400/30 bg-red-400/10 text-red-300"
+          }`}>
+            {leaderboardPoints === null
+              ? "Leaderboard comparison unavailable"
+              : leaderboardPoints === totalPoints
+                ? `✓ Matches leaderboard: ${leaderboardPoints}`
+                : `Needs review: leaderboard ${leaderboardPoints}`}
+          </div>
+        </div>
+        <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-5">
+          {[
+            {
+              label: "Match scores/winners",
+              points: predictions.reduce((sum, item) => sum + (item.points || 0), 0),
+            },
+            {
+              label: "Match extras/bonus",
+              points: Object.values(extras).reduce((sum, item) => sum + (item.points || 0), 0),
+            },
+            {
+              label: "Group tables",
+              points: groupPreds.reduce((sum, item) => sum + (item.points || 0), 0),
+            },
+            {
+              label: "Group top scorer",
+              points: groupTopscorer?.points || 0,
+            },
+            {
+              label: "Tournament",
+              points: tournamentPred?.points || 0,
+            },
+          ].map((item) => (
+            <div key={item.label} className="rounded-xl border border-white/10 bg-black/15 p-3">
+              <p className="text-[10px] uppercase tracking-wide text-gray-500">{item.label}</p>
+              <p className="mt-1 text-xl font-bold text-white">{item.points}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Group Stage Predictions */}
@@ -275,8 +334,14 @@ export default function ProfilePage() {
 
       {/* Match Predictions */}
       <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
-        <div className="mb-4">
-          <h2 className="text-xl font-bold">Match Predictions</h2>
+        <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-xl font-bold">Match-by-match audit</h2>
+            <p className="text-xs text-gray-400">
+              Every scored component is shown separately. Pending matches do not affect totals.
+            </p>
+          </div>
+          <p className="text-xs text-gray-500">{predictions.length} predictions</p>
         </div>
 
       {predictions.length === 0 ? (
@@ -315,6 +380,52 @@ export default function ProfilePage() {
                   : null;
             const winnerPoints =
               winnerCorrect && winnerOdds ? Math.round(winnerOdds * 20) : 0;
+            const exactScorePoints = isExactScore ? (hasOdds ? 80 : 30) : 0;
+            const outcomePoints = isKnockout
+              ? winnerPoints
+              : Math.max(0, (pred.points || 0) - exactScorePoints);
+            const predictedOutcome =
+              pred.predicted_home > pred.predicted_away
+                ? match.home_team
+                : pred.predicted_home < pred.predicted_away
+                  ? match.away_team
+                  : "Draw";
+            const actualOutcome =
+              match.home_score === null || match.away_score === null
+                ? "Pending"
+                : match.home_score > match.away_score
+                  ? match.home_team
+                  : match.home_score < match.away_score
+                    ? match.away_team
+                    : "Draw";
+            const awardedOdds = isKnockout
+              ? winnerOdds
+              : predictedOutcome === match.home_team
+                ? match.home_win_odds
+                : predictedOutcome === match.away_team
+                  ? match.away_win_odds
+                  : match.draw_odds;
+            const sameAnswer = (left: unknown, right: unknown) =>
+              typeof left === "string" &&
+              typeof right === "string" &&
+              left.trim().toLowerCase() === right.trim().toLowerCase();
+            const firstGoalCorrect = sameAnswer(
+              extra?.predicted_scorers,
+              match.actual_scorers
+            );
+            const firstGoalPoints = firstGoalCorrect ? (hasOdds ? 30 : 15) : 0;
+            const bonusUnit = hasOdds ? 30 : 20;
+            const bonusRows = (match.bonus_questions || []).map((question) => {
+              const predicted = extra?.bonus_answers?.[question.type] ?? null;
+              const actual = match.bonus_actuals?.[question.type] ?? null;
+              return {
+                type: question.type,
+                label: question.question,
+                predicted,
+                actual,
+                points: sameAnswer(predicted, actual) ? bonusUnit : 0,
+              };
+            });
             return (
               <div
                 key={pred.id}
@@ -368,68 +479,69 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* Points Breakdown */}
+                {/* Reconciliation ledger */}
                 {match.home_score !== null && (extra || pred.points !== null) && (
-                  <div className="mt-2 pt-2 border-t border-white/5 flex flex-wrap gap-2 text-xs">
-                    {pred.points !== null && !isKnockout && (
-                      <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400">
-                        Score: +{pred.points}
-                      </span>
-                    )}
-                    {pred.points !== null && isKnockout && (
-                      <>
-                        <span className={`px-2 py-0.5 rounded-full ${
-                          isExactScore
-                            ? "bg-blue-500/10 text-blue-400"
-                            : "bg-red-500/10 text-red-400"
-                        }`}>
-                          Exact score: {isExactScore ? "+80" : "+0"}
-                        </span>
-                        {predictedWinner && (
-                          <span className={`px-2 py-0.5 rounded-full ${
-                            winnerCorrect
-                              ? "bg-emerald-500/10 text-emerald-400"
-                              : "bg-red-500/10 text-red-400"
-                          }`}>
-                            Winner: {predictedWinner}{" "}
-                            {winnerCorrect
-                              ? `+${winnerPoints} (${winnerOdds?.toFixed(2)} × 20)`
-                              : "+0"}
-                          </span>
-                        )}
-                      </>
-                    )}
-                    {extra?.predicted_scorers && (() => {
-                      const correct = match.actual_scorers && match.actual_scorers === extra.predicted_scorers;
-                      const hasOddsMatch = match.home_win_odds && match.away_win_odds &&
-                        (!match.stage.startsWith("Group") || match.draw_odds);
-                      const fgPts = hasOddsMatch ? 30 : 15;
-                      return (
-                        <span className={`px-2 py-0.5 rounded-full ${
-                          correct ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"
-                        }`}>
-                          First Goal: {extra.predicted_scorers} {correct ? `+${fgPts}` : "+0"}
-                        </span>
-                      );
-                    })()}
-                    {extra?.bonus_answers && (() => {
-                      const actuals = match.bonus_actuals;
-                      const hasOdds = match.home_win_odds && match.away_win_odds &&
-                        (!match.stage.startsWith("Group") || match.draw_odds);
-                      const bonusPts = hasOdds ? 30 : 20;
-                      return Object.entries(extra.bonus_answers)
-                        .filter(([key]) => key !== "winner_prediction")
-                        .map(([key, val]) => {
-                        const correct = actuals && actuals[key] === val;
-                        return (
-                          <span key={key} className={`px-2 py-0.5 rounded-full ${
-                            correct ? "bg-purple-500/10 text-purple-400" : "bg-red-500/10 text-red-400"
-                          }`}>
-                            {key.replace(/_/g, " ")}: {val} {correct ? `+${bonusPts}` : "+0"}
-                          </span>
-                        );
-                        });
-                    })()}
+                  <div className="mt-3 overflow-x-auto rounded-xl border border-white/10 text-xs">
+                    <div className="grid min-w-[520px] grid-cols-[minmax(110px,1.1fr)_minmax(100px,1fr)_minmax(100px,1fr)_58px] bg-white/[0.06] px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+                      <span>Component</span>
+                      <span>Predicted</span>
+                      <span>Actual</span>
+                      <span className="text-right">Points</span>
+                    </div>
+                    <BreakdownRow
+                      label="Exact score"
+                      predicted={`${pred.predicted_home}-${pred.predicted_away}`}
+                      actual={`${match.home_score}-${match.away_score}`}
+                      points={exactScorePoints}
+                      correct={isExactScore}
+                    />
+                    <BreakdownRow
+                      label={isKnockout ? "Winner / advance" : "Match outcome"}
+                      predicted={
+                        isKnockout
+                          ? predictedWinner || "Not selected"
+                          : predictedOutcome
+                      }
+                      actual={isKnockout ? actualWinner || "Not recorded" : actualOutcome}
+                      points={outcomePoints}
+                      correct={outcomePoints > 0}
+                      note={
+                        outcomePoints > 0 && hasOdds
+                          ? `${awardedOdds?.toFixed(2) || "odds"} × 20`
+                          : undefined
+                      }
+                    />
+                    <BreakdownRow
+                      label="First team to score"
+                      predicted={extra?.predicted_scorers || "Not selected"}
+                      actual={match.actual_scorers || "Not recorded"}
+                      points={firstGoalPoints}
+                      correct={firstGoalCorrect}
+                    />
+                    {bonusRows.map((row) => (
+                      <BreakdownRow
+                        key={row.type}
+                        label={row.label}
+                        predicted={row.predicted || "Not selected"}
+                        actual={row.actual || "Not recorded"}
+                        points={row.points}
+                        correct={row.points > 0}
+                      />
+                    ))}
+                    <div className="grid min-w-[360px] grid-cols-3 gap-2 border-t border-white/10 bg-black/20 px-3 py-3 text-center">
+                      <div>
+                        <p className="text-[10px] uppercase text-gray-500">Score + winner</p>
+                        <p className="font-bold text-blue-300">{pred.points || 0}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase text-gray-500">Extras + bonus</p>
+                        <p className="font-bold text-purple-300">{extra?.points || 0}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase text-gray-500">Match total</p>
+                        <p className="font-bold text-accent">{matchTotal}</p>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -437,6 +549,40 @@ export default function ProfilePage() {
           })}
         </div>
       )}
+      </div>
+    </div>
+  );
+}
+
+function BreakdownRow({
+  label,
+  predicted,
+  actual,
+  points,
+  correct,
+  note,
+}: {
+  label: string;
+  predicted: string;
+  actual: string;
+  points: number;
+  correct: boolean;
+  note?: string;
+}) {
+  return (
+    <div className="grid min-w-[520px] grid-cols-[minmax(110px,1.1fr)_minmax(100px,1fr)_minmax(100px,1fr)_58px] items-center border-t border-white/[0.07] px-3 py-2.5">
+      <span className="font-medium text-gray-200">{label}</span>
+      <span className="truncate pr-2 text-gray-300" title={predicted}>
+        {predicted}
+      </span>
+      <span className="truncate pr-2 text-gray-400" title={actual}>
+        {actual}
+      </span>
+      <div className="text-right">
+        <span className={correct ? "font-bold text-emerald-300" : "text-gray-500"}>
+          +{points}
+        </span>
+        {note && <p className="text-[9px] text-gray-600">{note}</p>}
       </div>
     </div>
   );
