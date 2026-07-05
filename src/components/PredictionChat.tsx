@@ -180,6 +180,7 @@ function AssistantContent({ content }: { content: string }) {
 
 export function PredictionChat() {
   const [open, setOpen] = useState(false);
+  const [fullScreen, setFullScreen] = useState(false);
   const [highlighted, setHighlighted] = useState(false);
   const [messages, setMessages] = useState<Message[]>([WELCOME]);
   const [input, setInput] = useState("");
@@ -296,7 +297,10 @@ export function PredictionChat() {
   }
 
   function toggleChat() {
-    setOpen((current) => !current);
+    setOpen((current) => {
+      if (current) setFullScreen(false);
+      return !current;
+    });
     if (!open && highlighted) {
       localStorage.setItem("zizu-discovered", "true");
       setHighlighted(false);
@@ -308,7 +312,11 @@ export function PredictionChat() {
       {open && (
         <section
           aria-label="Open ZiZu AI Assistant"
-          className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] right-2 flex h-[min(58dvh,420px)] w-[calc(100vw-1rem)] max-w-[340px] flex-col overflow-hidden rounded-2xl border border-white/15 bg-slate-950/95 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:static sm:mb-3 sm:h-[min(72vh,590px)] sm:w-[calc(100vw-2rem)] sm:max-w-[390px] sm:rounded-3xl"
+          className={
+            fullScreen
+              ? "fixed inset-0 z-[100] flex h-dvh w-screen flex-col overflow-hidden bg-slate-950 shadow-2xl"
+              : "fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] right-2 flex h-[min(58dvh,420px)] w-[calc(100vw-1rem)] max-w-[340px] flex-col overflow-hidden rounded-2xl border border-white/15 bg-slate-950/95 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:static sm:mb-3 sm:h-[min(72vh,590px)] sm:w-[calc(100vw-2rem)] sm:max-w-[390px] sm:rounded-3xl"
+          }
         >
           <header className="flex shrink-0 items-center justify-between border-b border-white/10 bg-gradient-to-r from-emerald-500/15 via-transparent to-amber-400/10 px-3 py-2.5 sm:px-4 sm:py-3">
             <div className="flex items-center gap-3">
@@ -322,14 +330,33 @@ export function PredictionChat() {
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="grid h-9 w-9 place-items-center rounded-full text-xl text-gray-400 transition hover:bg-white/10 hover:text-white"
-              aria-label="Close prediction assistant"
-            >
-              ×
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setFullScreen((current) => !current)}
+                className="grid h-9 w-9 place-items-center rounded-full text-lg text-gray-400 transition hover:bg-white/10 hover:text-white"
+                aria-label={
+                  fullScreen
+                    ? "Exit full-screen assistant"
+                    : "Open assistant full screen"
+                }
+                title={fullScreen ? "Exit full screen" : "Full screen"}
+              >
+                {fullScreen ? "↙" : "↗"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setFullScreen(false);
+                  setOpen(false);
+                }}
+                className="grid h-9 w-9 place-items-center rounded-full text-xl text-gray-400 transition hover:bg-white/10 hover:text-white"
+                aria-label="Minimize prediction assistant"
+                title="Minimize"
+              >
+                −
+              </button>
+            </div>
           </header>
 
           <div
