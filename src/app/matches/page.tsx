@@ -210,7 +210,7 @@ function MatchCard({
   );
 
   function oddsToPoints(odds: number): number {
-    return Math.floor(odds * 20);
+    return Math.round(odds * 20);
   }
 
   useEffect(() => {

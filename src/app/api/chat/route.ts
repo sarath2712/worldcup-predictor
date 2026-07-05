@@ -25,7 +25,7 @@ const SITE_RULES = {
     firstGoalTeam: 15,
   },
   oddsScoring: {
-    outcomeOrKnockoutWinner: "decimal odds × 20, truncated to an integer",
+    outcomeOrKnockoutWinner: "decimal odds × 20, rounded to the nearest integer",
     exactScore: 80,
     firstGoalTeam: 30,
     matchExtra: 30,
@@ -781,7 +781,7 @@ export async function POST(request: Request) {
       "",
       "Calculation guide",
       "Standard matches: exact score 30; otherwise correct outcome 10. First-goal team 15.",
-      "Odds-based matches: correct outcome/winner = decimal odds × 20 (truncated); exact score 80; first-goal team and each match extra 30.",
+      "Odds-based matches: correct outcome/winner = decimal odds × 20 (rounded to the nearest integer); exact score 80; first-goal team and each match extra 30.",
       "Group standings: correct first and second 50; correct first, second and third 75. Correct group-stage top scorer 75.",
       "For each match, total = match points + match-extra points. Pending matches receive points only after scoring.",
     ].join("\n");
@@ -916,13 +916,13 @@ export async function POST(request: Request) {
         scoringMode: hasOdds ? "odds_based" : "standard",
         possibleOutcomePoints: hasOdds
           ? {
-              [`${match.home_team} win`]: Math.floor(
+              [`${match.home_team} win`]: Math.round(
                 Number(match.home_win_odds) * 20
               ),
               ...(!isKnockout && match.draw_odds
-                ? { draw: Math.floor(Number(match.draw_odds) * 20) }
+                ? { draw: Math.round(Number(match.draw_odds) * 20) }
                 : {}),
-              [`${match.away_team} win`]: Math.floor(
+              [`${match.away_team} win`]: Math.round(
                 Number(match.away_win_odds) * 20
               ),
             }

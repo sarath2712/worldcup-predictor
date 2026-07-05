@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION public.odds_to_points(odds decimal)
 RETURNS integer AS $$
 BEGIN
   IF odds IS NULL THEN RETURN NULL; END IF;
-  -- odds × 20, no rounding, keep exact value
+  -- PostgreSQL rounds a numeric value when casting it to integer.
   RETURN (odds * 20)::integer;
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;

@@ -94,5 +94,5 @@ export async function GET() {
 }
 
 function oddsToPoints(odds: number): number {
-  return Math.floor(odds * 20);
+  return Math.round(odds * 20);
 }

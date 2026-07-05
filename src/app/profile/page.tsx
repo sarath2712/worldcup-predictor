@@ -314,7 +314,7 @@ export default function ProfilePage() {
                   ? match.away_win_odds
                   : null;
             const winnerPoints =
-              winnerCorrect && winnerOdds ? Math.floor(winnerOdds * 20) : 0;
+              winnerCorrect && winnerOdds ? Math.round(winnerOdds * 20) : 0;
             return (
               <div
                 key={pred.id}

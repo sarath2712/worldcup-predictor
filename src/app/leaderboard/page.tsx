@@ -19,11 +19,15 @@ export default function LeaderboardPage() {
 
   useEffect(() => {
     async function load() {
-      const [{ data }, { data: groupPoints }, { data: topScorerPoints }] = await Promise.all([
-        supabase.from("leaderboard").select("*").order("total_points", { ascending: false }),
+      const [leaderboardResponse, { data: groupPoints }, { data: topScorerPoints }] = await Promise.all([
+        fetch("/api/leaderboard", { cache: "no-store" }),
         supabase.from("group_predictions").select("user_id, points"),
         supabase.from("group_topscorer_predictions").select("user_id, points"),
       ]);
+      const leaderboardPayload = leaderboardResponse.ok
+        ? await leaderboardResponse.json()
+        : { entries: [] };
+      const data = leaderboardPayload.entries as LeaderboardEntry[];
 
       const groupTotals = new Map<string, number>();
       for (const row of groupPoints || []) {

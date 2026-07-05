@@ -1191,7 +1191,7 @@ function AdminMatchRow({
     (isKnockout || match.draw_odds !== null);
   const firstGoalPoints = hasOdds ? 30 : 15;
   const extraPoints = hasOdds || isKnockout ? 30 : 20;
-  const oddsToPoints = (odds: number) => Math.floor(odds * 20);
+  const oddsToPoints = (odds: number) => Math.round(odds * 20);
 
   return (
     <div className={`p-4 rounded-xl border backdrop-blur-sm space-y-3 ${isCompleted ? "bg-green-500/5 border-green-500/20" : isPast ? "bg-yellow-500/5 border-yellow-500/20" : "bg-white/5 border-white/10"}`}>
