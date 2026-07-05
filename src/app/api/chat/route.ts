@@ -254,7 +254,15 @@ export async function POST(request: Request) {
   if (!latestQuestion) {
     return NextResponse.json({ error: "Please ask a question." }, { status: 400 });
   }
-  const questionLower = latestQuestion.toLowerCase();
+  const userQuestions = messages
+    .filter((message) => message.role === "user")
+    .map((message) => message.content);
+  const previousUserQuestion = userQuestions.at(-2) || "";
+  const isContextualFollowUp =
+    Boolean(previousUserQuestion) &&
+    /\b(he|she|they|his|her|their|that|this|the match|what team|who did|predicted? to (?:win|advance)|points? breakdown)\b/i.test(
+      latestQuestion
+    );
   const asksAboutPlaystation =
     /\b(playstation|play station|ps world cup|ps5|ps4)\b/i.test(latestQuestion);
   const usageCategory = asksAboutPlaystation
@@ -349,9 +357,9 @@ export async function POST(request: Request) {
         .select("match_id,score_p1,score_p2")
         .order("match_id", { ascending: true })
     : { data: [] };
-  const mentioned = (profiles.data || [])
-    .filter(
-      (profile) => {
+  const findMentionedProfiles = (question: string) => {
+    const normalizedQuestion = question.toLowerCase();
+    return (profiles.data || []).filter((profile) => {
         const normalizedUsername = profile.username.toLowerCase();
         const meaningfulNameParts = normalizedUsername
           .split(/\s+/)
@@ -359,14 +367,21 @@ export async function POST(request: Request) {
         return (
           profile.id !== user.id &&
           profile.username.length >= 3 &&
-          (questionLower.includes(normalizedUsername) ||
+          (normalizedQuestion.includes(normalizedUsername) ||
             meaningfulNameParts.some((part: string) =>
-              questionLower.includes(part)
+              normalizedQuestion.includes(part)
             ))
         );
-      }
-    )
-    .slice(0, isAdmin ? 5 : 2);
+      });
+  };
+  const latestMentionedProfiles = findMentionedProfiles(latestQuestion);
+  const mentioned = (
+    latestMentionedProfiles.length > 0
+      ? latestMentionedProfiles
+      : isContextualFollowUp
+        ? findMentionedProfiles(previousUserQuestion)
+        : []
+  ).slice(0, isAdmin ? 5 : 2);
 
   const mentionedParticipants = await Promise.all(
     mentioned.map((profile) =>
@@ -391,19 +406,32 @@ export async function POST(request: Request) {
       .normalize("NFKD")
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
-  const normalizedQuestion = normalize(latestQuestion);
   const teams = Array.from(
     new Set(
       safeMatches.flatMap((match) => [match.home_team, match.away_team])
     )
   );
-  const mentionedTeams = teams.filter((team) =>
-    normalizedQuestion.includes(normalize(team)) ||
-    normalize(team)
-      .split(/\s+/)
-      .filter((part) => part.length >= 4)
-      .some((part) => normalizedQuestion.includes(part))
-  );
+  const findMentionedTeams = (question: string) => {
+    const normalizedQuestion = normalize(question);
+    return teams.filter(
+      (team) =>
+        normalizedQuestion.includes(normalize(team)) ||
+        normalize(team)
+          .split(/\s+/)
+          .filter((part) => part.length >= 4)
+          .some((part) => normalizedQuestion.includes(part))
+    );
+  };
+  const latestMentionedTeams = findMentionedTeams(latestQuestion);
+  const mentionedTeams =
+    latestMentionedTeams.length >= 2 || !isContextualFollowUp
+      ? latestMentionedTeams
+      : Array.from(
+          new Set([
+            ...latestMentionedTeams,
+            ...findMentionedTeams(previousUserQuestion),
+          ])
+        );
   const completedMatches = safeMatches.filter(
     (match) => new Date(match.kickoff_utc).getTime() <= now
   );
@@ -417,6 +445,14 @@ export async function POST(request: Request) {
           mentionedTeams.includes(match.away_team)
       )
     : [...completedMatches.slice(-6), ...upcomingMatches.slice(0, 4)];
+  const specificallyMentionedMatches =
+    mentionedTeams.length >= 2
+      ? safeMatches.filter(
+          (match) =>
+            mentionedTeams.includes(match.home_team) &&
+            mentionedTeams.includes(match.away_team)
+        )
+      : [];
   const contextMatchIds = new Set(contextMatches.map((match) => match.id));
   const matchById = new Map(safeMatches.map((match) => [match.id, match]));
   const profileById = new Map(
@@ -505,9 +541,166 @@ export async function POST(request: Request) {
     }
   }
 
+  const wantsNamedFixtureDetail =
+    isAdmin &&
+    mentionedParticipants.length === 1 &&
+    specificallyMentionedMatches.length === 1 &&
+    /\b(predictions?|details?|breakdown|points?|score|extras?|win|winner|advance|team)\b/i.test(
+      latestQuestion
+    );
+
+  if (wantsNamedFixtureDetail) {
+    const participant = mentionedParticipants[0];
+    const match = specificallyMentionedMatches[0];
+    const prediction = participant.predictions.find(
+      (item) => item.match_id === match.id
+    );
+    const extra = participant.matchExtras.find(
+      (item) => item.match_id === match.id
+    );
+    const fixture = `${match.home_team} vs ${match.away_team}`;
+    const showAllQuestion = `Show all predictions for ${participant.username}`;
+
+    if (!prediction) {
+      await trackUsage({ status: "success", model: "database" });
+      return NextResponse.json(
+        {
+          answer: `${participant.username} did not record a prediction for ${fixture}.`,
+          suggestions: [showAllQuestion],
+        },
+        { headers: { "Cache-Control": "private, no-store" } }
+      );
+    }
+
+    const played = match.home_score !== null && match.away_score !== null;
+    const isKnockout = !match.stage.startsWith("Group");
+    const hasOdds = Boolean(
+      match.home_win_odds &&
+        match.away_win_odds &&
+        (isKnockout || match.draw_odds)
+    );
+    const exact =
+      played &&
+      prediction.predicted_home === match.home_score &&
+      prediction.predicted_away === match.away_score;
+    const exactPoints = exact
+      ? hasOdds
+        ? SITE_RULES.oddsScoring.exactScore
+        : SITE_RULES.standardScoring.exactScore
+      : 0;
+    const matchPoints = prediction.points ?? 0;
+    const winnerPoints = Math.max(0, matchPoints - exactPoints);
+    const actualWinner = match.bonus_actuals?.winner_prediction ?? null;
+    const predictedWinner = extra?.bonus_answers?.winner_prediction ?? null;
+    const asksOnlyForWinner =
+      /\b(what|which|who)\b.*\b(team|win|winner|advance)\b|\bpredicted? to (?:win|advance)\b/i.test(
+        latestQuestion
+      ) &&
+      !/\b(details?|breakdown|points?|score|extras?|all)\b/i.test(
+        latestQuestion
+      );
+
+    if (asksOnlyForWinner) {
+      const breakdownQuestion = `Show the points breakdown for ${participant.username} in ${fixture}`;
+      const answer = predictedWinner
+        ? [
+            `**${participant.username} predicted ${predictedWinner} to advance** in ${fixture}.`,
+            played && actualWinner
+              ? `Actual winner: ${actualWinner}. Winner-prediction points: ${winnerPoints}.`
+              : "Winner-prediction points are pending.",
+          ].join("\n")
+        : `${participant.username} did not select a team to advance in ${fixture}.`;
+
+      await trackUsage({ status: "success", model: "database" });
+      return NextResponse.json(
+        {
+          answer,
+          suggestions: [breakdownQuestion, showAllQuestion],
+        },
+        { headers: { "Cache-Control": "private, no-store" } }
+      );
+    }
+
+    const extraUnit = hasOdds ? SITE_RULES.oddsScoring.matchExtra : 20;
+    const firstGoalUnit = hasOdds
+      ? SITE_RULES.oddsScoring.firstGoalTeam
+      : SITE_RULES.standardScoring.firstGoalTeam;
+    const sameAnswer = (left: unknown, right: unknown) =>
+      typeof left === "string" &&
+      typeof right === "string" &&
+      left.trim().toLowerCase() === right.trim().toLowerCase();
+    const rows: string[] = [
+      `| Item | Prediction | Actual | Points |`,
+      `|---|---|---|---:|`,
+      `| Exact score | ${prediction.predicted_home}-${prediction.predicted_away} | ${
+        played ? `${match.home_score}-${match.away_score}` : "Pending"
+      } | ${played ? exactPoints : "Pending"} |`,
+    ];
+
+    if (isKnockout && (predictedWinner || actualWinner)) {
+      rows.push(
+        `| Team to advance | ${predictedWinner || "Not selected"} | ${
+          actualWinner || "Pending"
+        } | ${played ? winnerPoints : "Pending"} |`
+      );
+    }
+
+    if (extra?.predicted_scorers || match.actual_scorers) {
+      rows.push(
+        `| First team to score | ${extra?.predicted_scorers || "Not selected"} | ${
+          match.actual_scorers || "Pending"
+        } | ${
+          played
+            ? sameAnswer(extra?.predicted_scorers, match.actual_scorers)
+              ? firstGoalUnit
+              : 0
+            : "Pending"
+        } |`
+      );
+    }
+
+    for (const bonus of match.bonus_questions || []) {
+      const type = bonus?.type;
+      if (!type) continue;
+      const predicted = extra?.bonus_answers?.[type] ?? "Not selected";
+      const actual = match.bonus_actuals?.[type] ?? "Pending";
+      rows.push(
+        `| ${bonus.question || type} | ${predicted} | ${actual} | ${
+          played
+            ? sameAnswer(predicted, actual)
+              ? extraUnit
+              : 0
+            : "Pending"
+        } |`
+      );
+    }
+
+    const extraPoints = extra?.points ?? 0;
+    const totalPoints = matchPoints + extraPoints;
+    const answer = [
+      `### ${participant.username} — ${fixture}`,
+      `Stage: ${match.stage}`,
+      "",
+      ...rows,
+      "",
+      played
+        ? `**Total: match ${matchPoints} + extras ${extraPoints} = ${totalPoints} points**`
+        : "**Points are pending until the match is completed and scored.**",
+      "",
+      `For a broader view, choose “${showAllQuestion}”.`,
+    ].join("\n");
+
+    await trackUsage({ status: "success", model: "database" });
+    return NextResponse.json(
+      { answer, suggestions: [showAllQuestion] },
+      { headers: { "Cache-Control": "private, no-store" } }
+    );
+  }
+
   const wantsNamedAdminHistory =
     isAdmin &&
     mentionedParticipants.length === 1 &&
+    specificallyMentionedMatches.length === 0 &&
     /\b(predictions?|history|breakdown|points?|summary)\b/i.test(latestQuestion);
   const historyParticipant = wantsNamedAdminHistory
     ? mentionedParticipants[0]

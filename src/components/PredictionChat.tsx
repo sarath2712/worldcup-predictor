@@ -185,6 +185,7 @@ export function PredictionChat() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -239,9 +240,9 @@ export function PredictionChat() {
     });
   }, [messages, loading]);
 
-  async function sendMessage(event?: FormEvent) {
+  async function sendMessage(event?: FormEvent, suggestedQuestion?: string) {
     event?.preventDefault();
-    const question = input.trim();
+    const question = (suggestedQuestion || input).trim();
     if (!question || loading) return;
 
     const nextMessages: Message[] = [
@@ -251,6 +252,7 @@ export function PredictionChat() {
     setMessages(nextMessages);
     setInput("");
     setError("");
+    setSuggestions([]);
     setLoading(true);
 
     try {
@@ -267,6 +269,14 @@ export function PredictionChat() {
         ...current,
         { role: "assistant", content: data.answer },
       ]);
+      setSuggestions(
+        Array.isArray(data.suggestions)
+          ? data.suggestions.filter(
+              (suggestion: unknown): suggestion is string =>
+                typeof suggestion === "string" && suggestion.trim().length > 0
+            )
+          : []
+      );
     } catch (requestError) {
       setError(
         requestError instanceof Error
@@ -349,6 +359,20 @@ export function PredictionChat() {
                 </div>
               </div>
             ))}
+            {!loading && suggestions.length > 0 && (
+              <div className="flex flex-wrap gap-2 pl-1">
+                {suggestions.map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onClick={() => void sendMessage(undefined, suggestion)}
+                    className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-left text-xs font-medium text-emerald-200 transition hover:border-emerald-300/60 hover:bg-emerald-400/20"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
             {loading && (
               <div className="flex justify-start">
                 <div className="flex gap-1 rounded-2xl rounded-bl-md border border-white/10 bg-white/10 px-4 py-3">
