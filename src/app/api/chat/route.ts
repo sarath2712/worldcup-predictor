@@ -783,6 +783,10 @@ export async function POST(request: Request) {
     const extrasByMatch = new Map(
       historyParticipant.matchExtras.map((extra) => [extra.match_id, extra])
     );
+    const sameAnswer = (left: unknown, right: unknown) =>
+      typeof left === "string" &&
+      typeof right === "string" &&
+      left.trim().toLowerCase() === right.trim().toLowerCase();
     const rows = historyParticipant.predictions.map((prediction, index) => {
       const match = matchById.get(prediction.match_id);
       const extra = extrasByMatch.get(prediction.match_id);
@@ -794,13 +798,69 @@ export async function POST(request: Request) {
       const result = played
         ? `${match?.home_score}-${match?.away_score}`
         : "Pending";
+      if (!match || !played) {
+        return [
+          `${index + 1}. ${match?.home_team || "Unknown"} vs ${match?.away_team || "Unknown"} (${match?.stage || "Unknown stage"})`,
+          `   Prediction: ${prediction.predicted_home}-${prediction.predicted_away} | Result: ${result}`,
+          "   Points: pending until the match is scored",
+        ].join("\n");
+      }
+
+      const isKnockout = !match.stage.startsWith("Group");
+      const hasOdds = Boolean(
+        match.home_win_odds &&
+          match.away_win_odds &&
+          (isKnockout || match.draw_odds)
+      );
+      const exact =
+        prediction.predicted_home === match.home_score &&
+        prediction.predicted_away === match.away_score;
+      const exactPoints = exact
+        ? hasOdds
+          ? SITE_RULES.oddsScoring.exactScore
+          : SITE_RULES.standardScoring.exactScore
+        : 0;
+      const outcomeOrWinnerPoints = Math.max(
+        0,
+        predictionPoints - exactPoints
+      );
+      const firstGoalPoints = sameAnswer(
+        extra?.predicted_scorers,
+        match.actual_scorers
+      )
+        ? hasOdds
+          ? SITE_RULES.oddsScoring.firstGoalTeam
+          : SITE_RULES.standardScoring.firstGoalTeam
+        : 0;
+      const bonusUnit = hasOdds ? SITE_RULES.oddsScoring.matchExtra : 20;
+      const bonusParts = (match.bonus_questions || []).map(
+        (question: { type: string; question: string }) => {
+        const predicted = extra?.bonus_answers?.[question.type] ?? "Not selected";
+        const actual = match.bonus_actuals?.[question.type] ?? "Not recorded";
+        const points = sameAnswer(predicted, actual) ? bonusUnit : 0;
+        return `${question.question} ${predicted} (${points})`;
+        }
+      );
+      const outcomeLabel = isKnockout ? "Winner" : "Outcome";
+      const predictedOutcome = isKnockout
+        ? extra?.bonus_answers?.winner_prediction || "Not selected"
+        : prediction.predicted_home > prediction.predicted_away
+          ? match.home_team
+          : prediction.predicted_home < prediction.predicted_away
+            ? match.away_team
+            : "Draw";
+      const pointParts = [
+        `Exact score ${exact ? "✓" : "✗"} (${exactPoints})`,
+        `${outcomeLabel}: ${predictedOutcome} (${outcomeOrWinnerPoints})`,
+        `First goal: ${extra?.predicted_scorers || "Not selected"} (${firstGoalPoints})`,
+        ...bonusParts,
+      ];
 
       return [
-        `${index + 1}. ${match?.home_team || "Unknown"} vs ${match?.away_team || "Unknown"} (${match?.stage || "Unknown stage"})`,
+        `${index + 1}. ${match.home_team} vs ${match.away_team} (${match.stage})`,
         `   Prediction: ${prediction.predicted_home}-${prediction.predicted_away} | Result: ${result}`,
-        played
-          ? `   Points: match ${predictionPoints} + extras ${extraPoints} = ${total}`
-          : "   Points: pending until the match is scored",
+        `   Breakdown: ${pointParts.join(" | ")}`,
+        `   Total: score/winner ${predictionPoints} + extras/bonus ${extraPoints} = ${total}`,
       ].join("\n");
     });
     const matchPoints = historyParticipant.predictions.reduce(
@@ -825,6 +885,25 @@ export async function POST(request: Request) {
       groupPoints +
       groupTopScorerPoints +
       tournamentPoints;
+    const exactScoreCount = historyParticipant.predictions.filter(
+      (prediction) => {
+        const match = matchById.get(prediction.match_id);
+        return (
+          match?.home_score !== null &&
+          match?.away_score !== null &&
+          prediction.predicted_home === match?.home_score &&
+          prediction.predicted_away === match?.away_score
+        );
+      }
+    ).length;
+    const historyUserId = wantsNamedAdminHistory
+      ? mentioned[0]?.id
+      : authenticatedUserId;
+    const leaderboardTotal = (leaderboard.data || []).find(
+      (entry) => entry.user_id === historyUserId
+    )?.total_points;
+    const reconciles =
+      leaderboardTotal !== undefined && leaderboardTotal === grandTotal;
     const groupRows = historyParticipant.groupPredictions.map(
       (prediction) =>
         `${prediction.group_name}: ${prediction.predicted_first}, ${prediction.predicted_second}, ${prediction.predicted_third} — ${prediction.points ?? "pending"} points`
@@ -835,6 +914,12 @@ export async function POST(request: Request) {
       `${historyParticipant.username}'s complete prediction history`,
       "",
       `Points summary: match predictions ${matchPoints} + match extras ${extraPoints} + group predictions ${groupPoints} + group top scorer ${groupTopScorerPoints} + tournament ${tournamentPoints} = ${grandTotal}`,
+      `Exact scores: ${exactScoreCount}`,
+      leaderboardTotal === undefined
+        ? "Leaderboard comparison: unavailable"
+        : reconciles
+          ? `Leaderboard check: ✓ ${grandTotal} points reconciled`
+          : `Leaderboard check: needs review (history ${grandTotal}, leaderboard ${leaderboardTotal})`,
       "",
       rows.length ? rows.join("\n\n") : "No match predictions have been made yet.",
       "",
@@ -858,7 +943,12 @@ export async function POST(request: Request) {
 
     await trackUsage({ status: "success", model: "database" });
     return NextResponse.json(
-      { answer },
+      {
+        answer,
+        suggestions: [
+          `Show all exact score predictions for ${historyParticipant.username}`,
+        ],
+      },
       { headers: { "Cache-Control": "private, no-store" } }
     );
   }

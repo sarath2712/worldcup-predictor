@@ -124,7 +124,7 @@ function AssistantContent({ content }: { content: string }) {
               className={
                 cardIndex === 0
                   ? "font-semibold text-sky-200"
-                  : /\bpoints?:/i.test(cardLine)
+                  : /\b(points?|total):/i.test(cardLine)
                     ? "mt-1 text-xs font-medium text-amber-200"
                     : "mt-1 text-xs text-gray-300"
               }
