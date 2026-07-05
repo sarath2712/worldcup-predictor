@@ -23,6 +23,9 @@ export default function ProfilePage() {
   const [userInfo, setUserInfo] = useState<{ username: string; email: string; mobile: string; flatNumber: string }>({ username: "", email: "", mobile: "", flatNumber: "" });
   const [totalPoints, setTotalPoints] = useState(0);
   const [leaderboardPoints, setLeaderboardPoints] = useState<number | null>(null);
+  const [activeAuditTab, setActiveAuditTab] = useState<
+    "matches" | "groups" | "tournament"
+  >("matches");
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
@@ -234,8 +237,40 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      <div
+        role="tablist"
+        aria-label="Prediction audit sections"
+        className="grid grid-cols-3 gap-1 rounded-2xl border border-white/10 bg-white/5 p-1.5"
+      >
+        {[
+          { id: "matches" as const, label: "Match Audit", count: predictions.length },
+          { id: "groups" as const, label: "Groups", count: groupPreds.length },
+          { id: "tournament" as const, label: "Tournament", count: tournamentPred ? 1 : 0 },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            aria-selected={activeAuditTab === tab.id}
+            onClick={() => setActiveAuditTab(tab.id)}
+            className={`rounded-xl px-2 py-3 text-xs font-semibold transition sm:text-sm ${
+              activeAuditTab === tab.id
+                ? "bg-accent text-slate-950 shadow-lg"
+                : "text-gray-400 hover:bg-white/10 hover:text-white"
+            }`}
+          >
+            {tab.label}
+            <span className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] ${
+              activeAuditTab === tab.id ? "bg-black/15" : "bg-white/10"
+            }`}>
+              {tab.count}
+            </span>
+          </button>
+        ))}
+      </div>
+
       {/* Group Stage Predictions */}
-      <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+      <div className={`${activeAuditTab === "groups" ? "block" : "hidden"} p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold">Group Stage Predictions</h2>
           <p className="text-xs text-gray-500 bg-white/5 px-3 py-1 rounded-full">Points calculated after group stage</p>
@@ -302,7 +337,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Tournament Predictions */}
-      <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+      <div className={`${activeAuditTab === "tournament" ? "block" : "hidden"} p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold">Tournament Predictions</h2>
           <p className="text-xs text-gray-500 bg-white/5 px-3 py-1 rounded-full">Points calculated after Final</p>
@@ -333,7 +368,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Match Predictions */}
-      <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+      <div className={`${activeAuditTab === "matches" ? "block" : "hidden"} p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm`}>
         <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="text-xl font-bold">Match-by-match audit</h2>
@@ -427,11 +462,11 @@ export default function ProfilePage() {
               };
             });
             return (
-              <div
+              <details
                 key={pred.id}
-                className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm"
+                className="group overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm open:border-accent/30 open:bg-white/[0.07]"
               >
-                <div className="flex items-center justify-between">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 marker:hidden">
                   <div>
                     <p className="font-medium">
                       {match.home_team} vs {match.away_team}
@@ -476,12 +511,18 @@ export default function ProfilePage() {
                     {match.home_score !== null && (
                       <span className="font-bold text-accent">+{matchTotal}</span>
                     )}
+                    <p className="mt-1 text-[10px] text-gray-500 group-open:hidden">
+                      Tap to expand
+                    </p>
+                    <p className="mt-1 hidden text-[10px] text-gray-500 group-open:block">
+                      Tap to collapse
+                    </p>
                   </div>
-                </div>
+                </summary>
 
                 {/* Reconciliation ledger */}
                 {match.home_score !== null && (extra || pred.points !== null) && (
-                  <div className="mt-3 overflow-x-auto rounded-xl border border-white/10 text-xs">
+                  <div className="mx-4 mb-4 overflow-x-auto rounded-xl border border-white/10 text-xs">
                     <div className="grid min-w-[520px] grid-cols-[minmax(110px,1.1fr)_minmax(100px,1fr)_minmax(100px,1fr)_58px] bg-white/[0.06] px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
                       <span>Component</span>
                       <span>Predicted</span>
@@ -544,7 +585,12 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 )}
-              </div>
+                {match.home_score === null && (
+                  <div className="mx-4 mb-4 rounded-xl border border-white/10 bg-black/15 p-3 text-xs text-gray-400">
+                    This match is pending. Points will appear after the result is scored.
+                  </div>
+                )}
+              </details>
             );
           })}
         </div>
