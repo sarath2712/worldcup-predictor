@@ -459,7 +459,7 @@ export async function POST(request: Request) {
     (profiles.data || []).map((profile) => [profile.id, profile.username])
   );
 
-  let adminMatchPredictionAudit: Array<{
+  let fixturePredictionAudit: Array<{
     matchId: number;
     fixture: string;
     result: string | null;
@@ -470,22 +470,21 @@ export async function POST(request: Request) {
     predictedWinner: string | null;
   }> = [];
 
-  if (isAdmin && adminReadClient && mentionedTeams.length >= 2) {
-    const requestedMatches = contextMatches.filter(
+  if (serviceClient && mentionedTeams.length >= 2) {
+    const requestedMatches = specificallyMentionedMatches.filter(
       (match) =>
-        mentionedTeams.includes(match.home_team) &&
-        mentionedTeams.includes(match.away_team)
+        new Date(match.kickoff_utc).getTime() <= now
     );
     const requestedMatchIds = requestedMatches.map((match) => match.id);
 
     if (requestedMatchIds.length > 0) {
       const [allPredictions, allExtras] = await Promise.all([
-        adminReadClient
+        serviceClient
           .from("predictions")
           .select("user_id,match_id,predicted_home,predicted_away,points")
           .in("match_id", requestedMatchIds)
           .limit(250),
-        adminReadClient
+        serviceClient
           .from("match_extras")
           .select("user_id,match_id,bonus_answers,points")
           .in("match_id", requestedMatchIds)
@@ -502,7 +501,7 @@ export async function POST(request: Request) {
       );
       const { data: auditProfiles } =
         auditUserIds.length > 0
-          ? await adminReadClient
+          ? await serviceClient
               .from("profiles")
               .select("id,username")
               .in("id", auditUserIds)
@@ -511,7 +510,7 @@ export async function POST(request: Request) {
         (auditProfiles || []).map((profile) => [profile.id, profile.username])
       );
 
-      adminMatchPredictionAudit = (allPredictions.data || []).map(
+      fixturePredictionAudit = (allPredictions.data || []).map(
         (prediction) => {
           const match = matchById.get(prediction.match_id);
           const extra = extrasByUserMatch.get(
@@ -539,6 +538,96 @@ export async function POST(request: Request) {
         }
       );
     }
+  }
+
+  const asksForFixturePredictionAudit =
+    mentionedParticipants.length === 0 &&
+    specificallyMentionedMatches.length === 1 &&
+    /\b(who|all|everyone|everybody|participants?|players?|people)\b/i.test(
+      latestQuestion
+    ) &&
+    /\b(predictions?|predicted|correct|exact|winner|win|advance)\b/i.test(
+      latestQuestion
+    );
+
+  if (asksForFixturePredictionAudit) {
+    const match = specificallyMentionedMatches[0];
+    const fixture = `${match.home_team} vs ${match.away_team}`;
+    const hasStarted = new Date(match.kickoff_utc).getTime() <= now;
+
+    if (!hasStarted) {
+      await trackUsage({ status: "success", model: "database" });
+      return NextResponse.json(
+        {
+          answer: `${fixture} predictions remain private until kickoff.`,
+        },
+        { headers: { "Cache-Control": "private, no-store" } }
+      );
+    }
+
+    const result =
+      match.home_score !== null && match.away_score !== null
+        ? `${match.home_score}-${match.away_score}`
+        : null;
+    const actualWinner = match.bonus_actuals?.winner_prediction ?? null;
+    const exactRows = fixturePredictionAudit.filter(
+      (row) => result !== null && row.predictedScore === result
+    );
+    const winnerRows = fixturePredictionAudit.filter(
+      (row) => actualWinner !== null && row.predictedWinner === actualWinner
+    );
+    const asksForAllPredictions =
+      /\b(all|everyone|everybody)\b.*\b(predictions?|predicted)\b/i.test(
+        latestQuestion
+      ) && !/\b(correct|exact|winner|win|advance)\b/i.test(latestQuestion);
+
+    const formatRows = (
+      rows: typeof fixturePredictionAudit,
+      includeWinner: boolean
+    ) =>
+      rows.length
+        ? [
+            `| Participant | Score prediction |${includeWinner ? " Winner pick |" : ""} Match | Extras | Total |`,
+            `|---|---:|${includeWinner ? "---|" : ""}---:|---:|---:|`,
+            ...rows.map(
+              (row) =>
+                `| ${row.username} | ${row.predictedScore} |${
+                  includeWinner ? ` ${row.predictedWinner || "—"} |` : ""
+                } ${row.matchPoints ?? 0} | ${row.extraPoints ?? 0} | ${
+                  (row.matchPoints ?? 0) + (row.extraPoints ?? 0)
+                } |`
+            ),
+          ].join("\n")
+        : "None.";
+
+    const answer = asksForAllPredictions
+      ? [
+          `### ${fixture} — all predictions`,
+          result ? `Result: ${result}${actualWinner ? `; advanced: ${actualWinner}` : ""}` : "Result pending.",
+          "",
+          formatRows(fixturePredictionAudit, true),
+        ].join("\n")
+      : [
+          `### ${fixture} — correct predictions`,
+          result ? `Result: ${result}${actualWinner ? `; advanced: ${actualWinner}` : ""}` : "Result pending.",
+          "",
+          `**Exact score (${exactRows.length})**`,
+          formatRows(exactRows, true),
+          "",
+          `**Correct advancing winner (${winnerRows.length})**`,
+          formatRows(winnerRows, true),
+        ].join("\n");
+
+    await trackUsage({ status: "success", model: "database" });
+    return NextResponse.json(
+      {
+        answer,
+        suggestions: asksForAllPredictions
+          ? [`Who predicted ${fixture} correctly?`]
+          : [`Show all predictions for ${fixture}`],
+      },
+      { headers: { "Cache-Control": "private, no-store" } }
+    );
   }
 
   const wantsNamedFixtureDetail =
@@ -1097,7 +1186,7 @@ export async function POST(request: Request) {
           : SITE_RULES.standardScoring.firstGoalTeam,
       };
     }),
-    adminMatchPredictionAudit,
+    fixturePredictionAudit,
     playstationWorldCup: asksAboutPlaystation
       ? {
           fixtures: PLAYSTATION_FIXTURES,
@@ -1126,7 +1215,7 @@ SCOPE:
 - When SITE_CONTEXT.requesterRole is "admin" and adminReadEnabled is true, you may summarize the other participants' prediction details supplied in SITE_CONTEXT. This exception applies only to prediction data explicitly supplied in the context.
 - SARATHJS is the authorized admin. When requesterRole is "admin" and adminReadEnabled is true, do not refuse requests for other users' prediction information on privacy grounds. The admin may inspect every participant's predictions, extras, groups, tournament picks, and points through read-only queries.
 - For a broad admin request about all users, give the complete compact overview available in the leaderboard. Explain that the admin can request full detail by participant name or fixture when listing every individual prediction would exceed a useful chat response; do not claim the admin lacks permission.
-- For admin questions asking who predicted a named fixture correctly or requesting all predictions for it, use SITE_CONTEXT.adminMatchPredictionAudit and include every supplied participant in a compact table.
+- For post-kickoff questions asking who predicted a named fixture correctly or requesting all predictions for it, use SITE_CONTEXT.fixturePredictionAudit. Every signed-in user receives the same read-only audit.
 - In fixture audits, distinguish exact-score correctness from correct outcome/advancing-winner correctness. Show predicted score, predicted winner when present, match points, extra points, and total points. Never equate "received points" with "exact score" unless the predicted and actual scores are identical.
 - When asked for another participant's summary, always provide the public leaderboard fields available for that participant: rank, total points, matches scored, exact scores, and correct outcomes.
 - If their match-by-match prediction details are not visible, say so only after giving the available public summary. Do not treat missing private details as zero predictions and do not guess.
@@ -1177,7 +1266,7 @@ ${JSON.stringify(context)}`;
             messages: [{ role: "system", content: systemPrompt }, ...messages],
             temperature: 0.2,
             max_completion_tokens:
-              adminMatchPredictionAudit.length > 0 ? 1000 : 600,
+              fixturePredictionAudit.length > 0 ? 1000 : 600,
           }),
           signal: AbortSignal.timeout(12_000),
         }
