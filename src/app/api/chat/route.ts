@@ -459,6 +459,169 @@ export async function POST(request: Request) {
     (profiles.data || []).map((profile) => [profile.id, profile.username])
   );
 
+  const asksForUpcomingSubmissionStatus =
+    /\b(who|all|everyone|everybody|participants?|players?|people|list)\b/i.test(
+      latestQuestion
+    ) &&
+    /\b(submitted|made|entered|filled|given|completed)\b/i.test(
+      latestQuestion
+    ) &&
+    /\b(predictions?|picks?)\b/i.test(latestQuestion) &&
+    /\b(upcoming|round\s*(?:of\s*)?8|round\s*(?:of\s*)?eight|quarter[-\s]?finals?|qf)\b/i.test(
+      latestQuestion
+    );
+
+  if (asksForUpcomingSubmissionStatus) {
+    const roundOf8Matches = upcomingMatches.filter(
+      (match) =>
+        /quarter[-\s]?final/i.test(match.stage) ||
+        /\b(round\s*(?:of\s*)?8|round\s*(?:of\s*)?eight|qf)\b/i.test(
+          match.stage
+        )
+    );
+
+    if (!adminReadClient) {
+      await trackUsage({ status: "success", model: "database" });
+      return NextResponse.json(
+        {
+          answer:
+            "Upcoming prediction choices remain private until kickoff. I can’t list other players’ submission status from the data available to this signed-in view.",
+        },
+        { headers: { "Cache-Control": "private, no-store" } }
+      );
+    }
+
+    if (roundOf8Matches.length === 0) {
+      await trackUsage({ status: "success", model: "database" });
+      return NextResponse.json(
+        {
+          answer:
+            "I couldn’t find upcoming Round of 8 / quarter-final fixtures in the current site data.",
+        },
+        { headers: { "Cache-Control": "private, no-store" } }
+      );
+    }
+
+    const roundOf8MatchIds = roundOf8Matches.map((match) => match.id);
+    const [{ data: qfPredictions, error: qfPredictionError }, { data: qfExtras, error: qfExtrasError }] =
+      await Promise.all([
+        adminReadClient
+          .from("predictions")
+          .select("user_id,match_id,updated_at")
+          .in("match_id", roundOf8MatchIds)
+          .limit(1000),
+        adminReadClient
+          .from("match_extras")
+          .select("user_id,match_id,updated_at")
+          .in("match_id", roundOf8MatchIds)
+          .limit(1000),
+      ]);
+
+    if (qfPredictionError || qfExtrasError) {
+      await trackUsage({
+        status: "failed",
+        model: "database",
+        errorCode: qfPredictionError?.message || qfExtrasError?.message,
+      });
+      return NextResponse.json(
+        { error: qfPredictionError?.message || qfExtrasError?.message },
+        { status: 500 }
+      );
+    }
+
+    const predictionMatchIdsByUser = new Map<string, Set<number>>();
+    for (const prediction of qfPredictions || []) {
+      const set =
+        predictionMatchIdsByUser.get(prediction.user_id) || new Set<number>();
+      set.add(prediction.match_id);
+      predictionMatchIdsByUser.set(prediction.user_id, set);
+    }
+
+    const extrasMatchIdsByUser = new Map<string, Set<number>>();
+    for (const extra of qfExtras || []) {
+      const set = extrasMatchIdsByUser.get(extra.user_id) || new Set<number>();
+      set.add(extra.match_id);
+      extrasMatchIdsByUser.set(extra.user_id, set);
+    }
+
+    const participantRows = Array.from(profileById.entries())
+      .map(([userId, username]) => {
+        const predictionCount = predictionMatchIdsByUser.get(userId)?.size || 0;
+        const extrasCount = extrasMatchIdsByUser.get(userId)?.size || 0;
+        return {
+          userId,
+          username,
+          predictionCount,
+          extrasCount,
+          completedAll:
+            predictionCount === roundOf8Matches.length &&
+            extrasCount === roundOf8Matches.length,
+        };
+      })
+      .filter((row) => row.predictionCount > 0 || row.extrasCount > 0)
+      .sort((a, b) => a.username.localeCompare(b.username));
+
+    const submittedByMatch = roundOf8Matches.map((match) => {
+      const submittedUserIds = new Set(
+        (qfPredictions || [])
+          .filter((prediction) => prediction.match_id === match.id)
+          .map((prediction) => prediction.user_id)
+      );
+      const names = Array.from(submittedUserIds)
+        .map((userId) => profileById.get(userId) || "Unknown participant")
+        .sort((a, b) => a.localeCompare(b));
+      return {
+        fixture: `${match.home_team} vs ${match.away_team}`,
+        kickoff: match.kickoff_utc,
+        names,
+      };
+    });
+
+    const fullSubmitters = participantRows.filter((row) => row.completedAll);
+    const partialSubmitters = participantRows.filter((row) => !row.completedAll);
+
+    const formatNames = (names: string[]) =>
+      names.length ? names.join(", ") : "None yet";
+
+    const answer = [
+      "### Round of 8 prediction submissions",
+      "This shows submission status only; upcoming score/winner/extras choices remain hidden until kickoff.",
+      "",
+      `Fixtures tracked: ${roundOf8Matches.length}`,
+      `Players with at least one Round of 8 score prediction: ${participantRows.length}`,
+      `Players completed all Round of 8 score + extras entries: ${fullSubmitters.length}`,
+      "",
+      "| Fixture | Score predictions submitted | Players |",
+      "|---|---:|---|",
+      ...submittedByMatch.map(
+        (row) =>
+          `| ${row.fixture} | ${row.names.length} | ${formatNames(row.names)} |`
+      ),
+      "",
+      `**Completed all ${roundOf8Matches.length} fixtures:** ${
+        fullSubmitters.length
+          ? fullSubmitters.map((row) => row.username).join(", ")
+          : "None yet"
+      }`,
+      partialSubmitters.length
+        ? `**Partial submissions:** ${partialSubmitters
+            .map(
+              (row) =>
+                `${row.username} (${row.predictionCount}/${roundOf8Matches.length} scores, ${row.extrasCount}/${roundOf8Matches.length} extras)`
+            )
+            .join(", ")}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    await trackUsage({ status: "success", model: "database" });
+    return NextResponse.json(
+      { answer },
+      { headers: { "Cache-Control": "private, no-store" } }
+    );
+  }
+
   let fixturePredictionAudit: Array<{
     matchId: number;
     fixture: string;
