@@ -1,15 +1,29 @@
 import { NextResponse } from "next/server";
+import { unstable_noStore as noStore } from "next/cache";
 import { createClient } from "@supabase/supabase-js";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const PAGE_SIZE = 1000;
 
 export async function GET() {
+  noStore();
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { auth: { autoRefreshToken: false, persistSession: false } }
+    {
+      auth: { autoRefreshToken: false, persistSession: false },
+      global: {
+        fetch: (input, init) =>
+          fetch(input, {
+            ...init,
+            cache: "no-store",
+            next: { revalidate: 0 },
+          }),
+      },
+    }
   );
 
   const [{ data: leaderboard, error: leaderboardError }, { data: matches, error: matchesError }] =

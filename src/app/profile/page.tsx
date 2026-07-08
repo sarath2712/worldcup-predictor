@@ -107,16 +107,23 @@ export default function ProfilePage() {
       if (gtsData) setGroupTopscorer(gtsData);
       const gtsPoints = gtsData?.points || 0;
 
-      setTotalPoints(predPoints + extraPoints + tournamentPoints + groupPoints + gtsPoints);
-      const leaderboardResponse = await fetch("/api/leaderboard", {
-        cache: "no-store",
-      });
-      if (leaderboardResponse.ok) {
-        const payload = await leaderboardResponse.json();
-        const ownEntry = (payload.entries || []).find(
-          (entry: { user_id: string }) => entry.user_id === user.id
-        );
-        if (ownEntry) setLeaderboardPoints(ownEntry.total_points);
+      const sectionTotal =
+        predPoints + extraPoints + tournamentPoints + groupPoints + gtsPoints;
+
+      const { data: ownLeaderboardEntry } = await supabase
+        .from("leaderboard")
+        .select("total_points")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      const authoritativeTotal =
+        typeof ownLeaderboardEntry?.total_points === "number"
+          ? ownLeaderboardEntry.total_points
+          : sectionTotal;
+
+      setTotalPoints(authoritativeTotal);
+      if (typeof ownLeaderboardEntry?.total_points === "number") {
+        setLeaderboardPoints(ownLeaderboardEntry.total_points);
       }
       setLoading(false);
     }
