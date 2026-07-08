@@ -463,10 +463,10 @@ export async function POST(request: Request) {
     /\b(who|all|everyone|everybody|participants?|players?|people|list)\b/i.test(
       latestQuestion
     ) &&
-    /\b(submitted|made|entered|filled|given|completed)\b/i.test(
+    /\b(submitted|made|entered|filled|given|completed|predicted|picked)\b/i.test(
       latestQuestion
     ) &&
-    /\b(predictions?|picks?)\b/i.test(latestQuestion) &&
+    /\b(predictions?|picks?|predicted|picked)\b/i.test(latestQuestion) &&
     /\b(upcoming|round\s*(?:of\s*)?8|round\s*(?:of\s*)?eight|quarter[-\s]?finals?|qf)\b/i.test(
       latestQuestion
     );
