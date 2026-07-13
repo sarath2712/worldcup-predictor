@@ -147,47 +147,13 @@ export default function CaricatureContestPage() {
       <Link href="/" className="text-sm text-gray-400 hover:text-white transition mb-6 inline-block">
         ← Back to Home
       </Link>
-      <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
-        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 19l7-7 3 3-7 7-3-3z"/>
-          <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
-          <path d="M2 2l7.586 7.586"/>
-          <circle cx="11" cy="11" r="2"/>
-        </svg>
-        CARICATURE CONTEST
-      </h1>
-
-      <div className="text-gray-300 mb-8 space-y-4 text-sm leading-relaxed">
-        <p>
-          Every fan has a face that lives in their head.
-        </p>
-        <p>
-          The keeper frozen mid-dive. The striker with arms wide, shirt over his head. The manager losing his mind on the touchline. The player you love so much you&apos;ve memorised the way he celebrates.
-        </p>
-        <p className="font-semibold text-white">Now draw them.</p>
-        <p>
-          Pull out the big nose, the wild hair, the impossible legs, the trophy held just a little too proudly. Make us laugh. Make us point and say <em>that&apos;s exactly him</em>.
-        </p>
-        <p>
-          Footballers, fans, legends, your own mad uncle who thinks he&apos;s Messi. Anyone from the beautiful game is fair play. Pencil, paint, napkin. Talent optional. Cheek mandatory.
-        </p>
-        <p className="font-semibold text-accent">Bring the player. We&apos;ll bring the laughs. Best caricature wins.</p>
-        <p className="rounded-2xl border border-accent/20 bg-accent/10 p-4 font-semibold text-white">
-          Submit your caricature by Wednesday, July 15, 2026 at 7:00 PM IST.
-          Community voting will start after that at 7:00 PM.
-        </p>
-        <p className="text-xs text-gray-400 border-t border-white/10 pt-3">
-          <span className="font-semibold text-white">Rules:</span> Open to ALL age groups. Scan or photograph your drawing and upload below. Each file must be less than 1 MB.
-        </p>
-      </div>
-
       <section className="mb-8 rounded-3xl border border-accent/20 bg-gradient-to-br from-accent/10 via-white/5 to-primary/10 p-5 sm:p-7">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">Caricature gallery</p>
-            <h2 className="mt-2 text-2xl font-bold text-white">Preview the entries</h2>
+            <h1 className="mt-2 text-3xl font-bold text-white">Preview the entries</h1>
             <p className="mt-1 text-sm text-gray-400">
-              Tap a picture to view it full screen. Artist names are hidden until voting opens.
+              Tap a picture to view it full screen. Voting starts Wednesday, July 15, 2026 at 7:00 PM IST.
             </p>
           </div>
           <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-100">
@@ -224,7 +190,6 @@ export default function CaricatureContestPage() {
                   />
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent p-4">
                     <p className="text-xs uppercase tracking-wide text-gray-300">Entry #{index + 1}</p>
-                    <p className="font-bold text-white">Artist hidden</p>
                   </div>
                   <span className="absolute right-3 top-3 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
                     View
@@ -242,7 +207,42 @@ export default function CaricatureContestPage() {
         )}
       </section>
 
+      <h2 className="mb-2 flex items-center gap-3 text-3xl font-bold">
+        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+          <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+          <path d="M2 2l7.586 7.586"/>
+          <circle cx="11" cy="11" r="2"/>
+        </svg>
+        Caricature Contest
+      </h2>
+
+      <div className="text-gray-300 mb-8 space-y-4 text-sm leading-relaxed">
+        <p>
+          Every fan has a face that lives in their head.
+        </p>
+        <p>
+          The keeper frozen mid-dive. The striker with arms wide, shirt over his head. The manager losing his mind on the touchline. The player you love so much you&apos;ve memorised the way he celebrates.
+        </p>
+        <p className="font-semibold text-white">Now draw them.</p>
+        <p>
+          Pull out the big nose, the wild hair, the impossible legs, the trophy held just a little too proudly. Make us laugh. Make us point and say <em>that&apos;s exactly him</em>.
+        </p>
+        <p>
+          Footballers, fans, legends, your own mad uncle who thinks he&apos;s Messi. Anyone from the beautiful game is fair play. Pencil, paint, napkin. Talent optional. Cheek mandatory.
+        </p>
+        <p className="font-semibold text-accent">Bring the player. We&apos;ll bring the laughs. Best caricature wins.</p>
+        <p className="rounded-2xl border border-accent/20 bg-accent/10 p-4 font-semibold text-white">
+          Submit your caricature by Wednesday, July 15, 2026 at 7:00 PM IST.
+          Community voting will start after that at 7:00 PM.
+        </p>
+        <p className="text-xs text-gray-400 border-t border-white/10 pt-3">
+          <span className="font-semibold text-white">Rules:</span> Open to ALL age groups. Scan or photograph your drawing and upload below. Each file must be less than 1 MB.
+        </p>
+      </div>
+
       <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 mb-8">
+        <h3 className="mb-4 text-xl font-bold text-white">Submit your caricature</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-300">Name *</label>
@@ -348,7 +348,7 @@ export default function CaricatureContestPage() {
               <div>
                 <p className="text-xs uppercase tracking-wide text-gray-500">Caricature entry</p>
                 <p className="font-bold text-white">
-                  Entry #{entries.findIndex((entry) => entry.id === selectedEntry.id) + 1} · Artist hidden
+                  Entry #{entries.findIndex((entry) => entry.id === selectedEntry.id) + 1}
                 </p>
               </div>
               <button
