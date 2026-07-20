@@ -80,9 +80,9 @@ const mensTeams: Team[] = [
     players: [
       { name: "Chirag Tyagh", flat: "A1001", isCaptain: true },
       { name: "Sushant Kumar", flat: "2122", isCaptain: false },
-      { name: "Rohan", flat: "5154", isCaptain: false },
+      { name: "Pikanshu Kumar", flat: "7082", isCaptain: false },
       { name: "Franklin Francis", flat: "8124", isCaptain: false },
-      { name: "Kishor", flat: "1067", isCaptain: false },
+      { name: "Sagar Kateel", flat: "Q-8004", isCaptain: false },
       { name: "Arjun", flat: "5182", isCaptain: false },
       { name: "Tushar", flat: "7111", isCaptain: false },
     ],
@@ -91,13 +91,10 @@ const mensTeams: Team[] = [
     name: "Team 2",
     players: [
       { name: "Kshiraj Nair", flat: "8062", isCaptain: true },
-      { name: "Pikanshu Kumar", flat: "7082", isCaptain: false },
-      { name: "Sagar Kateel", flat: "Q-8004", isCaptain: false },
-      { name: "Gitrajit", flat: "4042", isCaptain: false },
+      { name: "Rohan", flat: "5154", isCaptain: false },
+      { name: "Kishor", flat: "1067", isCaptain: false },
+      { name: "Sriram S", flat: "7131", isCaptain: false },
       { name: "Jay Patel", flat: "2132", isCaptain: false },
-      { name: "Chethan", flat: "8002", isCaptain: false },
-      { name: "Satyaki Das", flat: "1076", isCaptain: false },
-      { name: "Sahil", flat: "6002", isCaptain: false },
     ],
   },
   {
@@ -105,7 +102,7 @@ const mensTeams: Team[] = [
     players: [
       { name: "Anil Rawat", flat: "7062", isCaptain: true },
       { name: "Pankaj Kumawat", flat: "2061", isCaptain: false },
-      { name: "Sriram S", flat: "7131", isCaptain: false },
+      { name: "Gitrajit", flat: "4042", isCaptain: false },
       { name: "Pavan Itagi", flat: "8043", isCaptain: false },
       { name: "Sachin Shiragola", flat: "6174", isCaptain: false },
       { name: "Mitesh Rao V", flat: "7012", isCaptain: false },
@@ -170,7 +167,13 @@ const womensTeams: Team[] = [
 ];
 
 const kidsResults = { champion: "Team 3", runnerUp: "Team 4" };
+const mensResults = { champion: "Team 2", runnerUp: "Team 4" };
 const womensResults = { champion: "Team 1", runnerUp: "Team 2" };
+const mensFixtures = [
+  { stage: "Semi-Final 1", fixture: "Team 2 vs Team 1", result: "Team 2 wins by walkover" },
+  { stage: "Semi-Final 2", fixture: "Team 3 vs Team 4", result: "Team 4 wins by walkover" },
+  { stage: "Final", fixture: "Team 2 vs Team 4", result: "Team 2 wins — Champion" },
+];
 
 function WinnerBadge() {
   return (
@@ -240,8 +243,8 @@ export default function CompetitionPage() {
 
   const current = sections.find((s) => s.key === activeSection)!;
 
-  function getTeamResult(teamName: string, category: "kids" | "womens"): "champion" | "runner-up" | null {
-    const results = category === "kids" ? kidsResults : womensResults;
+  function getTeamResult(teamName: string, category: "kids" | "mens" | "womens"): "champion" | "runner-up" | null {
+    const results = category === "kids" ? kidsResults : category === "mens" ? mensResults : womensResults;
     if (teamName === results.champion) return "champion";
     if (teamName === results.runnerUp) return "runner-up";
     return null;
@@ -291,39 +294,25 @@ export default function CompetitionPage() {
         </div>
       )}
 
-      {/* Men's - Teams + Schedule coming soon */}
+      {/* Men's - Results with winner badges */}
       {activeSection === "mens" && (
         <>
+          <div className="rounded-2xl border border-blue-500/30 bg-blue-500/10 p-5 mb-6">
+            <h2 className="text-lg font-bold text-blue-400 mb-4">Men&apos;s Football Results</h2>
+            <div className="space-y-3">
+              {mensFixtures.map((match) => (
+                <div key={match.stage} className="rounded-xl bg-black/20 border border-white/10 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-blue-400">{match.stage}</p>
+                  <p className="font-semibold text-white mt-1">{match.fixture}</p>
+                  <p className="text-sm text-green-400 mt-1">{match.result}</p>
+                </div>
+              ))}
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {mensTeams.map((team) => (
-              <div key={team.name} className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-3">
-                <h2 className="text-lg font-bold text-accent">{team.name}</h2>
-                <div className="space-y-2">
-                  {team.players.map((p) => (
-                    <div
-                      key={p.name}
-                      className={`flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 rounded-lg ${
-                        p.isCaptain ? "bg-accent/10 border border-accent/30" : "bg-white/5"
-                      }`}
-                    >
-                      <span className="font-semibold text-white text-sm">
-                        {p.name}
-                        {p.isCaptain && <span className="ml-1.5 text-accent text-xs">(C)</span>}
-                      </span>
-                      {p.flat && <span className="text-xs text-gray-500">Flat {p.flat}</span>}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <ResultTeamCard key={team.name} team={team} result={getTeamResult(team.name, "mens")} />
             ))}
-          </div>
-          <div className="mt-6 border border-dashed border-blue-500/30 rounded-xl p-5 text-center">
-            <svg className="w-6 h-6 mx-auto mb-2 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <rect x="3" y="4" width="18" height="18" rx="2" />
-              <path d="M16 2v4M8 2v4M3 10h18" />
-            </svg>
-            <p className="text-sm font-bold text-blue-400">Schedule Coming Soon</p>
-            <p className="text-xs text-gray-500 mt-1">Men&apos;s tournament schedule will be announced shortly</p>
           </div>
         </>
       )}

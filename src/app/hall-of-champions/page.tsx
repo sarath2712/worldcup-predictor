@@ -76,9 +76,6 @@ const championTeams = [
       ["Kishor", "1067"],
       ["Sriram S", "7131"],
       ["Jay Patel", "2132"],
-      ["Chethan", "8002"],
-      ["Satyaki Das", "1076"],
-      ["Sahil", "6002"],
     ],
   },
   {
