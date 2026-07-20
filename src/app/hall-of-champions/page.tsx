@@ -251,6 +251,14 @@ export default function HallOfChampionsPage() {
             </span>
             <h2 className="mt-2 text-3xl font-black text-white">Pavan Itagi</h2>
             <p className="mt-1 font-semibold text-gray-300">Champion · Flat 8043</p>
+            <div className="mt-4 w-fit rounded-xl border border-yellow-300/30 bg-black/30 px-4 py-3 shadow-lg">
+              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-yellow-200/80">
+                Cash Prize · SLG Mega Millions
+              </p>
+              <p className="mt-1 text-2xl font-black leading-none text-yellow-300">
+                ₹1,000.000
+              </p>
+            </div>
             <p className="mt-4 text-sm leading-relaxed text-gray-400">
               The community’s favourite artwork secured first place with 9 votes.
               Kirti Bagga of Flat 6043 finished runner-up with 8 votes.

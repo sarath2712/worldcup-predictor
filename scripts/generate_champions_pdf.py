@@ -340,6 +340,11 @@ def generate():
     text.textLine("Runner-up: Kirti Bagga")
     text.textLine("Flat 6043 | 8 votes")
     pdf.drawText(text)
+    pdf.setFillColor(GOLD)
+    pdf.setFont("Helvetica-Bold", 8)
+    pdf.drawString(270, 342, "CASH PRIZE - SLG MEGA MILLIONS")
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(270, 320, "Rs 1,000.000")
     footer(pdf, 4)
     pdf.showPage()
 
