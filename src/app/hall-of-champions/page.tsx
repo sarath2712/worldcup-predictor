@@ -293,9 +293,9 @@ export default function HallOfChampionsPage() {
         <p className="mx-auto mt-4 max-w-3xl text-sm leading-relaxed text-gray-300 sm:text-base">
           From the Prediction Contest and PlayStation FC26 Tournament to Men&apos;s,
           Kids&apos; and Women&apos;s Football and the Caricature Contest, your
-          participation, encouragement, and support brought our community together.
-          With every competition now complete, we celebrate the people who took part
-          and congratulate all our champions.
+          participation, encouragement, and support made the celebration special.
+          With every competition now complete, we congratulate all our champions.
+          We Moved Football Together in SLG.
         </p>
       </section>
     </main>
