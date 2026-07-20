@@ -19,10 +19,16 @@ export default function LeaderboardPage() {
 
   useEffect(() => {
     async function load() {
-      const [leaderboardResponse, { data: groupPoints }, { data: topScorerPoints }] = await Promise.all([
+      const [
+        leaderboardResponse,
+        { data: groupPoints },
+        { data: topScorerPoints },
+        { data: tournamentPoints },
+      ] = await Promise.all([
         fetch("/api/leaderboard", { cache: "no-store" }),
         supabase.from("group_predictions").select("user_id, points"),
         supabase.from("group_topscorer_predictions").select("user_id, points"),
+        supabase.from("tournament_predictions").select("user_id, points"),
       ]);
       const leaderboardPayload = leaderboardResponse.ok
         ? await leaderboardResponse.json()
@@ -37,11 +43,16 @@ export default function LeaderboardPage() {
       for (const row of topScorerPoints || []) {
         topScorerTotals.set(row.user_id, (topScorerTotals.get(row.user_id) || 0) + (row.points || 0));
       }
+      const tournamentTotals = new Map<string, number>();
+      for (const row of tournamentPoints || []) {
+        tournamentTotals.set(row.user_id, (tournamentTotals.get(row.user_id) || 0) + (row.points || 0));
+      }
 
       setEntries((data || []).map((entry) => ({
         ...entry,
         group_stage_points: groupTotals.get(entry.user_id) || 0,
         group_top_scorer_points: topScorerTotals.get(entry.user_id) || 0,
+        tournament_points: tournamentTotals.get(entry.user_id) || 0,
       })));
 
       // Get most recent completed match
@@ -132,7 +143,7 @@ export default function LeaderboardPage() {
         <p className="text-gray-400">No predictions scored yet. Check back after the first match!</p>
       ) : (
         <div className="bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm overflow-x-auto">
-          <table className="w-full min-w-[760px]">
+          <table className="w-full min-w-[880px]">
             <thead className="bg-white/5">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
@@ -140,6 +151,7 @@ export default function LeaderboardPage() {
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Points</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Group Stage</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Group Top Scorer</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Tournament</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Exact</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Correct</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Played</th>
@@ -158,6 +170,7 @@ export default function LeaderboardPage() {
                   <td className="px-4 py-3 text-center font-bold text-accent">{entry.total_points}</td>
                   <td className="px-4 py-3 text-center text-sm font-semibold text-emerald-400">{entry.group_stage_points || 0}</td>
                   <td className="px-4 py-3 text-center text-sm font-semibold text-amber-400">{entry.group_top_scorer_points || 0}</td>
+                  <td className="px-4 py-3 text-center text-sm font-semibold text-purple-400">{entry.tournament_points || 0}</td>
                   <td className="px-4 py-3 text-center text-sm">{entry.exact_scores}</td>
                   <td className="px-4 py-3 text-center text-sm">{entry.correct_outcomes}</td>
                   <td className="px-4 py-3 text-center text-sm text-gray-500">{entry.matches_scored}</td>
@@ -170,7 +183,7 @@ export default function LeaderboardPage() {
 
       <div className="text-sm text-gray-400 bg-white/5 border border-white/10 p-4 rounded-lg space-y-1">
         <p><strong>Match Scoring:</strong> Exact score = 30 pts | Correct outcome = 10 pts | POTM (knockout only) = 20 pts | First Goal = 15 pts</p>
-        <p><strong>Tournament:</strong> Winner = 200 pts | Finalist = 180 pts | Golden Boot/Ball/Glove = 150 pts each</p>
+        <p><strong>Tournament:</strong> Winner = 400 pts | Finalist = 360 pts | Golden Boot/Ball/Glove = 300 pts each</p>
       </div>
 
       {entries.length > 0 && (

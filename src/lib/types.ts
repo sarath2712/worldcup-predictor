@@ -51,6 +51,7 @@ export type LeaderboardEntry = {
   rank: number;
   group_stage_points?: number;
   group_top_scorer_points?: number;
+  tournament_points?: number;
 };
 
 export type MatchExtras = {
