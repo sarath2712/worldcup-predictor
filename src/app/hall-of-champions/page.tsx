@@ -178,8 +178,8 @@ export default function HallOfChampionsPage() {
                       priority
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#071225] via-transparent to-transparent" />
-                    <span className={`absolute left-3 top-3 rounded-full bg-gradient-to-r ${winner.accent} px-2.5 py-1 text-xs font-black text-slate-950 shadow-lg`}>
-                      {winner.badge}
+                    <span className={`absolute left-3 top-3 rounded-full bg-gradient-to-r ${winner.accent} px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-slate-950 shadow-xl ring-2 ring-white/60 sm:text-xs`}>
+                      {winner.badge} · {winner.place}
                     </span>
                     <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
                       <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-yellow-300 sm:text-[10px]">
@@ -228,6 +228,9 @@ export default function HallOfChampionsPage() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-300">
               Caricature Contest
             </p>
+            <span className="mt-4 w-fit rounded-full border-2 border-yellow-200/70 bg-gradient-to-r from-yellow-300 via-amber-400 to-orange-500 px-3 py-1.5 text-xs font-black uppercase tracking-wide text-slate-950 shadow-xl">
+              1st · Champion
+            </span>
             <h2 className="mt-2 text-3xl font-black text-white">Pavan Itagi</h2>
             <p className="mt-1 font-semibold text-gray-300">Champion · Flat 8043</p>
             <p className="mt-4 text-sm leading-relaxed text-gray-400">

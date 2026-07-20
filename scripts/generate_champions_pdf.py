@@ -89,10 +89,14 @@ def winner_card(pdf, x, y, width, height, winner):
     pdf.drawImage(image, x, y + 70, width, image_h, mask="auto")
 
     pdf.setFillColor(winner["color"])
-    pdf.roundRect(x + 10, y + height - 27, 28, 17, 8, fill=1, stroke=0)
+    pdf.roundRect(x + 10, y + height - 29, 88, 19, 9, fill=1, stroke=0)
     pdf.setFillColor(NAVY)
-    pdf.setFont("Helvetica-Bold", 9)
-    pdf.drawCentredString(x + 24, y + height - 22, winner["badge"])
+    pdf.setFont("Helvetica-Bold", 8)
+    pdf.drawCentredString(
+        x + 54,
+        y + height - 23,
+        f'{winner["badge"]} - {winner["place"].upper()}',
+    )
 
     pdf.setFillColor(GOLD)
     pdf.setFont("Helvetica-Bold", 7.5)
@@ -308,6 +312,11 @@ def generate():
     pdf.setFillColor(TEAL)
     pdf.setFont("Helvetica-Bold", 9)
     pdf.drawString(270, 475, "CARICATURE CONTEST")
+    pdf.setFillColor(GOLD)
+    pdf.roundRect(430, 462, 104, 20, 10, fill=1, stroke=0)
+    pdf.setFillColor(NAVY)
+    pdf.setFont("Helvetica-Bold", 8)
+    pdf.drawCentredString(482, 468, "1ST - CHAMPION")
     pdf.setFillColor(white)
     pdf.setFont("Helvetica-Bold", 24)
     pdf.drawString(270, 443, "Pavan Itagi")
