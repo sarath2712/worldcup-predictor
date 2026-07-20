@@ -239,21 +239,29 @@ def generate():
     pdf.setLineWidth(2)
     pdf.line(W / 2 - 75, H - 273, W / 2 + 75, H - 273)
     pdf.setFillColor(PANEL)
-    pdf.roundRect(65, 275, W - 130, 175, 18, fill=1, stroke=0)
+    pdf.roundRect(55, 230, W - 110, 270, 18, fill=1, stroke=0)
     pdf.setFillColor(white)
     pdf.setFont("Helvetica-Bold", 20)
-    pdf.drawCentredString(W / 2, 410, "Celebrating Our Community")
+    pdf.drawCentredString(W / 2, 462, "Thank You, Sobha Lake Gardens")
     pdf.setFillColor(MUTED)
-    pdf.setFont("Helvetica", 11)
+    pdf.setFont("Helvetica", 10.5)
     lines = [
-        "Prediction talent. FC26 skill. Football teamwork.",
-        "Creative expression. One unforgettable celebration.",
+        "As our FIFA WC 2026 celebrations come to a close,",
+        "thank you to everyone who joined, participated, volunteered,",
+        "cheered, and supported this wonderful community journey.",
         "",
-        "Congratulations to every champion, runner-up,",
-        "participant, volunteer, and supporter.",
+        "Prediction Contest | PlayStation FC26 Tournament",
+        "Men's Football | Kids' Football | Women's Football",
+        "Caricature Contest",
+        "",
+        "Every competition is now complete.",
+        "It is time to celebrate our champions!",
     ]
     for index, line in enumerate(lines):
-        pdf.drawCentredString(W / 2, 380 - index * 20, line)
+        if index >= 8:
+            pdf.setFillColor(GOLD)
+            pdf.setFont("Helvetica-Bold", 11)
+        pdf.drawCentredString(W / 2, 430 - index * 20, line)
     footer(pdf, 1)
     pdf.showPage()
 
@@ -328,23 +336,33 @@ def generate():
     y = heading(pdf, "Community Football", "Women's Football Champions", H - 55)
     y = team_panel(pdf, 38, y, W - 76, "Women's Football Champions", "Team 1", "Team 2", womens, PINK)
     pdf.setFillColor(PANEL)
-    pdf.roundRect(38, 185, W - 76, 190, 16, fill=1, stroke=0)
+    pdf.roundRect(38, 155, W - 76, 235, 16, fill=1, stroke=0)
     pdf.setFillColor(GOLD)
     pdf.setFont("Helvetica-Bold", 11)
-    pdf.drawCentredString(W / 2, 335, "CONGRATULATIONS")
+    pdf.drawCentredString(W / 2, 350, "THANK YOU, SOBHA LAKE GARDENS")
     pdf.setFillColor(white)
     pdf.setFont("Helvetica-Bold", 22)
-    pdf.drawCentredString(W / 2, 300, "To All Our Champions")
+    pdf.drawCentredString(W / 2, 315, "Together, We Made It Special")
     pdf.setFillColor(MUTED)
-    pdf.setFont("Helvetica", 10.5)
+    pdf.setFont("Helvetica", 10)
     closing = [
-        "Thank you to every participant and volunteer who made",
-        "the FIFA WC 2026 celebration a memorable community event.",
+        "With the final whistle blown and every competition complete,",
+        "thank you to every participant, volunteer, supporter, and neighbour",
+        "who joined us and made the FIFA WC 2026 celebrations memorable.",
+        "",
+        "Your enthusiasm brought our community together.",
+        "Now, let us celebrate the champions!",
         "",
         "www.slgevents.in/hall-of-champions",
     ]
     for index, line in enumerate(closing):
-        pdf.drawCentredString(W / 2, 265 - index * 20, line)
+        if index == 5:
+            pdf.setFillColor(GOLD)
+            pdf.setFont("Helvetica-Bold", 11)
+        elif index == 7:
+            pdf.setFillColor(MUTED)
+            pdf.setFont("Helvetica", 10)
+        pdf.drawCentredString(W / 2, 280 - index * 18, line)
     footer(pdf, 6)
     pdf.save()
 

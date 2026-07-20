@@ -130,8 +130,9 @@ export default function HallOfChampionsPage() {
             Hall of Champions
           </h1>
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-gray-300 sm:text-base">
-            Celebrating the winners, runners-up, and championship teams who made our
-            community competitions unforgettable.
+            As our FIFA WC 2026 celebrations come to a close, thank you to every
+            participant, volunteer, supporter, and neighbour who made them special.
+            Now it is time to celebrate our champions.
           </p>
           <a
             href="/downloads/hall-of-champions.pdf"
@@ -280,6 +281,22 @@ export default function HallOfChampionsPage() {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="mt-12 rounded-3xl border border-yellow-400/20 bg-gradient-to-br from-yellow-400/10 via-white/5 to-emerald-500/10 p-6 text-center sm:p-10">
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-yellow-300">
+          Thank You, Sobha Lake Gardens
+        </p>
+        <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">
+          Together, We Made It Special
+        </h2>
+        <p className="mx-auto mt-4 max-w-3xl text-sm leading-relaxed text-gray-300 sm:text-base">
+          From the Prediction Contest and PlayStation FC26 Tournament to Men&apos;s,
+          Kids&apos; and Women&apos;s Football and the Caricature Contest, your
+          participation, encouragement, and support brought our community together.
+          With every competition now complete, we celebrate the people who took part
+          and congratulate all our champions.
+        </p>
       </section>
     </main>
   );
