@@ -133,6 +133,18 @@ export default function HallOfChampionsPage() {
             Celebrating the winners, runners-up, and championship teams who made our
             community competitions unforgettable.
           </p>
+          <a
+            href="/downloads/hall-of-champions.pdf"
+            download
+            className="mt-6 inline-flex items-center gap-2 rounded-full border border-yellow-300/40 bg-yellow-300 px-5 py-2.5 text-sm font-bold text-slate-950 shadow-lg shadow-yellow-500/10 transition hover:bg-yellow-200"
+          >
+            Download Champions PDF
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 3v12" />
+              <path d="m7 10 5 5 5-5" />
+              <path d="M5 21h14" />
+            </svg>
+          </a>
         </div>
       </header>
 
@@ -189,14 +201,15 @@ export default function HallOfChampionsPage() {
       </div>
 
       <section className="mt-10 overflow-hidden rounded-3xl border border-teal-400/20 bg-gradient-to-br from-teal-500/10 via-white/5 to-emerald-500/10">
-        <div className="grid md:grid-cols-[1.35fr_1fr]">
-          <div className="relative aspect-[3/2] min-h-[240px] overflow-hidden bg-white">
+        <div className="grid md:grid-cols-[0.8fr_1.2fr]">
+          <div className="relative aspect-[4/5] min-h-[320px] overflow-hidden bg-slate-900">
             <Image
-              src="/winners/trupti-itagi-caricature.webp"
-              alt="Winning caricature by Pavan Itagi"
+              src="/winners/pavan-itagi.webp"
+              alt="Pavan Itagi, Caricature Contest Champion"
               fill
-              sizes="(max-width: 768px) 100vw, 60vw"
-              className="object-contain"
+              sizes="(max-width: 768px) 100vw, 40vw"
+              className="object-cover"
+              style={{ objectPosition: "center 42%" }}
             />
           </div>
           <div className="flex flex-col justify-center p-6 sm:p-8">
