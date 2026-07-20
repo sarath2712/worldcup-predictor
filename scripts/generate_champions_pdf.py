@@ -350,7 +350,7 @@ def generate():
         "thank you to every participant, volunteer, supporter, and neighbour",
         "who joined us and made the FIFA WC 2026 celebrations memorable.",
         "",
-        "We Moved Football Together in SLG.",
+        "We Move Football Together in SLG.",
         "Now, let us celebrate the champions!",
         "",
         "www.slgevents.in/hall-of-champions",

@@ -295,7 +295,9 @@ export default function HallOfChampionsPage() {
           Kids&apos; and Women&apos;s Football and the Caricature Contest, your
           participation, encouragement, and support made the celebration special.
           With every competition now complete, we congratulate all our champions.
-          We Moved Football Together in SLG.
+        </p>
+        <p className="mx-auto mt-5 w-fit rounded-full border border-yellow-300/30 bg-yellow-300/10 px-5 py-2 text-base font-black text-yellow-300 sm:text-xl">
+          We Move Football Together in SLG
         </p>
       </section>
     </main>
