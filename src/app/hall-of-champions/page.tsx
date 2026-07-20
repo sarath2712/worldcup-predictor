@@ -201,16 +201,27 @@ export default function HallOfChampionsPage() {
       </div>
 
       <section className="mt-10 overflow-hidden rounded-3xl border border-teal-400/20 bg-gradient-to-br from-teal-500/10 via-white/5 to-emerald-500/10">
-        <div className="grid md:grid-cols-[0.8fr_1.2fr]">
-          <div className="relative aspect-[4/5] min-h-[320px] overflow-hidden bg-slate-900">
-            <Image
-              src="/winners/pavan-itagi.webp"
-              alt="Pavan Itagi, Caricature Contest Champion"
-              fill
-              sizes="(max-width: 768px) 100vw, 40vw"
-              className="object-cover"
-              style={{ objectPosition: "center 42%" }}
-            />
+        <div className="grid md:grid-cols-[1.25fr_0.75fr]">
+          <div className="grid grid-cols-2 bg-slate-900">
+            <div className="relative aspect-[4/5] min-h-[260px] overflow-hidden">
+              <Image
+                src="/winners/pavan-itagi.webp"
+                alt="Pavan Itagi, Caricature Contest Champion"
+                fill
+                sizes="(max-width: 768px) 50vw, 32vw"
+                className="object-cover"
+                style={{ objectPosition: "center 42%" }}
+              />
+            </div>
+            <div className="relative aspect-[4/5] min-h-[260px] overflow-hidden bg-white">
+              <Image
+                src="/winners/trupti-itagi-caricature.webp"
+                alt="Winning caricature by Pavan Itagi"
+                fill
+                sizes="(max-width: 768px) 50vw, 32vw"
+                className="object-contain"
+              />
+            </div>
           </div>
           <div className="flex flex-col justify-center p-6 sm:p-8">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-300">
