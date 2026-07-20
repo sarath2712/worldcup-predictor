@@ -162,12 +162,6 @@ export default function HallOfChampionsPage() {
               </p>
               <h2 className="mt-1 text-2xl font-black text-white sm:text-3xl">{section.title}</h2>
               <p className="mt-2 max-w-2xl text-sm text-gray-400">{section.description}</p>
-              <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-yellow-300/30 bg-yellow-300/10 px-3 py-1.5">
-                <span className="text-[10px] font-black uppercase tracking-[0.18em] text-yellow-300">
-                  SLG Mega Millions
-                </span>
-                <span className="text-[10px] text-yellow-100/70">Big winner energy</span>
-              </div>
             </div>
 
             <div className="grid max-w-3xl grid-cols-2 gap-3 sm:gap-5">
@@ -253,7 +247,7 @@ export default function HallOfChampionsPage() {
             <p className="mt-1 font-semibold text-gray-300">Champion · Flat 8043</p>
             <div className="mt-4 w-fit rounded-xl border border-yellow-300/30 bg-black/30 px-4 py-3 shadow-lg">
               <p className="text-[9px] font-black uppercase tracking-[0.18em] text-yellow-200/80">
-                Cash Prize · SLG Mega Millions
+                Cash Prize
               </p>
               <p className="mt-1 text-2xl font-black leading-none text-yellow-300">
                 ₹1,000.000

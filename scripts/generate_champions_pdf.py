@@ -113,8 +113,6 @@ def winner_card(pdf, x, y, width, height, winner):
     pdf.drawString(x + 12, y + 23, "CASH PRIZE")
     pdf.setFont("Helvetica-Bold", 15)
     pdf.drawString(x + 12, y + 8, winner["prize"])
-    pdf.setFont("Helvetica-Bold", 6.8)
-    pdf.drawRightString(x + width - 12, y + 10, "SLG MEGA MILLIONS")
 
 
 def team_panel(pdf, x, y, width, title, team, runner_up, players, color):
@@ -342,7 +340,7 @@ def generate():
     pdf.drawText(text)
     pdf.setFillColor(GOLD)
     pdf.setFont("Helvetica-Bold", 8)
-    pdf.drawString(270, 342, "CASH PRIZE - SLG MEGA MILLIONS")
+    pdf.drawString(270, 342, "CASH PRIZE")
     pdf.setFont("Helvetica-Bold", 18)
     pdf.drawString(270, 320, "Rs 1,000.000")
     footer(pdf, 4)
