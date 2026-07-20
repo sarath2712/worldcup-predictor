@@ -194,6 +194,45 @@ const tiles: { title: string; subtitle: string; href: string; Icon: typeof Jerse
   },
 ];
 
+const winners = [
+  {
+    name: "Mahesh Tirupati",
+    competition: "Prediction Contest",
+    place: "Winner",
+    image: "/winners/mahesh-tirupati.webp",
+    imagePosition: "center 55%",
+    accent: "from-amber-300 via-yellow-400 to-amber-600",
+    badge: "1st",
+  },
+  {
+    name: "Arjun",
+    competition: "Prediction Contest",
+    place: "Runner-up",
+    image: "/winners/arjun.webp",
+    imagePosition: "center 42%",
+    accent: "from-slate-200 via-gray-300 to-slate-500",
+    badge: "2nd",
+  },
+  {
+    name: "Pikanshu",
+    competition: "PlayStation Competition",
+    place: "First Place",
+    image: "/winners/pikanshu.webp",
+    imagePosition: "center",
+    accent: "from-amber-300 via-yellow-400 to-amber-600",
+    badge: "1st",
+  },
+  {
+    name: "Kshiraj",
+    competition: "PlayStation Competition",
+    place: "Second Place",
+    image: "/winners/kshiraj.webp",
+    imagePosition: "center",
+    accent: "from-slate-200 via-gray-300 to-slate-500",
+    badge: "2nd",
+  },
+];
+
 function Countdown() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
 
@@ -515,6 +554,62 @@ export default function Home() {
         {/* Spacer for floating buttons */}
         <div className="h-12" />
       </div>
+
+      {/* Competition winners */}
+      <section className="relative z-10 w-full max-w-6xl px-4 pb-24 pt-6 sm:pt-10">
+        <div className="mb-6 text-center">
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-yellow-400/30 bg-yellow-400/10 px-3 py-1">
+            <TrophyIcon className="h-4 w-4 text-yellow-300" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-yellow-200">
+              Hall of Champions
+            </span>
+          </div>
+          <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+            Meet Our Winners
+          </h2>
+          <p className="mt-2 text-sm text-gray-400">
+            Celebrating the champions of the FIFA WC 2026 community competitions.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+          {winners.map((winner) => (
+            <article
+              key={`${winner.competition}-${winner.place}`}
+              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-2xl shadow-black/20"
+            >
+              <div className={`h-1 bg-gradient-to-r ${winner.accent}`} />
+              <div className="relative aspect-[4/5] overflow-hidden bg-slate-900">
+                <Image
+                  src={winner.image}
+                  alt={`${winner.name}, ${winner.place} in the ${winner.competition}`}
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 25vw"
+                  className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                  style={{ objectPosition: winner.imagePosition }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#071225] via-transparent to-transparent" />
+                <span
+                  className={`absolute left-3 top-3 rounded-full bg-gradient-to-r ${winner.accent} px-2.5 py-1 text-xs font-black text-slate-950 shadow-lg`}
+                >
+                  {winner.badge}
+                </span>
+                <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-yellow-300 sm:text-[10px]">
+                    {winner.competition}
+                  </p>
+                  <h3 className="mt-1 text-lg font-black leading-tight text-white sm:text-2xl">
+                    {winner.name}
+                  </h3>
+                  <p className="mt-0.5 text-xs font-semibold text-gray-300 sm:text-sm">
+                    {winner.place}
+                  </p>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
       {/* Floating Contact for Help Button */}
       <Link
