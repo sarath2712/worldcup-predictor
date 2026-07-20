@@ -79,14 +79,14 @@ def winner_card(pdf, x, y, width, height, winner):
     pdf.setFillColor(winner["color"])
     pdf.roundRect(x, y + height - 5, width, 5, 2, fill=1, stroke=0)
 
-    image_h = height - 70
+    image_h = height - 92
     image = cover_image(
         ROOT / winner["image"],
         width,
         image_h,
         winner.get("focus", 0.5),
     )
-    pdf.drawImage(image, x, y + 70, width, image_h, mask="auto")
+    pdf.drawImage(image, x, y + 92, width, image_h, mask="auto")
 
     pdf.setFillColor(winner["color"])
     pdf.roundRect(x + 10, y + height - 29, 88, 19, 9, fill=1, stroke=0)
@@ -100,14 +100,21 @@ def winner_card(pdf, x, y, width, height, winner):
 
     pdf.setFillColor(GOLD)
     pdf.setFont("Helvetica-Bold", 7.5)
-    pdf.drawString(x + 12, y + 51, winner["competition"].upper())
+    pdf.drawString(x + 12, y + 73, winner["competition"].upper())
     pdf.setFillColor(white)
     pdf.setFont("Helvetica-Bold", 14)
-    pdf.drawString(x + 12, y + 33, winner["name"])
+    pdf.drawString(x + 12, y + 55, winner["name"])
     pdf.setFillColor(MUTED)
     pdf.setFont("Helvetica", 8.5)
-    pdf.drawString(x + 12, y + 18, f'{winner["place"]} | Flat {winner["flat"]}')
-    pdf.drawRightString(x + width - 12, y + 18, winner["detail"])
+    pdf.drawString(x + 12, y + 40, f'{winner["place"]} | Flat {winner["flat"]}')
+    pdf.drawRightString(x + width - 12, y + 40, winner["detail"])
+    pdf.setFillColor(GOLD)
+    pdf.setFont("Helvetica-Bold", 7.5)
+    pdf.drawString(x + 12, y + 23, "CASH PRIZE")
+    pdf.setFont("Helvetica-Bold", 15)
+    pdf.drawString(x + 12, y + 8, winner["prize"])
+    pdf.setFont("Helvetica-Bold", 6.8)
+    pdf.drawRightString(x + width - 12, y + 10, "SLG MEGA MILLIONS")
 
 
 def team_panel(pdf, x, y, width, title, team, runner_up, players, color):
@@ -152,6 +159,7 @@ prediction = [
         "competition": "Prediction Contest",
         "place": "Champion",
         "detail": "8,523 points",
+        "prize": "Rs 3,000.000",
         "image": "public/winners/mahesh-tirupati.webp",
         "focus": 0.55,
         "badge": "1st",
@@ -163,6 +171,7 @@ prediction = [
         "competition": "Prediction Contest",
         "place": "Runner-up",
         "detail": "7,836 points",
+        "prize": "Rs 1,500.000",
         "image": "public/winners/arjun.webp",
         "focus": 0.42,
         "badge": "2nd",
@@ -177,6 +186,7 @@ fc26 = [
         "competition": "PlayStation FC26",
         "place": "Champion",
         "detail": "Final 6-2",
+        "prize": "Rs 2,500.000",
         "image": "public/winners/pikanshu.webp",
         "badge": "1st",
         "color": GOLD,
@@ -187,6 +197,7 @@ fc26 = [
         "competition": "PlayStation FC26",
         "place": "Runner-up",
         "detail": "Finalist",
+        "prize": "Rs 1,000.000",
         "image": "public/winners/kshiraj.webp",
         "badge": "2nd",
         "color": SILVER,

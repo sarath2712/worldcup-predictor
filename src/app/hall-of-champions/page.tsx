@@ -8,6 +8,7 @@ const individualWinners = [
     competition: "Prediction Contest",
     place: "Champion",
     detail: "8,523 points",
+    prize: "₹3,000.000",
     image: "/winners/mahesh-tirupati.webp",
     imagePosition: "center 55%",
     badge: "1st",
@@ -19,6 +20,7 @@ const individualWinners = [
     competition: "Prediction Contest",
     place: "Runner-up",
     detail: "7,836 points",
+    prize: "₹1,500.000",
     image: "/winners/arjun.webp",
     imagePosition: "center 42%",
     badge: "2nd",
@@ -30,6 +32,7 @@ const individualWinners = [
     competition: "PlayStation FC26",
     place: "Champion",
     detail: "Final: 6–2",
+    prize: "₹2,500.000",
     image: "/winners/pikanshu.webp",
     imagePosition: "center",
     badge: "1st",
@@ -41,6 +44,7 @@ const individualWinners = [
     competition: "PlayStation FC26",
     place: "Runner-up",
     detail: "Finalist",
+    prize: "₹1,000.000",
     image: "/winners/kshiraj.webp",
     imagePosition: "center",
     badge: "2nd",
@@ -158,6 +162,12 @@ export default function HallOfChampionsPage() {
               </p>
               <h2 className="mt-1 text-2xl font-black text-white sm:text-3xl">{section.title}</h2>
               <p className="mt-2 max-w-2xl text-sm text-gray-400">{section.description}</p>
+              <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-yellow-300/30 bg-yellow-300/10 px-3 py-1.5">
+                <span className="text-[10px] font-black uppercase tracking-[0.18em] text-yellow-300">
+                  SLG Mega Millions
+                </span>
+                <span className="text-[10px] text-yellow-100/70">Big winner energy</span>
+              </div>
             </div>
 
             <div className="grid max-w-3xl grid-cols-2 gap-3 sm:gap-5">
@@ -192,6 +202,14 @@ export default function HallOfChampionsPage() {
                         {winner.place} · Flat {winner.flat}
                       </p>
                       <p className="mt-0.5 text-[10px] text-gray-400 sm:text-xs">{winner.detail}</p>
+                      <div className="mt-2 rounded-lg border border-yellow-300/30 bg-black/40 px-2.5 py-1.5 backdrop-blur-sm">
+                        <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-yellow-200/80">
+                          Cash Prize
+                        </p>
+                        <p className="text-base font-black leading-none text-yellow-300 sm:text-xl">
+                          {winner.prize}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </article>
