@@ -196,7 +196,7 @@ export default function HallOfChampionsPage() {
           <div className="relative aspect-[3/2] min-h-[240px] overflow-hidden bg-white">
             <Image
               src="/winners/trupti-itagi-caricature.webp"
-              alt="Winning caricature by Trupti Itagi"
+              alt="Winning caricature by Pavan Itagi"
               fill
               sizes="(max-width: 768px) 100vw, 60vw"
               className="object-contain"
@@ -206,7 +206,7 @@ export default function HallOfChampionsPage() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-300">
               Caricature Contest
             </p>
-            <h2 className="mt-2 text-3xl font-black text-white">Trupti Itagi</h2>
+            <h2 className="mt-2 text-3xl font-black text-white">Pavan Itagi</h2>
             <p className="mt-1 font-semibold text-gray-300">Champion · Flat 8043</p>
             <p className="mt-4 text-sm leading-relaxed text-gray-400">
               The community’s favourite artwork secured first place with 9 votes.
